@@ -56,23 +56,35 @@ const StatCard = ({
   const stat1Color = statColorMap[stat1.color || 'default'];
   const stat2Color = statColorMap[stat2.color || 'default'];
   
+  const gradientMap = {
+    blue: 'from-blue/10 to-blue/5',
+    green: 'from-green/10 to-green/5',
+    yellow: 'from-yellow/10 to-yellow/5',
+    red: 'from-red/10 to-red/5',
+    default: 'from-blue/10 to-blue/5'
+  };
+  
+  const gradient = gradientMap[cardColor];
+  
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden border-t-4 border-t-blue">
-      <div className="p-5">
-        <div className="flex items-center justify-center mb-4">
-          <div className={`w-16 h-16 rounded-full border-2 ${borderColor} flex items-center justify-center ${iconColor}`}>
+    <div className={`bg-gradient-to-br ${gradient} dark:bg-gray-900 rounded-xl shadow-md overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300`}>
+      <div className="p-6 relative">
+        <div className="absolute top-4 right-4">
+          <div className={`w-10 h-10 rounded-lg ${iconColor} flex items-center justify-center bg-white dark:bg-gray-800 shadow-sm`}>
             {icon}
           </div>
         </div>
-        <h2 className="text-xl font-homenaje text-center uppercase mb-4 text-gray-800 dark:text-gray-200">{title}</h2>
-        <div className="flex justify-between">
-          <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+        
+        <h2 className="text-xl font-homenaje uppercase mb-5 text-gray-800 dark:text-gray-200">{title}</h2>
+        
+        <div className="grid grid-cols-2 gap-4 mt-6">
+          <div className="p-3 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">{stat1.label}</p>
-            <p className={`text-xl font-bold ${stat1Color}`}>{stat1.value}</p>
+            <p className={`text-2xl font-bold ${stat1Color}`}>{stat1.value}</p>
           </div>
-          <div className="text-center p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+          <div className="p-3 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">{stat2.label}</p>
-            <p className={`text-xl font-bold ${stat2Color}`}>{stat2.value}</p>
+            <p className={`text-2xl font-bold ${stat2Color}`}>{stat2.value}</p>
           </div>
         </div>
       </div>
