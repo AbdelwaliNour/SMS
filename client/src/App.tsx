@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import Dashboard from "@/pages/dashboard";
 import Students from "@/pages/students";
 import AddStudent from "@/pages/add-student";
+import EditStudent from "@/pages/edit-student";
 import Employees from "@/pages/employees";
 import AddEmployee from "@/pages/add-employee";
 import Classrooms from "@/pages/classrooms";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={Dashboard}/>
       <Route path="/students" component={Students}/>
       <Route path="/add-student" component={AddStudent}/>
+      <Route path="/edit-student/:id" component={EditStudent}/>
       <Route path="/employees" component={Employees}/>
       <Route path="/add-employee" component={AddEmployee}/>
       <Route path="/classrooms" component={Classrooms}/>

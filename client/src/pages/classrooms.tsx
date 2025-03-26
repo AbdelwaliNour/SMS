@@ -16,6 +16,7 @@ import { apiRequest, queryClient } from '@/lib/queryClient';
 import { ColumnDef } from '@tanstack/react-table';
 import FilterSelect from '@/components/ui/filter-select';
 import { getSectionDisplayName } from '@/lib/utils';
+import EditClassroomForm from '@/components/classrooms/EditClassroomForm';
 
 const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
@@ -28,6 +29,8 @@ type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
 
 export default function Classrooms() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
   const { toast } = useToast();
   const [filters, setFilters] = useState({
     section: '',
@@ -127,11 +130,8 @@ export default function Classrooms() {
               size="sm"
               className="text-blue"
               onClick={() => {
-                // Implement edit functionality
-                toast({
-                  title: 'Edit Classroom',
-                  description: `Edit functionality for ${row.original.name}`,
-                });
+                setSelectedClassroom(row.original);
+                setIsEditModalOpen(true);
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
