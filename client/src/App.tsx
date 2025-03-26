@@ -13,6 +13,8 @@ import Classrooms from "@/pages/classrooms";
 import Finance from "@/pages/finance";
 import Exams from "@/pages/exams";
 import Attendance from "@/pages/attendance";
+import Reports from "@/pages/reports";
+import TimeTable from "@/pages/timetable";
 
 export type AppTheme = "light" | "dark";
 
@@ -28,6 +30,8 @@ function Router() {
       <Route path="/finance" component={Finance}/>
       <Route path="/exams" component={Exams}/>
       <Route path="/attendance" component={Attendance}/>
+      <Route path="/reports" component={Reports}/>
+      <Route path="/timetable" component={TimeTable}/>
       <Route component={NotFound} />
     </Switch>
   );

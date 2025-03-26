@@ -2,6 +2,7 @@ import { useLocation, Link } from 'wouter';
 import { useState } from 'react';
 import { Logo } from '../ui/logo';
 import { AppTheme } from '@/App';
+import { Switch } from '@/components/ui/switch';
 
 interface SidebarProps {
   theme: AppTheme;
@@ -32,7 +33,9 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
         <div className="px-4 mb-2">
           <Link href="/">
             <a className={`flex items-center py-2 px-4 rounded-md ${location === '/' ? 'bg-blue text-white' : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-              <i className="fas fa-th-large w-6 mr-2"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
               Dashboard
             </a>
           </Link>
@@ -85,11 +88,27 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
             </a>
           </Link>
           <Link href="/exams">
-            <a className={`flex items-center py-2 px-4 rounded-md ${location === '/exams' ? 'bg-blue text-white' : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+            <a className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === '/exams' ? 'bg-blue text-white' : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               Results
+            </a>
+          </Link>
+          <Link href="/reports">
+            <a className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === '/reports' ? 'bg-blue text-white' : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Reports
+            </a>
+          </Link>
+          <Link href="/timetable">
+            <a className={`flex items-center py-2 px-4 rounded-md ${location === '/timetable' ? 'bg-blue text-white' : 'text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Time Table
             </a>
           </Link>
         </div>
@@ -97,27 +116,28 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
       
       {/* Theme Toggle & User */}
       <div className="p-4 border-t border-divider dark:border-gray-700">
-        <div className="flex justify-start mb-4">
-          <button 
-            onClick={toggleTheme}
-            className="flex items-center text-sm font-medium text-gray-600 dark:text-gray-300"
-          >
-            {theme === 'dark' ? (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                Light
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex items-center justify-between mb-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+          <div className="flex items-center">
+            <span className="mr-2">
+              {theme === 'dark' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
-                Dark
-              </>
-            )}
-          </button>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {theme === 'dark' ? 'Dark' : 'Light'} Mode
+            </span>
+          </div>
+          <Switch
+            checked={theme === 'dark'}
+            onCheckedChange={toggleTheme}
+            className="data-[state=checked]:bg-blue"
+          />
         </div>
         
         <div className="flex items-center">
