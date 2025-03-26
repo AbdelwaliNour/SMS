@@ -197,93 +197,122 @@ export default function Classrooms() {
                   <DialogTitle>Add New Classroom</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Room Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g. Room 101" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="section"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Section</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select section" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="primary">Primary</SelectItem>
-                              <SelectItem value="secondary">Secondary</SelectItem>
-                              <SelectItem value="highschool">High School</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="capacity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Capacity</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="Capacity" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="teacherId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Assign Teacher</FormLabel>
-                          <Select 
-                            onValueChange={(value) => field.onChange(value ? parseInt(value) : null)} 
-                            defaultValue={field.value?.toString()}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a teacher" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="">Not Assigned</SelectItem>
-                              {teachers.map((teacher) => (
-                                <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                  {teacher.firstName} {teacher.lastName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="flex justify-end space-x-2 pt-4">
-                      <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+                      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Classroom Details</h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Room Name</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="e.g. Room 101" 
+                                  {...field} 
+                                  className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="section"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Section</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
+                                    <SelectValue placeholder="Select section" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="primary">Primary</SelectItem>
+                                  <SelectItem value="secondary">Secondary</SelectItem>
+                                  <SelectItem value="highschool">High School</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+                      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Capacity & Assignment</h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="capacity"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Capacity</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  placeholder="Capacity" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                                  className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="teacherId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Assign Teacher</FormLabel>
+                              <Select 
+                                onValueChange={(value) => field.onChange(value ? parseInt(value) : null)} 
+                                defaultValue={field.value?.toString()}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
+                                    <SelectValue placeholder="Select a teacher" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="">Not Assigned</SelectItem>
+                                  {teachers.map((teacher) => (
+                                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
+                                      {teacher.firstName} {teacher.lastName}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-3 pt-2">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setIsAddModalOpen(false)}
+                        className="border-gray-200 hover:bg-gray-50 text-gray-600"
+                      >
                         Cancel
                       </Button>
-                      <Button type="submit" className="bg-blue hover:bg-blue/90 text-white">
+                      <Button 
+                        type="submit" 
+                        className="bg-blue hover:bg-blue/90 text-white shadow-sm hover:shadow"
+                      >
                         Add Classroom
                       </Button>
                     </div>
@@ -294,13 +323,45 @@ export default function Classrooms() {
           </div>
           
           {isLoading ? (
-            <div className="p-8 text-center">Loading classrooms...</div>
+            <div className="p-8">
+              <div className="space-y-4">
+                <div className="h-8 w-1/3 bg-gray-200 dark:bg-gray-800 rounded-md animate-pulse"></div>
+                <div className="border border-gray-200 dark:border-gray-800 rounded-md overflow-hidden">
+                  <div className="h-12 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
+                    <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                  </div>
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+                      <div className="flex space-x-8 w-full">
+                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           ) : error ? (
-            <div className="p-8 text-center text-red">Error loading classrooms. Please try again.</div>
+            <div className="p-8">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-6 py-4 rounded-xl shadow-sm flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 className="font-bold text-lg mb-1">Unable to load classrooms</h3>
+                  <p>There was an error loading the classroom data. Please refresh the page or try again later.</p>
+                </div>
+              </div>
+            </div>
           ) : (
             <DataTable
               columns={columns}
               data={classrooms || []}
+              filterColumn="section"
+              searchable={true}
             />
           )}
         </div>

@@ -118,25 +118,25 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         return (
           <div className="flex space-x-2">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-blue"
+              className="text-blue border-blue/30 hover:bg-blue/10 hover:text-blue rounded-full w-8 h-8 p-0"
               onClick={() => {
                 setSelectedEmployee(row.original);
                 setIsEditModalOpen(true);
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-red"
+              className="text-red border-red/30 hover:bg-red/10 hover:text-red rounded-full w-8 h-8 p-0"
               onClick={() => handleDelete(row.original.id)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </Button>
@@ -154,7 +154,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
             <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">Employees List</h2>
           </div>
           <Button 
-            className="bg-blue hover:bg-blue/90 text-white"
+            className="bg-blue hover:bg-blue/90 text-white rounded-full shadow-md hover:shadow-lg transition-all"
             onClick={onAddEmployee}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,9 +165,39 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         </div>
         
         {isLoading ? (
-          <div className="p-8 text-center">Loading employees...</div>
+          <div className="p-8">
+            <div className="space-y-4">
+              <div className="h-8 w-1/3 bg-gray-200 dark:bg-gray-800 rounded-md animate-pulse"></div>
+              <div className="border border-gray-200 dark:border-gray-800 rounded-md overflow-hidden">
+                <div className="h-12 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
+                  <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                </div>
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+                    <div className="flex space-x-8 w-full">
+                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         ) : error ? (
-          <div className="p-8 text-center text-red">Error loading employees. Please try again.</div>
+          <div className="p-8">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-6 py-4 rounded-xl shadow-sm flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 className="font-bold text-lg mb-1">Unable to load employees</h3>
+                <p>There was an error loading the employee data. Please refresh the page or try again later.</p>
+              </div>
+            </div>
+          </div>
         ) : (
           <DataTable
             columns={columns}
