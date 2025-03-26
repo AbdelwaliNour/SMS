@@ -1,26 +1,24 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable } from '@/components/ui/data-table';
 import { Employee } from '@shared/schema';
+import { ColumnDef } from '@tanstack/react-table';
+import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
-import { generateUserAvatar, getSectionDisplayName, getGenderDisplayName } from '@/lib/utils';
-import { Link } from 'wouter';
-import { ColumnDef } from '@tanstack/react-table';
-import FilterSelect from '@/components/ui/filter-select';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import EditEmployeeForm from './EditEmployeeForm';
+import { Badge } from '@/components/ui/badge';
+import { getGenderDisplayName } from '@/lib/utils';
 
 interface EmployeesTableProps {
   onAddEmployee: () => void;
 }
 
 const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
-  const [filters, setFilters] = useState({
-    gender: '',
-    section: '',
-    shift: ''
-  });
 
   const { data: employees, isLoading, error, refetch } = useQuery<Employee[]>({
     queryKey: ['/api/employees'],
@@ -35,7 +33,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         title: 'Success',
         description: 'Employee deleted successfully',
       });
-      refetch();
+      queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
     } catch (error) {
       toast({
         title: 'Error',
@@ -45,77 +43,92 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
     }
   };
 
+  const getRoleBadgeVariant = (role: string) => {
+    const variants: Record<string, string> = {
+      teacher: 'blue',
+      admin: 'yellow',
+      driver: 'green',
+      guard: 'red',
+      staff: 'secondary',
+      cleaner: 'secondary',
+    };
+    return variants[role] || 'secondary';
+  };
+
+  const getRoleDisplayName = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  };
+
   const columns: ColumnDef<Employee>[] = [
-    {
-      accessorKey: 'image',
-      header: 'Image',
-      cell: ({ row }) => {
-        const employee = row.original;
-        const fullName = `${employee.firstName} ${employee.lastName}`;
-        return (
-          <img 
-            src={generateUserAvatar(fullName, 40)} 
-            alt={fullName} 
-            className="w-10 h-10 rounded-full"
-          />
-        );
-      },
-    },
     {
       accessorKey: 'employeeId',
       header: 'Employee ID',
     },
     {
-      accessorKey: 'name',
-      header: 'Employee Name',
+      accessorKey: 'firstName',
+      header: 'Name',
       cell: ({ row }) => {
-        const employee = row.original;
-        return `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`;
+        const firstName = row.original.firstName;
+        const middleName = row.original.middleName 
+          ? `${row.original.middleName.charAt(0)}. ` 
+          : '';
+        const lastName = row.original.lastName;
+        return `${firstName} ${middleName}${lastName}`;
       },
     },
     {
       accessorKey: 'role',
-      header: 'Title',
+      header: 'Role',
       cell: ({ row }) => {
         const role = row.original.role;
-        return role.charAt(0).toUpperCase() + role.slice(1);
-      }
+        const variant = getRoleBadgeVariant(role);
+        return (
+          <Badge variant={variant as any} className="capitalize">
+            {getRoleDisplayName(role)}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'gender',
+      header: 'Gender',
+      cell: ({ row }) => getGenderDisplayName(row.original.gender),
     },
     {
       accessorKey: 'section',
       header: 'Section',
-      cell: ({ row }) => getSectionDisplayName(row.original.section || ''),
+      cell: ({ row }) => row.original.section || 'N/A',
     },
     {
       accessorKey: 'shift',
       header: 'Shift',
-      cell: ({ row }) => {
-        const shift = row.original.shift;
-        return shift ? shift.charAt(0).toUpperCase() + shift.slice(1) : 'N/A';
-      }
+      cell: ({ row }) => row.original.shift 
+        ? row.original.shift.charAt(0).toUpperCase() + row.original.shift.slice(1) 
+        : 'N/A',
     },
     {
-      accessorKey: 'salary',
-      header: 'Salary',
-      cell: ({ row }) => `$${row.original.salary}`,
+      accessorKey: 'phone',
+      header: 'Phone',
+      cell: ({ row }) => row.original.phone || 'N/A',
     },
     {
       id: 'actions',
-      header: 'Action',
+      header: 'Actions',
       cell: ({ row }) => {
         return (
           <div className="flex space-x-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-blue" 
-              asChild
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-blue"
+              onClick={() => {
+                setSelectedEmployee(row.original);
+                setIsEditModalOpen(true);
+              }}
             >
-              <Link to={`/edit-employee/${row.original.id}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </Link>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
             </Button>
             <Button
               variant="ghost"
@@ -134,71 +147,60 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
   ];
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-      <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
-        <div className="flex items-center">
-          <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">View Employees</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Filter BY</span>
+    <>
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
+        <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
+          <div className="flex items-center">
+            <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">Employees List</h2>
+          </div>
+          <Button 
+            className="bg-blue hover:bg-blue/90 text-white"
+            onClick={onAddEmployee}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Employee
+          </Button>
         </div>
-        <div className="flex space-x-2">
-          <FilterSelect
-            label="Gender"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' },
-            ]}
-            value={filters.gender}
-            onChange={(value) => setFilters({ ...filters, gender: value })}
-            placeholder="Gender"
+        
+        {isLoading ? (
+          <div className="p-8 text-center">Loading employees...</div>
+        ) : error ? (
+          <div className="p-8 text-center text-red">Error loading employees. Please try again.</div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={employees || []}
+            searchable
+            filterColumn="role"
           />
-          <FilterSelect
-            label="Section"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'primary', label: 'Primary' },
-              { value: 'secondary', label: 'Secondary' },
-              { value: 'highschool', label: 'High School' },
-            ]}
-            value={filters.section}
-            onChange={(value) => setFilters({ ...filters, section: value })}
-            placeholder="Section"
-          />
-          <FilterSelect
-            label="Shift"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'morning', label: 'Morning' },
-              { value: 'afternoon', label: 'Afternoon' },
-              { value: 'evening', label: 'Evening' },
-            ]}
-            value={filters.shift}
-            onChange={(value) => setFilters({ ...filters, shift: value })}
-            placeholder="Shift"
-          />
-        </div>
-        <Button 
-          onClick={onAddEmployee} 
-          className="bg-blue hover:bg-blue/90 text-white"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add Employee
-        </Button>
+        )}
       </div>
-      
-      {isLoading ? (
-        <div className="p-8 text-center">Loading employees...</div>
-      ) : error ? (
-        <div className="p-8 text-center text-red">Error loading employees. Please try again.</div>
-      ) : (
-        <DataTable
-          columns={columns}
-          data={employees || []}
-        />
-      )}
-    </div>
+
+      {/* Edit Employee Dialog */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Edit Employee</DialogTitle>
+          </DialogHeader>
+          {selectedEmployee && (
+            <EditEmployeeForm 
+              employee={selectedEmployee} 
+              onSuccess={() => {
+                setIsEditModalOpen(false);
+                setSelectedEmployee(null);
+                refetch();
+              }}
+              onCancel={() => {
+                setIsEditModalOpen(false);
+                setSelectedEmployee(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

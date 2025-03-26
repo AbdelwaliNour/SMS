@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { apiRequest, queryClient } from '@/lib/queryClient';
+import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Employee } from '@shared/schema';
 
 const employeeFormSchema = z.object({
   employeeId: z.string().min(1, "Employee ID is required"),
@@ -25,29 +27,51 @@ const employeeFormSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
 
-const AddEmployeeForm = () => {
+interface EditEmployeeFormProps {
+  employee: Employee;
+  onSuccess: () => void;
+  onCancel: () => void;
+}
+
+const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormProps) => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
-      employeeId: '',
-      firstName: '',
-      middleName: null,
-      lastName: '',
-      gender: 'male',
-      role: 'teacher',
-      section: null,
-      shift: null,
-      phone: null,
-      email: null,
-      subjects: null,
+      employeeId: employee.employeeId || '',
+      firstName: employee.firstName || '',
+      middleName: employee.middleName || null,
+      lastName: employee.lastName || '',
+      gender: employee.gender,
+      role: employee.role,
+      section: employee.section || null,
+      shift: employee.shift || null,
+      phone: employee.phone || null,
+      email: employee.email || null,
+
+      subjects: employee.subjects || null,
     },
   });
 
+  useEffect(() => {
+    form.reset({
+      employeeId: employee.employeeId,
+      firstName: employee.firstName,
+      middleName: employee.middleName,
+      lastName: employee.lastName,
+      gender: employee.gender,
+      role: employee.role,
+      section: employee.section,
+      shift: employee.shift,
+      phone: employee.phone,
+      email: employee.email,
+
+      subjects: employee.subjects,
+    });
+  }, [employee, form]);
+
   const onSubmit = async (data: EmployeeFormValues) => {
-    setLoading(true);
     try {
       // If subjects is provided as a string, convert it to an array
       const formattedData = {
@@ -55,23 +79,24 @@ const AddEmployeeForm = () => {
         subjects: data.subjects || null,
       };
 
-      await apiRequest('POST', '/api/employees', formattedData);
+      await apiRequest('PATCH', `/api/employees/${employee.id}`, formattedData);
       toast({
         title: 'Success',
-        description: 'Employee added successfully',
+        description: 'Employee updated successfully',
       });
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
-      form.reset();
+      onSuccess();
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to add employee',
+        description: 'Failed to update employee',
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
     }
   };
+
+  // Prepare subjects data for form
+  const subjectsString = employee.subjects ? employee.subjects.join(', ') : '';
 
   return (
     <Form {...form}>
@@ -226,6 +251,8 @@ const AddEmployeeForm = () => {
           )}
         />
 
+
+
         {form.watch('role') === 'teacher' && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -265,6 +292,7 @@ const AddEmployeeForm = () => {
                     <FormControl>
                       <Input 
                         placeholder="e.g. Math, Science, History" 
+                        defaultValue={subjectsString}
                         onChange={(e) => {
                           const value = e.target.value;
                           const subjects = value 
@@ -310,8 +338,11 @@ const AddEmployeeForm = () => {
         />
 
         <div className="flex justify-end space-x-2 pt-4">
-          <Button type="submit" className="bg-blue hover:bg-blue/90 text-white" disabled={loading}>
-            {loading ? 'Adding...' : 'Add Employee'}
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" className="bg-blue hover:bg-blue/90 text-white">
+            Update Employee
           </Button>
         </div>
       </form>
@@ -319,4 +350,4 @@ const AddEmployeeForm = () => {
   );
 };
 
-export default AddEmployeeForm;
+export default EditEmployeeForm;
