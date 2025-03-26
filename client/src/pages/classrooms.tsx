@@ -22,7 +22,7 @@ const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
   section: z.enum(['primary', 'secondary', 'highschool']),
   capacity: z.number().min(1, "Capacity must be at least 1"),
-  teacherId: z.number().optional(),
+  teacherId: z.union([z.number(), z.null()]).optional(),
 });
 
 type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
@@ -52,7 +52,7 @@ export default function Classrooms() {
       name: '',
       section: 'primary',
       capacity: 30,
-      teacherId: undefined,
+      teacherId: null,
     },
   });
 
@@ -94,7 +94,7 @@ export default function Classrooms() {
     }
   };
 
-  const getTeacherName = (teacherId?: number) => {
+  const getTeacherName = (teacherId: number | null | undefined) => {
     if (!teacherId) return 'Not Assigned';
     const teacher = teachers.find(t => t.id === teacherId);
     return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';
@@ -258,7 +258,7 @@ export default function Classrooms() {
                         <FormItem>
                           <FormLabel>Assign Teacher</FormLabel>
                           <Select 
-                            onValueChange={(value) => field.onChange(value ? parseInt(value) : undefined)} 
+                            onValueChange={(value) => field.onChange(value ? parseInt(value) : null)} 
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>
@@ -304,6 +304,30 @@ export default function Classrooms() {
             />
           )}
         </div>
+
+        {/* Edit Classroom Dialog */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Classroom</DialogTitle>
+            </DialogHeader>
+            {selectedClassroom && (
+              <EditClassroomForm 
+                classroom={selectedClassroom} 
+                teachers={teachers}
+                onSuccess={() => {
+                  setIsEditModalOpen(false);
+                  setSelectedClassroom(null);
+                  refetch();
+                }}
+                onCancel={() => {
+                  setIsEditModalOpen(false);
+                  setSelectedClassroom(null);
+                }}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
