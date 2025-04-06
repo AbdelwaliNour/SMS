@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, Users, BookOpen, UserCheck, DollarSign, BarChart2, Calendar, Award, Settings } from 'lucide-react';
+import { Menu, X, Home, Users, BookOpen, UserCheck, DollarSign, BarChart2, Calendar, Award, Settings, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
@@ -205,6 +205,13 @@ export function MobileNavigation() {
                     label="Results"
                     href="/exams"
                     isActive={location === '/exams'}
+                    onClick={closeMenu}
+                  />
+                  <NavItem 
+                    icon={<BarChart size={20} />}
+                    label="Performance"
+                    href="/student-performance"
+                    isActive={location === '/student-performance'}
                     onClick={closeMenu}
                   />
                   <NavItem 

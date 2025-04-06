@@ -192,6 +192,26 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
             Results
           </Link>
           <Link
+            href="/student-performance"
+            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/student-performance" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            Performance
+          </Link>
+          <Link
             href="/reports"
             className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/reports" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
           >

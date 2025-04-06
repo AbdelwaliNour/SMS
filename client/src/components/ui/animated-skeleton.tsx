@@ -1,127 +1,58 @@
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cva, type VariantProps } from "class-variance-authority";
+import { HTMLAttributes } from 'react';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-// Define variants for our animated skeleton
-const animatedSkeletonVariants = cva(
-  "relative isolate overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:border-t before:border-slate-100 before:bg-gradient-to-r before:from-transparent before:via-slate-200/60 dark:before:via-slate-700/30 before:to-transparent",
-  {
-    variants: {
-      variant: {
-        default: "bg-slate-100 dark:bg-slate-800/60",
-        card: "bg-slate-100 dark:bg-slate-800/80 rounded-lg",
-        chart: "bg-slate-100 dark:bg-slate-800/40 rounded-md",
-        statistic: "bg-slate-100 dark:bg-slate-800/60 rounded-md",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
-
-export interface AnimatedSkeletonProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof animatedSkeletonVariants> {
-  loading?: boolean;
-  children?: React.ReactNode;
+interface AnimatedSkeletonProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'chart' | 'statistic';
 }
 
-export function AnimatedSkeleton({
+export const AnimatedSkeleton = ({
   className,
-  variant,
-  loading = true,
-  children,
+  variant = 'default',
   ...props
-}: AnimatedSkeletonProps) {
-  if (!loading) {
-    return <>{children}</>;
-  }
+}: AnimatedSkeletonProps) => {
+  const variants = {
+    default: 'animate-pulse bg-gray-200 dark:bg-gray-800',
+    chart: 'animate-pulse bg-gray-200 dark:bg-gray-800',
+    statistic: 'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 bg-[length:400%_100%]',
+  };
 
   return (
     <div
-      className={cn(animatedSkeletonVariants({ variant }), className)}
+      className={cn(
+        'rounded-md',
+        variants[variant],
+        className
+      )}
       {...props}
-      style={{
-        ...props.style,
-      }}
     />
   );
-}
+};
 
-// Predefined skeleton components
-export function ChartSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={cn("space-y-3", className)} {...props}>
-      <AnimatedSkeleton className="h-6 w-1/3" variant="statistic" />
-      <AnimatedSkeleton className="h-4 w-1/4" variant="statistic" />
-      <AnimatedSkeleton className="mt-4 h-[240px] w-full" variant="chart" />
+interface StatCardSkeletonProps extends HTMLAttributes<HTMLDivElement> {}
+
+export const StatCardSkeleton = ({ className, ...props }: StatCardSkeletonProps) => (
+  <Card className={cn("rounded-lg border p-4", className)} {...props}>
+    <div className="flex justify-between items-start mb-2">
+      <AnimatedSkeleton className="h-5 w-24" variant="statistic" />
+      <AnimatedSkeleton className="h-8 w-8 rounded-full" variant="statistic" />
     </div>
-  );
-}
+    <AnimatedSkeleton className="h-9 w-24 my-2" variant="statistic" />
+    <AnimatedSkeleton className="h-2 w-full mt-2" variant="statistic" />
+    <AnimatedSkeleton className="h-3 w-24 mt-3" variant="statistic" />
+  </Card>
+);
 
-export function CardSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <AnimatedSkeleton
-      className={cn("h-full rounded-xl border border-slate-200 dark:border-slate-800", className)}
-      variant="card"
-      {...props}
-    >
-      <div className="p-6">
-        <AnimatedSkeleton className="h-5 w-1/3 rounded" variant="statistic" />
-        <AnimatedSkeleton className="mt-2 h-4 w-1/2 rounded" variant="statistic" />
-        <div className="mt-6">
-          <AnimatedSkeleton className="h-64 w-full rounded" variant="chart" />
-        </div>
-      </div>
-    </AnimatedSkeleton>
-  );
-}
+interface CardSkeletonProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function StatCardSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <AnimatedSkeleton
-      className={cn("h-[120px] rounded-xl border border-slate-200 dark:border-slate-800", className)}
-      variant="card"
-      {...props}
-    >
-      <div className="p-6">
-        <AnimatedSkeleton className="h-9 w-9 rounded-full" variant="statistic" />
-        <AnimatedSkeleton className="mt-3 h-5 w-1/2 rounded" variant="statistic" />
-        <AnimatedSkeleton className="mt-2 h-6 w-1/3 rounded" variant="statistic" />
-      </div>
-    </AnimatedSkeleton>
-  );
-}
-
-export function TableRowSkeleton() {
-  return (
-    <div className="flex items-center space-x-4 py-3">
-      <AnimatedSkeleton className="h-12 w-12 rounded-full" variant="statistic" />
-      <div className="space-y-2">
-        <AnimatedSkeleton className="h-4 w-[200px]" variant="statistic" />
-        <AnimatedSkeleton className="h-4 w-[160px]" variant="statistic" />
-      </div>
-    </div>
-  );
-}
-
-export function DashboardSkeleton() {
-  return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <StatCardSkeleton />
-      <StatCardSkeleton />
-      <StatCardSkeleton />
-      <StatCardSkeleton />
-      <div className="md:col-span-2 lg:col-span-4">
-        <CardSkeleton className="h-[400px]" />
-      </div>
-      <div className="md:col-span-1 lg:col-span-2">
-        <CardSkeleton className="h-[400px]" />
-      </div>
-      <div className="md:col-span-1 lg:col-span-2">
-        <CardSkeleton className="h-[400px]" />
-      </div>
-    </div>
-  );
-}
+export const CardSkeleton = ({ className, ...props }: CardSkeletonProps) => (
+  <Card className={cn("overflow-hidden", className)} {...props}>
+    <CardHeader className="pb-2">
+      <AnimatedSkeleton className="h-6 w-40" variant="statistic" />
+      <AnimatedSkeleton className="h-4 w-32 mt-1" variant="statistic" />
+    </CardHeader>
+    <CardContent>
+      <AnimatedSkeleton className="h-[calc(100%-48px)] w-full rounded-md" variant="chart" />
+    </CardContent>
+  </Card>
+);

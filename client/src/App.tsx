@@ -16,6 +16,7 @@ import Exams from "@/pages/exams";
 import Attendance from "@/pages/attendance";
 import Reports from "@/pages/reports";
 import TimeTable from "@/pages/timetable";
+import StudentPerformance from "@/pages/student-performance";
 
 export type AppTheme = "light" | "dark";
 
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/attendance" component={Attendance} />
       <Route path="/reports" component={Reports} />
       <Route path="/timetable" component={TimeTable} />
+      <Route path="/student-performance" component={StudentPerformance} />
       <Route component={NotFound} />
     </Switch>
   );
