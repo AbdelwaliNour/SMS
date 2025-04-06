@@ -75,242 +75,277 @@ const AddEmployeeForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="employeeId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Employee ID</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. EMP-2024-001" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Role</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Basic Information Section */}
+        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Basic Information</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <FormField
+              control={form.control}
+              name="employeeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Employee ID</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
+                    <Input 
+                      placeholder="e.g. EMP-2024-001" 
+                      {...field} 
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="teacher">Teacher</SelectItem>
-                    <SelectItem value="driver">Driver</SelectItem>
-                    <SelectItem value="cleaner">Cleaner</SelectItem>
-                    <SelectItem value="guard">Guard</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="staff">Staff</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Role</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="driver">Driver</SelectItem>
+                      <SelectItem value="cleaner">Cleaner</SelectItem>
+                      <SelectItem value="guard">Guard</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="staff">Staff</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">First Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="First name" 
+                      {...field} 
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="middleName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Middle Name (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Middle name" 
+                      {...field} 
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(e.target.value || null)}
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Last Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Last name" 
+                      {...field} 
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Contact Information Section */}
+        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Contact Information</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Gender</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Phone (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Phone number" 
+                      {...field} 
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(e.target.value || null)}
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
-            name="firstName"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="First name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="middleName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Middle Name (Optional)</FormLabel>
+                <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Email (Optional)</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Middle name" 
+                    type="email" 
+                    placeholder="Email address" 
                     {...field} 
                     value={field.value || ''}
                     onChange={(e) => field.onChange(e.target.value || null)}
+                    className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name" {...field} />
-                </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone (Optional)</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Phone number" 
-                    {...field} 
-                    value={field.value || ''}
-                    onChange={(e) => field.onChange(e.target.value || null)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email (Optional)</FormLabel>
-              <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder="Email address" 
-                  {...field} 
-                  value={field.value || ''}
-                  onChange={(e) => field.onChange(e.target.value || null)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {form.watch('role') === 'teacher' && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Assignment Section */}
+        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Work Assignment</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <FormField
+              control={form.control}
+              name="shift"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Shift</FormLabel>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value || null)} 
+                    defaultValue={field.value || undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
+                        <SelectValue placeholder="Select shift" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">Not Assigned</SelectItem>
+                      <SelectItem value="morning">Morning</SelectItem>
+                      <SelectItem value="afternoon">Afternoon</SelectItem>
+                      <SelectItem value="evening">Evening</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            
+            {form.watch('role') === 'teacher' && (
               <FormField
                 control={form.control}
                 name="section"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Section</FormLabel>
+                    <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Section</FormLabel>
                     <Select 
                       onValueChange={(value) => field.onChange(value || null)} 
                       defaultValue={field.value || undefined}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
                           <SelectValue placeholder="Select section" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Not Assigned</SelectItem>
+                        <SelectItem value="none">Not Assigned</SelectItem>
                         <SelectItem value="primary">Primary</SelectItem>
                         <SelectItem value="secondary">Secondary</SelectItem>
                         <SelectItem value="highschool">High School</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="subjects"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subjects (comma separated)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="e.g. Math, Science, History" 
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const subjects = value 
-                            ? value.split(',').map(s => s.trim()).filter(Boolean) 
-                            : null;
-                          field.onChange(subjects);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </>
-        )}
-
-        <FormField
-          control={form.control}
-          name="shift"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Shift</FormLabel>
-              <Select 
-                onValueChange={(value) => field.onChange(value || null)} 
-                defaultValue={field.value || undefined}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select shift" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="">Not Assigned</SelectItem>
-                  <SelectItem value="morning">Morning</SelectItem>
-                  <SelectItem value="afternoon">Afternoon</SelectItem>
-                  <SelectItem value="evening">Evening</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
+            )}
+          </div>
+          
+          {form.watch('role') === 'teacher' && (
+            <FormField
+              control={form.control}
+              name="subjects"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Subjects (comma separated)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g. Math, Science, History" 
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const subjects = value 
+                          ? value.split(',').map(s => s.trim()).filter(Boolean) 
+                          : null;
+                        field.onChange(subjects);
+                      }}
+                      className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
           )}
-        />
+        </div>
 
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button type="submit" className="bg-blue hover:bg-blue/90 text-white" disabled={loading}>
+        <div className="flex justify-end space-x-3 pt-2">
+          <Button 
+            type="submit" 
+            className="bg-blue hover:bg-blue/90 text-white shadow-sm hover:shadow" 
+            disabled={loading}
+          >
             {loading ? 'Adding...' : 'Add Employee'}
           </Button>
         </div>

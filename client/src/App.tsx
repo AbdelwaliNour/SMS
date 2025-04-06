@@ -22,18 +22,18 @@ export type AppTheme = "light" | "dark";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard}/>
-      <Route path="/students" component={Students}/>
-      <Route path="/add-student" component={AddStudent}/>
-      <Route path="/edit-student/:id" component={EditStudent}/>
-      <Route path="/employees" component={Employees}/>
-      <Route path="/add-employee" component={AddEmployee}/>
-      <Route path="/classrooms" component={Classrooms}/>
-      <Route path="/finance" component={Finance}/>
-      <Route path="/exams" component={Exams}/>
-      <Route path="/attendance" component={Attendance}/>
-      <Route path="/reports" component={Reports}/>
-      <Route path="/timetable" component={TimeTable}/>
+      <Route path="/" component={Dashboard} />
+      <Route path="/students" component={Students} />
+      <Route path="/add-student" component={AddStudent} />
+      <Route path="/edit-student/:id" component={EditStudent} />
+      <Route path="/employees" component={Employees} />
+      <Route path="/add-employee" component={AddEmployee} />
+      <Route path="/classrooms" component={Classrooms} />
+      <Route path="/finance" component={Finance} />
+      <Route path="/exams" component={Exams} />
+      <Route path="/attendance" component={Attendance} />
+      <Route path="/reports" component={Reports} />
+      <Route path="/timetable" component={TimeTable} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -43,7 +43,12 @@ function App() {
   const [theme, setTheme] = useState<AppTheme>(() => {
     // Check for stored theme preference or use preferred color scheme
     const savedTheme = localStorage.getItem("theme") as AppTheme | null;
-    return savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    return (
+      savedTheme ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light")
+    );
   });
 
   // Update HTML class when theme changes

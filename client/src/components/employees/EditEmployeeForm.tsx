@@ -297,7 +297,7 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Not Assigned</SelectItem>
+                      <SelectItem value="none">Not Assigned</SelectItem>
                       <SelectItem value="morning">Morning</SelectItem>
                       <SelectItem value="afternoon">Afternoon</SelectItem>
                       <SelectItem value="evening">Evening</SelectItem>
@@ -325,7 +325,7 @@ const EditEmployeeForm = ({ employee, onSuccess, onCancel }: EditEmployeeFormPro
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Not Assigned</SelectItem>
+                        <SelectItem value="none">Not Assigned</SelectItem>
                         <SelectItem value="primary">Primary</SelectItem>
                         <SelectItem value="secondary">Secondary</SelectItem>
                         <SelectItem value="highschool">High School</SelectItem>
