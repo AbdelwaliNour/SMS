@@ -9,6 +9,7 @@ import { generateUserAvatar, getSectionDisplayName, getGenderDisplayName } from 
 import { Link } from 'wouter';
 import { ColumnDef } from '@tanstack/react-table';
 import FilterSelect from '@/components/ui/filter-select';
+import StudentsTableSkeleton from './StudentsTableSkeleton';
 
 interface StudentsTableProps {
   onAddStudent: () => void;
@@ -175,7 +176,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
       </div>
       
       {isLoading ? (
-        <div className="p-8 text-center">Loading students...</div>
+        <StudentsTableSkeleton />
       ) : error ? (
         <div className="p-8 text-center text-red">Error loading students. Please try again.</div>
       ) : (

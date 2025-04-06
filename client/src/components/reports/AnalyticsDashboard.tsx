@@ -6,6 +6,7 @@ import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AnimatedSkeleton, CardSkeleton, ChartSkeleton } from '@/components/ui/animated-skeleton';
 
 // Colors from our theme
 const COLORS = ['#00A1FF', '#00C445', '#FFBE00', '#F62929', '#757575'];
@@ -410,16 +411,25 @@ const AnalyticsDashboard = () => {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-homenaje text-yellow">Revenue by Section</CardTitle>
+              <CardTitle className="text-lg font-homenaje text-yellow">Section-wise Collection</CardTitle>
               <CardDescription>Fee collection by school section</CardDescription>
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={[
-                    { name: 'Primary', amount: analytics?.financial.collectionBySection.primary || 0 },
-                    { name: 'Secondary', amount: analytics?.financial.collectionBySection.secondary || 0 },
-                    { name: 'High School', amount: analytics?.financial.collectionBySection.highschool || 0 },
+                    { 
+                      name: 'Primary', 
+                      amount: analytics?.financial.collectionBySection.primary || 0 
+                    },
+                    { 
+                      name: 'Secondary', 
+                      amount: analytics?.financial.collectionBySection.secondary || 0 
+                    },
+                    { 
+                      name: 'High School', 
+                      amount: analytics?.financial.collectionBySection.highschool || 0 
+                    },
                   ]}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
@@ -439,46 +449,46 @@ const AnalyticsDashboard = () => {
   );
 };
 
-// Loading skeleton for analytics
+// Loading skeleton for analytics with shimmer effect
 const AnalyticsSkeleton = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-10 w-48" />
+        <AnimatedSkeleton className="h-8 w-64" variant="statistic" />
+        <AnimatedSkeleton className="h-10 w-48" variant="statistic" />
       </div>
 
-      <Skeleton className="h-12 w-full" />
+      <AnimatedSkeleton className="h-12 w-full" variant="statistic" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="pb-2">
-            <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-4 w-32" />
+            <AnimatedSkeleton className="h-6 w-40" variant="statistic" />
+            <AnimatedSkeleton className="h-4 w-32 mt-1" variant="statistic" />
           </CardHeader>
           <CardContent className="h-80">
-            <Skeleton className="h-full w-full" />
+            <AnimatedSkeleton className="h-full w-full rounded-md" variant="chart" />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="pb-2">
-            <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-4 w-32" />
+            <AnimatedSkeleton className="h-6 w-40" variant="statistic" />
+            <AnimatedSkeleton className="h-4 w-32 mt-1" variant="statistic" />
           </CardHeader>
           <CardContent className="h-80">
-            <Skeleton className="h-full w-full" />
+            <AnimatedSkeleton className="h-full w-full rounded-md" variant="chart" />
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader className="pb-2">
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-4 w-32" />
+          <AnimatedSkeleton className="h-6 w-40" variant="statistic" />
+          <AnimatedSkeleton className="h-4 w-32 mt-1" variant="statistic" />
         </CardHeader>
         <CardContent className="h-80">
-          <Skeleton className="h-full w-full" />
+          <AnimatedSkeleton className="h-full w-full rounded-md" variant="chart" />
         </CardContent>
       </Card>
     </div>

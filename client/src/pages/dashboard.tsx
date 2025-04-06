@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
 import StatCard from '@/components/dashboard/StatCard';
+import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import StudentsTable from '@/components/students/StudentsTable';
@@ -9,13 +10,57 @@ import { useLocation } from 'wouter';
 export default function Dashboard() {
   const [, navigate] = useLocation();
   
-  const { data: stats, isLoading, error } = useQuery({
+  interface StatsData {
+    students: {
+      total: number;
+      male: number;
+      female: number;
+      present: number;
+      absent: number;
+    };
+    classrooms: {
+      total: number;
+      capacity: number;
+      sections: {
+        primary: number;
+        secondary: number;
+        highschool: number;
+      };
+    };
+    employees: {
+      total: number;
+      teachers: number;
+      staff: number;
+    };
+  }
+
+  const { data: stats, isLoading, error } = useQuery<StatsData>({
     queryKey: ['/api/stats'],
   });
 
   const goToAddStudent = () => {
     navigate('/add-student');
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <DashboardSkeleton />
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="p-4 border border-red/20 bg-red/5 rounded-lg text-red mb-6">
+          <h3 className="text-lg font-medium">Error Loading Dashboard Data</h3>
+          <p>There was a problem loading the dashboard data. Please try refreshing the page.</p>
+        </div>
+        <StudentsTable onAddStudent={goToAddStudent} />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -36,11 +81,11 @@ export default function Dashboard() {
           }
           stat1={{
             label: "Capacity",
-            value: isLoading ? "..." : stats?.classrooms?.capacity || 1000
+            value: stats?.classrooms?.capacity || 1000
           }}
           stat2={{
             label: "Students",
-            value: isLoading ? "..." : stats?.students?.total || 750
+            value: stats?.students?.total || 750
           }}
         />
         
@@ -59,11 +104,11 @@ export default function Dashboard() {
           }
           stat1={{
             label: "Male",
-            value: isLoading ? "..." : stats?.students?.male || 350
+            value: stats?.students?.male || 350
           }}
           stat2={{
             label: "Female",
-            value: isLoading ? "..." : stats?.students?.female || 400
+            value: stats?.students?.female || 400
           }}
         />
         
@@ -82,11 +127,11 @@ export default function Dashboard() {
           }
           stat1={{
             label: "Present",
-            value: isLoading ? "..." : stats?.students?.present || 700
+            value: stats?.students?.present || 700
           }}
           stat2={{
             label: "Absent",
-            value: isLoading ? "..." : stats?.students?.absent || 50
+            value: stats?.students?.absent || 50
           }}
         />
       </div>
