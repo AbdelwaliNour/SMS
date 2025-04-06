@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // Enum definitions
 export const genderEnum = pgEnum('gender', ['male', 'female']);
@@ -151,3 +152,50 @@ export type InsertExam = z.infer<typeof insertExamSchema>;
 
 export type Result = typeof results.$inferSelect;
 export type InsertResult = z.infer<typeof insertResultSchema>;
+
+// Define relations
+export const studentsRelations = relations(students, ({ many }) => ({
+  attendance: many(attendance),
+  payments: many(payments),
+  results: many(results),
+}));
+
+export const employeesRelations = relations(employees, ({ many }) => ({
+  classrooms: many(classrooms),
+}));
+
+export const classroomsRelations = relations(classrooms, ({ one }) => ({
+  teacher: one(employees, {
+    fields: [classrooms.teacherId],
+    references: [employees.id],
+  }),
+}));
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+  student: one(students, {
+    fields: [attendance.studentId],
+    references: [students.id],
+  }),
+}));
+
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  student: one(students, {
+    fields: [payments.studentId],
+    references: [students.id],
+  }),
+}));
+
+export const examsRelations = relations(exams, ({ many }) => ({
+  results: many(results),
+}));
+
+export const resultsRelations = relations(results, ({ one }) => ({
+  student: one(students, {
+    fields: [results.studentId],
+    references: [students.id]
+  }),
+  exam: one(exams, {
+    fields: [results.examId],
+    references: [exams.id]
+  })
+}));
