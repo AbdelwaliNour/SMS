@@ -1,223 +1,416 @@
 import React from 'react';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { useFormContext } from 'react-hook-form';
-import { getFieldState, getInputStateClass, getFieldHint } from '@/lib/form-validation';
+import { UseFormReturn, FieldPath } from 'react-hook-form';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, AlertCircle } from 'lucide-react';
 
-export interface Option {
+/**
+ * Base props for enhanced form field components
+ */
+interface BaseEnhancedFormFieldProps<T extends Record<string, any>> {
+  form: UseFormReturn<T>;
+  name: FieldPath<T>;
   label: string;
-  value: string;
-}
-
-interface EnhancedFormFieldProps {
-  name: string;
-  label: string;
-  type?: 'text' | 'email' | 'number' | 'password' | 'date' | 'time' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio';
-  placeholder?: string;
   description?: string;
-  options?: Option[];
+  disabled?: boolean;
   className?: string;
-  labelClassName?: string;
-  showHint?: boolean;
-  isRequired?: boolean;
-  isReadOnly?: boolean;
-  isDisabled?: boolean;
-  onChange?: (value: any) => void;
+  required?: boolean;
+  showSuccessState?: boolean;
 }
 
-export function EnhancedFormField({
+/**
+ * Props for the enhanced text input form field
+ */
+export interface EnhancedFormFieldProps<T extends Record<string, any>> extends BaseEnhancedFormFieldProps<T> {
+  placeholder?: string;
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date';
+  maxLength?: number;
+}
+
+/**
+ * Props for the enhanced select form field
+ */
+export interface EnhancedSelectFieldProps<T extends Record<string, any>> extends BaseEnhancedFormFieldProps<T> {
+  placeholder?: string;
+  options: Array<{ 
+    value: string; 
+    label: string;
+  }>;
+}
+
+/**
+ * Props for the enhanced textarea form field
+ */
+export interface EnhancedTextareaFieldProps<T extends Record<string, any>> extends BaseEnhancedFormFieldProps<T> {
+  placeholder?: string;
+  maxLength?: number;
+  rows?: number;
+}
+
+/**
+ * Enhanced form field with validation feedback and animations
+ */
+export function EnhancedFormField<T extends Record<string, any>>({
+  form,
   name,
   label,
-  type = 'text',
-  placeholder,
   description,
-  options = [],
-  className = '',
-  labelClassName = '',
-  showHint = true,
-  isRequired = false,
-  isReadOnly = false,
-  isDisabled = false,
-  onChange,
-}: EnhancedFormFieldProps) {
-  const form = useFormContext();
+  placeholder,
+  type = 'text',
+  disabled = false,
+  className,
+  required = false,
+  showSuccessState = true,
+  maxLength,
+}: EnhancedFormFieldProps<T>) {
+  const fieldState = form.getFieldState(name);
+  const value = form.watch(name);
   
-  // Get form state for this field
-  const fieldState = getFieldState(
-    form?.formState?.errors?.[name], 
-    form?.formState?.touchedFields?.[name]
-  );
-  
-  // Generate field hint based on field name or use provided placeholder
-  const hint = showHint ? (placeholder || getFieldHint(name)) : undefined;
-  
-  // Determine input state classes
-  const stateClass = getInputStateClass(fieldState);
+  const isValid = !fieldState.invalid && fieldState.isDirty && value;
+  const hasError = fieldState.invalid && fieldState.isTouched;
   
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className={cn(className)}>
-          <div className="flex justify-between">
-            <FormLabel className={cn(
-              "text-xs text-gray-700 dark:text-gray-300 mb-1 flex items-center", 
-              labelClassName
-            )}>
-              {label}
-              {isRequired && (
-                <span className="text-red ml-1">*</span>
-              )}
-            </FormLabel>
-            
-            {fieldState === "success" && (
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-4 w-4 text-green" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path 
-                  fillRule="evenodd" 
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" 
-                  clipRule="evenodd" 
-                />
-              </svg>
-            )}
-          </div>
-
-          {/* Field description if provided */}
-          {description && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1 mb-1">
-              {description}
-            </p>
-          )}
-
+        <FormItem className={className}>
+          <FormLabel className="flex items-center">
+            {label}
+            {required && <span className="text-red ml-1 text-xs">*</span>}
+          </FormLabel>
+          
           <FormControl>
-            {/* Render different input types */}
-            {type === 'select' ? (
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                }}
-                defaultValue={field.value}
-                disabled={isDisabled}
-              >
-                <SelectTrigger className={stateClass}>
-                  <SelectValue placeholder={placeholder} />
-                </SelectTrigger>
-                <SelectContent>
-                  {options.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : type === 'checkbox' ? (
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={(checked) => {
-                    field.onChange(checked);
-                    onChange?.(checked);
-                  }}
-                  disabled={isDisabled}
-                  className={cn(stateClass, "rounded-sm")}
-                />
-                {placeholder && (
-                  <Label className="text-sm text-gray-600 dark:text-gray-400">{placeholder}</Label>
-                )}
-              </div>
-            ) : type === 'radio' ? (
-              <RadioGroup
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  onChange?.(value);
-                }}
-                defaultValue={field.value}
-                className="flex flex-col space-y-1"
-                disabled={isDisabled}
-              >
-                {options.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-2">
-                    <RadioGroupItem value={option.value} id={`${name}-${option.value}`} />
-                    <Label htmlFor={`${name}-${option.value}`} className="text-sm">
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            ) : type === 'textarea' ? (
-              <Textarea
+            <div className="relative">
+              <Input
                 {...field}
-                placeholder={hint}
-                className={cn(stateClass)}
-                disabled={isDisabled}
-                readOnly={isReadOnly}
-                onChange={(e) => {
-                  field.onChange(e);
-                  onChange?.(e.target.value);
-                }}
-              />
-            ) : (
-              <div className="relative">
-                <Input
-                  {...field}
-                  type={type}
-                  placeholder={hint}
-                  className={cn(stateClass)}
-                  disabled={isDisabled}
-                  readOnly={isReadOnly}
-                  onChange={(e) => {
-                    if (type === 'number') {
-                      const value = e.target.value === '' ? '' : Number(e.target.value);
-                      field.onChange(value);
-                      onChange?.(value);
-                    } else {
-                      field.onChange(e);
-                      onChange?.(e.target.value);
-                    }
-                  }}
-                  value={field.value ?? ''}
-                />
-                
-                {/* Error icon */}
-                {fieldState === "error" && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-4 w-4 text-red" 
-                      viewBox="0 0 20 20" 
-                      fill="currentColor"
-                    >
-                      <path 
-                        fillRule="evenodd" 
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" 
-                        clipRule="evenodd" 
-                      />
-                    </svg>
-                  </div>
+                type={type}
+                placeholder={placeholder}
+                disabled={disabled}
+                maxLength={maxLength}
+                className={cn(
+                  'pr-10',
+                  hasError 
+                    ? 'border-red focus-visible:ring-red/20'
+                    : isValid && showSuccessState
+                      ? 'border-green focus-visible:ring-green/20'
+                      : ''
                 )}
+                value={field.value || ''}
+              />
+              
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <AnimatePresence initial={false} mode="wait">
+                  {hasError && (
+                    <motion.span
+                      key="error"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="text-red"
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </motion.span>
+                  )}
+                  
+                  {isValid && showSuccessState && !hasError && (
+                    <motion.span
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="text-green"
+                    >
+                      <Check className="h-4 w-4" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
-            )}
+            </div>
           </FormControl>
           
-          {/* Animated form message with transition */}
-          <FormMessage className={cn(
-            "animate-in fade-in slide-in-from-top-1 duration-200",
-            fieldState === "error" ? "text-red text-xs" : "text-xs text-gray-500 dark:text-gray-400"
-          )} />
+          {description && (
+            <FormDescription>
+              {description}
+            </FormDescription>
+          )}
+          
+          <AnimatePresence>
+            {hasError && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <FormMessage />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {maxLength && type === 'text' && (
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
+              {value?.length || 0}/{maxLength}
+            </div>
+          )}
         </FormItem>
       )}
     />
+  );
+}
+
+/**
+ * Enhanced select field with validation feedback and animations
+ */
+export function EnhancedSelectField<T extends Record<string, any>>({
+  form,
+  name,
+  label,
+  description,
+  options,
+  placeholder,
+  disabled = false,
+  className,
+  required = false,
+  showSuccessState = true,
+}: EnhancedSelectFieldProps<T>) {
+  const fieldState = form.getFieldState(name);
+  const value = form.watch(name);
+  
+  const isValid = !fieldState.invalid && fieldState.isDirty && value;
+  const hasError = fieldState.invalid && fieldState.isTouched;
+  
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className={className}>
+          <FormLabel className="flex items-center">
+            {label}
+            {required && <span className="text-red ml-1 text-xs">*</span>}
+          </FormLabel>
+          
+          <div className="relative">
+            <Select
+              disabled={disabled}
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              value={field.value || undefined}
+            >
+              <FormControl>
+                <SelectTrigger className={cn(
+                  hasError 
+                    ? 'border-red focus-visible:ring-red/20'
+                    : isValid && showSuccessState
+                      ? 'border-green focus-visible:ring-green/20'
+                      : ''
+                )}>
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <div className="absolute inset-y-0 right-8 flex items-center pointer-events-none">
+              <AnimatePresence initial={false} mode="wait">
+                {hasError && (
+                  <motion.span
+                    key="error"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="text-red"
+                  >
+                    <AlertCircle className="h-4 w-4" />
+                  </motion.span>
+                )}
+                
+                {isValid && showSuccessState && !hasError && (
+                  <motion.span
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="text-green"
+                  >
+                    <Check className="h-4 w-4" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+          
+          {description && (
+            <FormDescription>
+              {description}
+            </FormDescription>
+          )}
+          
+          <AnimatePresence>
+            {hasError && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <FormMessage />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </FormItem>
+      )}
+    />
+  );
+}
+
+/**
+ * Enhanced textarea field with validation feedback and animations
+ */
+export function EnhancedTextareaField<T extends Record<string, any>>({
+  form,
+  name,
+  label,
+  description,
+  placeholder,
+  disabled = false,
+  className,
+  required = false,
+  showSuccessState = true,
+  maxLength,
+  rows = 4,
+}: EnhancedTextareaFieldProps<T>) {
+  const fieldState = form.getFieldState(name);
+  const value = form.watch(name);
+  
+  const isValid = !fieldState.invalid && fieldState.isDirty && value;
+  const hasError = fieldState.invalid && fieldState.isTouched;
+  
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className={className}>
+          <FormLabel className="flex items-center">
+            {label}
+            {required && <span className="text-red ml-1 text-xs">*</span>}
+          </FormLabel>
+          
+          <FormControl>
+            <div className="relative">
+              <Textarea
+                {...field}
+                placeholder={placeholder}
+                disabled={disabled}
+                maxLength={maxLength}
+                rows={rows}
+                className={cn(
+                  hasError 
+                    ? 'border-red focus-visible:ring-red/20'
+                    : isValid && showSuccessState
+                      ? 'border-green focus-visible:ring-green/20'
+                      : ''
+                )}
+                value={field.value || ''}
+              />
+              
+              <div className="absolute top-2 right-2 flex items-center pointer-events-none">
+                <AnimatePresence initial={false} mode="wait">
+                  {hasError && (
+                    <motion.span
+                      key="error"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="text-red"
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </motion.span>
+                  )}
+                  
+                  {isValid && showSuccessState && !hasError && (
+                    <motion.span
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="text-green"
+                    >
+                      <Check className="h-4 w-4" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </FormControl>
+          
+          {description && (
+            <FormDescription>
+              {description}
+            </FormDescription>
+          )}
+          
+          <AnimatePresence>
+            {hasError && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <FormMessage />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {maxLength && (
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-right">
+              {value?.length || 0}/{maxLength}
+            </div>
+          )}
+        </FormItem>
+      )}
+    />
+  );
+}
+
+/**
+ * Section container for form fields with title and description
+ */
+interface EnhancedFormSectionProps {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function EnhancedFormSection({
+  title,
+  description,
+  children,
+  className,
+}: EnhancedFormSectionProps) {
+  return (
+    <div className={cn("p-6 rounded-lg border bg-card", className)}>
+      <div className="mb-4">
+        <h3 className="text-lg font-medium">{title}</h3>
+        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
+      </div>
+      <div className="space-y-4">
+        {children}
+      </div>
+    </div>
   );
 }
