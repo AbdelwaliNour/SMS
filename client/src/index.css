@@ -88,6 +88,23 @@
   }
 }
 
+@layer utilities {
+  /* Shimmer animation for skeletons */
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background-size: 400% 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: -100% 0;
+    }
+  }
+}
+
 @layer components {
   .blue {
     color: #00A1FF;
@@ -135,5 +152,13 @@
   
   .bg-blue-gradient {
     background: linear-gradient(135deg, #00A1FF 0%, #0062FF 100%);
+  }
+  
+  .font-homenaje {
+    font-family: 'Homenaje', sans-serif;
+  }
+  
+  .font-monda {
+    font-family: 'Monda', sans-serif;
   }
 }

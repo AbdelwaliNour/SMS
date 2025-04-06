@@ -28,6 +28,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get query parameters for filtering
       const period = req.query.period as string || 'all';
       const category = req.query.category as string || 'all';
+      const section = req.query.section as string || 'all';
       
       // Get all the data we need for analytics
       const students = await storage.getStudents();
@@ -38,156 +39,434 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const results = await storage.getResults();
       const classrooms = await storage.getClassrooms();
       
-      // Analytics data structure
-      const analytics = {
-        // Student demographics
-        demographics: {
-          genderDistribution: {
-            male: students.filter(s => s.gender === 'male').length,
-            female: students.filter(s => s.gender === 'female').length,
-          },
-          sectionDistribution: {
-            primary: students.filter(s => s.section === 'primary').length,
-            secondary: students.filter(s => s.section === 'secondary').length,
-            highschool: students.filter(s => s.section === 'highschool').length,
-          },
-        },
+      // Filter data based on period if needed
+      let filteredAttendance = [...attendance];
+      let filteredPayments = [...payments];
+      let filteredResults = [...results];
+      let filteredExams = [...exams];
+      
+      // Date filtering logic
+      if (period !== 'all') {
+        const now = new Date();
+        let startDate = new Date();
         
-        // Attendance trends
-        attendance: {
-          overall: {
-            present: attendance.filter(a => a.status === 'present').length,
-            absent: attendance.filter(a => a.status === 'absent').length,
-            late: attendance.filter(a => a.status === 'late').length,
-          },
-          bySection: {
-            primary: {
-              present: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'primary' && a.status === 'present';
-              }).length,
-              absent: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'primary' && a.status === 'absent';
-              }).length,
-            },
-            secondary: {
-              present: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'secondary' && a.status === 'present';
-              }).length,
-              absent: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'secondary' && a.status === 'absent';
-              }).length,
-            },
-            highschool: {
-              present: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'highschool' && a.status === 'present';
-              }).length,
-              absent: attendance.filter(a => {
-                const student = students.find(s => s.id === a.studentId);
-                return student?.section === 'highschool' && a.status === 'absent';
-              }).length,
-            },
-          },
-          trends: [
-            { date: '2025-03-20', present: 85, absent: 12, late: 3 },
+        // Calculate start date based on period
+        switch(period) {
+          case 'week':
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'quarter':
+            startDate.setMonth(now.getMonth() - 3);
+            break;
+          case 'year':
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        }
+        
+        // Apply filters
+        filteredAttendance = attendance.filter(a => a.date && new Date(a.date) >= startDate);
+        filteredPayments = payments.filter(p => p.date && new Date(p.date) >= startDate);
+        filteredExams = exams.filter(e => e.date && new Date(e.date) >= startDate);
+        filteredResults = results.filter(r => {
+          const exam = exams.find(e => e.id === r.examId);
+          return exam?.date && new Date(exam.date) >= startDate;
+        });
+      }
+      
+      // Section filtering
+      let sectionFilteredStudents = [...students];
+      if (section !== 'all') {
+        sectionFilteredStudents = students.filter(s => s.section === section);
+      }
+      
+      // Prepare student IDs for further filtering
+      const sectionStudentIds = sectionFilteredStudents.map(s => s.id);
+      
+      // Filter other entities by section if needed
+      if (section !== 'all') {
+        filteredAttendance = filteredAttendance.filter(a => sectionStudentIds.includes(a.studentId));
+        filteredPayments = filteredPayments.filter(p => sectionStudentIds.includes(p.studentId));
+        filteredResults = filteredResults.filter(r => sectionStudentIds.includes(r.studentId));
+      }
+      
+      // Generate attendance trends from actual data
+      const attendanceTrendMap = new Map();
+      
+      filteredAttendance.forEach(a => {
+        if (!a.date) return;
+        
+        const dateStr = new Date(a.date).toISOString().split('T')[0];
+        if (!attendanceTrendMap.has(dateStr)) {
+          attendanceTrendMap.set(dateStr, { date: dateStr, present: 0, absent: 0, late: 0 });
+        }
+        
+        const dayStats = attendanceTrendMap.get(dateStr);
+        if (a.status === 'present') dayStats.present++;
+        else if (a.status === 'absent') dayStats.absent++;
+        else if (a.status === 'late') dayStats.late++;
+      });
+      
+      // Sort attendance trends by date
+      const attendanceTrends = Array.from(attendanceTrendMap.values())
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      
+      // Use placeholder data only if we don't have enough real data
+      if (attendanceTrends.length < 7) {
+        attendanceTrends.push(
+          ...[
             { date: '2025-03-21', present: 82, absent: 15, late: 3 },
             { date: '2025-03-22', present: 78, absent: 18, late: 4 },
             { date: '2025-03-23', present: 88, absent: 9, late: 3 },
             { date: '2025-03-24', present: 90, absent: 8, late: 2 },
             { date: '2025-03-25', present: 91, absent: 7, late: 2 },
             { date: '2025-03-26', present: 89, absent: 8, late: 3 },
-          ],
+            { date: '2025-03-27', present: 87, absent: 10, late: 3 },
+          ].slice(0, 7 - attendanceTrends.length)
+        );
+      }
+      
+      // Generate subject performance data
+      const subjectPerformanceMap = new Map();
+      
+      // Collect all subjects from exams
+      filteredExams.forEach(exam => {
+        if (!exam.subjects || !exam.subjects.length) return;
+        
+        exam.subjects.forEach(subject => {
+          if (!subjectPerformanceMap.has(subject)) {
+            subjectPerformanceMap.set(subject, { 
+              subject, 
+              scores: [],
+              average: 0,
+              highest: 0,
+              lowest: 100 
+            });
+          }
+        });
+      });
+      
+      // For each subject, gather scores
+      filteredResults.forEach(result => {
+        const exam = filteredExams.find(e => e.id === result.examId);
+        
+        if (!exam?.subjects || !exam.subjects.length) return;
+        
+        exam.subjects.forEach(subject => {
+          const subjectData = subjectPerformanceMap.get(subject);
+          if (subjectData) {
+            subjectData.scores.push(result.score);
+            
+            if (result.score > subjectData.highest) {
+              subjectData.highest = result.score;
+            }
+            
+            if (result.score < subjectData.lowest) {
+              subjectData.lowest = result.score;
+            }
+          }
+        });
+      });
+      
+      // Calculate averages
+      subjectPerformanceMap.forEach(data => {
+        if (data.scores.length > 0) {
+          data.average = data.scores.reduce((sum, score) => sum + score, 0) / data.scores.length;
+        }
+        
+        // Remove the scores array from the final output
+        delete data.scores;
+      });
+      
+      // Convert to array of subject performance data
+      const subjectPerformance = Array.from(subjectPerformanceMap.values());
+      
+      // Use default subject data if we don't have any
+      if (subjectPerformance.length === 0) {
+        [
+          { subject: 'Math', average: 78, highest: 95, lowest: 45 },
+          { subject: 'Science', average: 82, highest: 98, lowest: 55 },
+          { subject: 'English', average: 85, highest: 97, lowest: 60 },
+          { subject: 'History', average: 75, highest: 92, lowest: 52 },
+          { subject: 'Geography', average: 79, highest: 94, lowest: 58 },
+        ].forEach(item => subjectPerformance.push(item));
+      }
+      
+      // Generate monthly payment data
+      const monthlyPaymentMap = new Map();
+      
+      // Initialize with current and past 5 months
+      const now = new Date();
+      for (let i = 0; i <= 5; i++) {
+        const monthDate = new Date(now);
+        monthDate.setMonth(now.getMonth() - i);
+        
+        const monthKey = monthDate.toLocaleString('default', { month: 'short' });
+        monthlyPaymentMap.set(monthKey, { month: monthKey, amount: 0 });
+      }
+      
+      // Add payment data to each month
+      filteredPayments.forEach(payment => {
+        if (!payment.date) return;
+        
+        const paymentDate = new Date(payment.date);
+        const monthKey = paymentDate.toLocaleString('default', { month: 'short' });
+        
+        if (monthlyPaymentMap.has(monthKey)) {
+          const monthData = monthlyPaymentMap.get(monthKey);
+          monthData.amount += payment.amount;
+        }
+      });
+      
+      // Convert to sorted array of monthly payment data
+      const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthlyCollection = Array.from(monthlyPaymentMap.values())
+        .sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
+      
+      // Analytics data structure
+      const analytics = {
+        // Student demographics
+        demographics: {
+          genderDistribution: {
+            male: sectionFilteredStudents.filter(s => s.gender === 'male').length,
+            female: sectionFilteredStudents.filter(s => s.gender === 'female').length,
+          },
+          sectionDistribution: {
+            primary: students.filter(s => s.section === 'primary').length,
+            secondary: students.filter(s => s.section === 'secondary').length,
+            highschool: students.filter(s => s.section === 'highschool').length,
+          },
+          ageDistribution: {
+            '5-10': sectionFilteredStudents.filter(s => s.age && s.age >= 5 && s.age <= 10).length,
+            '11-15': sectionFilteredStudents.filter(s => s.age && s.age >= 11 && s.age <= 15).length,
+            '16-20': sectionFilteredStudents.filter(s => s.age && s.age >= 16 && s.age <= 20).length,
+          }
+        },
+        
+        // Attendance trends
+        attendance: {
+          overall: {
+            present: filteredAttendance.filter(a => a.status === 'present').length,
+            absent: filteredAttendance.filter(a => a.status === 'absent').length,
+            late: filteredAttendance.filter(a => a.status === 'late').length,
+          },
+          bySection: {
+            primary: {
+              present: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'primary' && a.status === 'present';
+              }).length,
+              absent: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'primary' && a.status === 'absent';
+              }).length,
+            },
+            secondary: {
+              present: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'secondary' && a.status === 'present';
+              }).length,
+              absent: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'secondary' && a.status === 'absent';
+              }).length,
+            },
+            highschool: {
+              present: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'highschool' && a.status === 'present';
+              }).length,
+              absent: filteredAttendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'highschool' && a.status === 'absent';
+              }).length,
+            },
+          },
+          trends: attendanceTrends,
+          topAbsentees: sectionFilteredStudents
+            .map(student => {
+              const absences = filteredAttendance.filter(a => 
+                a.studentId === student.id && a.status === 'absent'
+              ).length;
+              
+              return {
+                studentId: student.id,
+                name: `${student.firstName} ${student.lastName}`,
+                absences
+              };
+            })
+            .sort((a, b) => b.absences - a.absences)
+            .slice(0, 5)
         },
         
         // Academic performance
         academic: {
           averageScores: {
-            overall: results.reduce((acc, curr) => acc + curr.score, 0) / results.length || 0,
+            overall: filteredResults.length 
+              ? filteredResults.reduce((acc, curr) => acc + curr.score, 0) / filteredResults.length 
+              : 0,
             bySection: {
-              primary: results.filter(r => {
+              primary: filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'primary';
               }).reduce((acc, curr) => acc + curr.score, 0) / 
-              results.filter(r => {
+              filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'primary';
               }).length || 0,
               
-              secondary: results.filter(r => {
+              secondary: filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'secondary';
               }).reduce((acc, curr) => acc + curr.score, 0) / 
-              results.filter(r => {
+              filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'secondary';
               }).length || 0,
               
-              highschool: results.filter(r => {
+              highschool: filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'highschool';
               }).reduce((acc, curr) => acc + curr.score, 0) / 
-              results.filter(r => {
+              filteredResults.filter(r => {
                 const student = students.find(s => s.id === r.studentId);
                 return student?.section === 'highschool';
               }).length || 0,
             },
           },
-          subjectPerformance: [
-            { subject: 'Math', average: 78, highest: 95, lowest: 45 },
-            { subject: 'Science', average: 82, highest: 98, lowest: 55 },
-            { subject: 'English', average: 85, highest: 97, lowest: 60 },
-            { subject: 'History', average: 75, highest: 92, lowest: 52 },
-            { subject: 'Geography', average: 79, highest: 94, lowest: 58 },
-          ],
+          subjectPerformance,
           performanceTrends: [
             { term: 'Term 1', averageScore: 76 },
             { term: 'Term 2', averageScore: 78 },
             { term: 'Term 3', averageScore: 80 },
             { term: 'Term 4', averageScore: 82 },
           ],
+          topPerformers: sectionFilteredStudents
+            .map(student => {
+              const studentResults = filteredResults.filter(r => r.studentId === student.id);
+              const averageScore = studentResults.length
+                ? studentResults.reduce((acc, curr) => acc + curr.score, 0) / studentResults.length
+                : 0;
+              
+              return {
+                studentId: student.id,
+                name: `${student.firstName} ${student.lastName}`,
+                averageScore,
+                examsTaken: studentResults.length
+              };
+            })
+            .filter(s => s.examsTaken > 0)
+            .sort((a, b) => b.averageScore - a.averageScore)
+            .slice(0, 5)
         },
         
         // Financial analytics
         financial: {
           feeCollection: {
-            total: payments.reduce((acc, curr) => acc + curr.amount, 0),
-            paid: payments.filter(p => p.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0),
-            partial: payments.filter(p => p.status === 'partial').reduce((acc, curr) => acc + curr.amount, 0),
-            unpaid: payments.filter(p => p.status === 'unpaid').reduce((acc, curr) => acc + curr.amount, 0),
+            total: filteredPayments.reduce((acc, curr) => acc + curr.amount, 0),
+            paid: filteredPayments.filter(p => p.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0),
+            partial: filteredPayments.filter(p => p.status === 'partial').reduce((acc, curr) => acc + curr.amount, 0),
+            unpaid: filteredPayments.filter(p => p.status === 'unpaid').reduce((acc, curr) => acc + curr.amount, 0),
           },
           collectionBySection: {
-            primary: payments.filter(p => {
+            primary: filteredPayments.filter(p => {
               const student = students.find(s => s.id === p.studentId);
               return student?.section === 'primary';
             }).reduce((acc, curr) => acc + curr.amount, 0),
             
-            secondary: payments.filter(p => {
+            secondary: filteredPayments.filter(p => {
               const student = students.find(s => s.id === p.studentId);
               return student?.section === 'secondary';
             }).reduce((acc, curr) => acc + curr.amount, 0),
             
-            highschool: payments.filter(p => {
+            highschool: filteredPayments.filter(p => {
               const student = students.find(s => s.id === p.studentId);
               return student?.section === 'highschool';
             }).reduce((acc, curr) => acc + curr.amount, 0),
           },
-          monthlyCollection: [
-            { month: 'Jan', amount: 25000 },
-            { month: 'Feb', amount: 27500 },
-            { month: 'Mar', amount: 26800 },
-            { month: 'Apr', amount: 29000 },
-            { month: 'May', amount: 28500 },
-            { month: 'Jun', amount: 30000 },
-          ],
+          monthlyCollection,
+          pendingPayments: sectionFilteredStudents
+            .map(student => {
+              const studentPayments = filteredPayments.filter(p => p.studentId === student.id);
+              const totalDue = studentPayments.reduce((acc, curr) => acc + curr.amount, 0);
+              const totalPaid = studentPayments
+                .filter(p => p.status === 'paid')
+                .reduce((acc, curr) => acc + curr.amount, 0);
+              const totalPartial = studentPayments
+                .filter(p => p.status === 'partial')
+                .reduce((acc, curr) => acc + (curr.paidAmount || 0), 0);
+              
+              const amountPending = totalDue - totalPaid - totalPartial;
+              
+              return {
+                studentId: student.id,
+                name: `${student.firstName} ${student.lastName}`,
+                totalDue,
+                amountPaid: totalPaid + totalPartial,
+                amountPending
+              };
+            })
+            .filter(s => s.amountPending > 0)
+            .sort((a, b) => b.amountPending - a.amountPending)
+            .slice(0, 5)
         },
+        
+        // Teacher performance
+        teacherPerformance: {
+          subjectAverages: employees
+            .filter(e => e.role === 'teacher' && e.subjects && e.subjects.length)
+            .map(teacher => {
+              // Find results for exams in teacher's subjects
+              const teacherSubjects = teacher.subjects || [];
+              
+              // Calculate average scores for each subject
+              const subjectScores = teacherSubjects.map(subject => {
+                // Find exams for this subject
+                const subjectExams = filteredExams.filter(e => 
+                  e.subjects && e.subjects.includes(subject)
+                );
+                
+                const examIds = subjectExams.map(e => e.id);
+                
+                // Find results for those exams
+                const subjectResults = filteredResults.filter(r => 
+                  examIds.includes(r.examId)
+                );
+                
+                // Calculate average score
+                const avgScore = subjectResults.length
+                  ? subjectResults.reduce((acc, r) => acc + r.score, 0) / subjectResults.length
+                  : 0;
+                
+                return {
+                  subject,
+                  avgScore,
+                  studentsPassed: subjectResults.filter(r => r.score >= 60).length,
+                  totalStudents: subjectResults.length
+                };
+              });
+              
+              // Overall teacher performance
+              const overallAverage = subjectScores.length
+                ? subjectScores.reduce((acc, s) => acc + s.avgScore, 0) / subjectScores.length
+                : 0;
+              
+              return {
+                teacherId: teacher.id,
+                name: `${teacher.firstName} ${teacher.lastName}`,
+                overallAverage,
+                subjectScores
+              };
+            })
+            .sort((a, b) => b.overallAverage - a.overallAverage)
+        }
       };
       
       res.json(analytics);
     } catch (error) {
+      console.error("Analytics error:", error);
       res.status(500).json({ error: 'Failed to fetch analytics data' });
     }
   });

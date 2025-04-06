@@ -264,35 +264,112 @@ export class DatabaseStorage implements IStorage {
   // Stats
   async getStats(): Promise<any> {
     try {
-      // Simplified stats for empty database
-      // We'll add more detailed stats once data is populated
+      // Fetch all necessary data
+      const studentsData = await db.select().from(students);
+      const employeesData = await db.select().from(employees);
+      const classroomsData = await db.select().from(classrooms);
+      const attendanceData = await db.select().from(attendance);
+      const paymentsData = await db.select().from(payments);
+      const examsData = await db.select().from(exams);
+      const resultsData = await db.select().from(results);
+      
+      // Compute student statistics
+      const studentGenderCounts = studentsData.reduce(
+        (acc, student) => {
+          if (student.gender === 'male') acc.male += 1;
+          else if (student.gender === 'female') acc.female += 1;
+          
+          if (student.section === 'primary') acc.primary += 1;
+          else if (student.section === 'secondary') acc.secondary += 1;
+          else if (student.section === 'highschool') acc.highschool += 1;
+          
+          return acc;
+        }, 
+        { male: 0, female: 0, primary: 0, secondary: 0, highschool: 0 }
+      );
+      
+      // Compute employee statistics
+      const teachersCount = employeesData.filter(emp => emp.role === 'teacher').length;
+      
+      // Compute attendance statistics
+      const attendanceCounts = attendanceData.reduce(
+        (acc, record) => {
+          if (record.status === 'present') acc.present += 1;
+          else if (record.status === 'absent') acc.absent += 1;
+          else if (record.status === 'late') acc.late += 1;
+          return acc;
+        },
+        { present: 0, absent: 0, late: 0 }
+      );
+      
+      // Compute payment statistics
+      const paymentStats = paymentsData.reduce(
+        (acc, payment) => {
+          if (payment.status === 'paid') {
+            acc.paid += 1;
+            acc.totalPaidAmount += payment.amount;
+          } else if (payment.status === 'unpaid') {
+            acc.unpaid += 1;
+            acc.totalUnpaidAmount += payment.amount;
+          } else if (payment.status === 'partial') {
+            acc.partial += 1;
+            acc.totalPaidAmount += payment.paidAmount || 0;
+            acc.totalUnpaidAmount += (payment.amount - (payment.paidAmount || 0));
+          }
+          return acc;
+        },
+        { paid: 0, unpaid: 0, partial: 0, totalPaidAmount: 0, totalUnpaidAmount: 0 }
+      );
+      
+      // Compute exam and results statistics
+      const averageScore = resultsData.length 
+        ? resultsData.reduce((acc, result) => acc + result.score, 0) / resultsData.length 
+        : 0;
+        
+      const subjectPerformance = examsData.map(exam => {
+        const examResults = resultsData.filter(r => r.examId === exam.id);
+        const avgScore = examResults.length 
+          ? examResults.reduce((acc, r) => acc + r.score, 0) / examResults.length 
+          : 0;
+        
+        return {
+          subject: exam.subject,
+          avgScore,
+          passRate: examResults.length 
+            ? examResults.filter(r => r.score >= 60).length / examResults.length * 100 
+            : 0
+        };
+      });
+      
+      // Return comprehensive stats
       return {
         students: {
-          total: 0,
-          male: 0,
-          female: 0,
-          primary: 0,
-          secondary: 0,
-          highschool: 0
+          total: studentsData.length,
+          ...studentGenderCounts
         },
         employees: {
-          total: 0,
-          teachers: 0
+          total: employeesData.length,
+          teachers: teachersCount
         },
         classrooms: {
-          total: 0
+          total: classroomsData.length
         },
-        attendance: {
-          present: 0,
-          absent: 0,
-          late: 0
+        attendance: attendanceCounts,
+        payments: paymentStats,
+        academics: {
+          averageScore,
+          totalExams: examsData.length,
+          totalResults: resultsData.length,
+          subjectPerformance
         },
-        payments: {
-          paid: 0,
-          unpaid: 0,
-          partial: 0,
-          totalPaidAmount: 0,
-          totalUnpaidAmount: 0
+        overview: {
+          studentTeacherRatio: teachersCount ? studentsData.length / teachersCount : 0,
+          attendanceRate: attendanceData.length 
+            ? attendanceCounts.present / attendanceData.length * 100 
+            : 0,
+          paymentCompletionRate: paymentsData.length 
+            ? paymentStats.paid / paymentsData.length * 100 
+            : 0
         }
       };
     } catch (error) {
