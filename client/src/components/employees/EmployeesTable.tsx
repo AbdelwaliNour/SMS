@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import EditEmployeeForm from './EditEmployeeForm';
 import { Badge } from '@/components/ui/badge';
 import { getGenderDisplayName } from '@/lib/utils';
+import { ProfileAvatar } from '@/components/ui/profile-avatar';
+import EmployeesTableSkeleton from './EmployeesTableSkeleton';
 
 interface EmployeesTableProps {
   onAddEmployee: () => void;
@@ -60,6 +62,23 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
   };
 
   const columns: ColumnDef<Employee>[] = [
+    {
+      accessorKey: 'avatar',
+      header: '',
+      cell: ({ row }) => {
+        const employee = row.original;
+        const fullName = `${employee.firstName} ${employee.lastName}`;
+        return (
+          <div className="flex justify-center">
+            <ProfileAvatar 
+              name={fullName}
+              size="md"
+              fallbackIcon="user"
+            />
+          </div>
+        );
+      },
+    },
     {
       accessorKey: 'employeeId',
       header: 'Employee ID',
@@ -165,27 +184,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         </div>
         
         {isLoading ? (
-          <div className="p-8">
-            <div className="space-y-4">
-              <div className="h-8 w-1/3 bg-gray-200 dark:bg-gray-800 rounded-md animate-pulse"></div>
-              <div className="border border-gray-200 dark:border-gray-800 rounded-md overflow-hidden">
-                <div className="h-12 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
-                  <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                </div>
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-                    <div className="flex space-x-8 w-full">
-                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <EmployeesTableSkeleton />
         ) : error ? (
           <div className="p-8">
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-6 py-4 rounded-xl shadow-sm flex items-center">

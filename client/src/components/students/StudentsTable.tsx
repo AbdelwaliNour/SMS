@@ -5,11 +5,12 @@ import { Student } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { generateUserAvatar, getSectionDisplayName, getGenderDisplayName } from '@/lib/utils';
+import { getSectionDisplayName, getGenderDisplayName } from '@/lib/utils';
 import { Link } from 'wouter';
 import { ColumnDef } from '@tanstack/react-table';
 import FilterSelect from '@/components/ui/filter-select';
 import StudentsTableSkeleton from './StudentsTableSkeleton';
+import { ProfileAvatar } from '@/components/ui/profile-avatar';
 
 interface StudentsTableProps {
   onAddStudent: () => void;
@@ -53,12 +54,14 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
       cell: ({ row }) => {
         const student = row.original;
         const fullName = `${student.firstName} ${student.lastName}`;
+        
         return (
-          <img 
-            src={generateUserAvatar(fullName, 40)} 
-            alt={fullName} 
-            className="w-10 h-10 rounded-full"
-          />
+          <div className="flex justify-center">
+            <ProfileAvatar 
+              name={fullName}
+              size="md"
+            />
+          </div>
         );
       },
     },

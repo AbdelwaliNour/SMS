@@ -17,6 +17,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import FilterSelect from '@/components/ui/filter-select';
 import { getSectionDisplayName } from '@/lib/utils';
 import EditClassroomForm from '@/components/classrooms/EditClassroomForm';
+import ClassroomsGridSkeleton from '@/components/classrooms/ClassroomsGridSkeleton';
+import { ProfileAvatar } from '@/components/ui/profile-avatar';
 
 const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
@@ -99,6 +101,26 @@ export default function Classrooms() {
     const teacher = teachers.find(t => t.id === teacherId);
     return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';
   };
+  
+  const getTeacherWithAvatar = (teacherId: number | null | undefined) => {
+    if (!teacherId) return <span className="text-gray-500">Not Assigned</span>;
+    
+    const teacher = teachers.find(t => t.id === teacherId);
+    if (!teacher) return <span className="text-gray-500">Unknown</span>;
+    
+    const fullName = `${teacher.firstName} ${teacher.lastName}`;
+    
+    return (
+      <div className="flex items-center space-x-2">
+        <ProfileAvatar 
+          name={fullName}
+          size="sm"
+          fallbackIcon="user"
+        />
+        <span>{fullName}</span>
+      </div>
+    );
+  };
 
   const columns: ColumnDef<Classroom>[] = [
     {
@@ -117,7 +139,7 @@ export default function Classrooms() {
     {
       accessorKey: 'teacherId',
       header: 'Assigned Teacher',
-      cell: ({ row }) => getTeacherName(row.original.teacherId),
+      cell: ({ row }) => getTeacherWithAvatar(row.original.teacherId),
     },
     {
       id: 'actions',
@@ -324,25 +346,7 @@ export default function Classrooms() {
           
           {isLoading ? (
             <div className="p-8">
-              <div className="space-y-4">
-                <div className="h-8 w-1/3 bg-gray-200 dark:bg-gray-800 rounded-md animate-pulse"></div>
-                <div className="border border-gray-200 dark:border-gray-800 rounded-md overflow-hidden">
-                  <div className="h-12 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center">
-                    <div className="h-4 w-1/4 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                  </div>
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
-                      <div className="flex space-x-8 w-full">
-                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                        <div className="h-4 w-1/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ClassroomsGridSkeleton />
             </div>
           ) : error ? (
             <div className="p-8">
