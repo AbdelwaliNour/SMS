@@ -461,6 +461,7 @@ export class MemStorage implements IStorage {
         dateOfBirth: '2010-01-01',
         phone: `12345${i}`,
         email: `student${i}@school.com`,
+        address: `${123 + i} Education Street, School District`,
         section,
         class: classLevel,
         fatherName: `Father ${i}`,

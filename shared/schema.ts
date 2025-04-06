@@ -32,6 +32,7 @@ export const students = pgTable("students", {
   dateOfBirth: text("date_of_birth"),
   phone: text("phone"),
   email: text("email"),
+  address: text("address"),
   section: sectionEnum("section").notNull(),
   class: text("class").notNull(),
   fatherName: text("father_name"),

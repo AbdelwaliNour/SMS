@@ -1,6 +1,8 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { MobileNavigation } from './MobileNavigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { AppTheme } from '@/App';
 
 interface LayoutProps {
@@ -8,20 +10,25 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const isMobile = useIsMobile();
   const [theme, setTheme] = useState<AppTheme>(() => {
     // Check localStorage or system preference
     const savedTheme = localStorage.getItem('theme') as AppTheme | null;
     return savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   });
 
+  // Apply theme class on initial render and when theme changes
+  useEffect(() => {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+  }, [theme]);
+
   const toggleTheme = () => {
     setTheme(prev => {
       const newTheme = prev === 'light' ? 'dark' : 'light';
       
-      // Update localStorage and document class
+      // Update localStorage
       localStorage.setItem('theme', newTheme);
-      document.documentElement.classList.remove('light', 'dark');
-      document.documentElement.classList.add(newTheme);
       
       return newTheme;
     });
@@ -29,14 +36,21 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-800">
-      <Sidebar 
-        theme={theme} 
-        toggleTheme={toggleTheme}
-        activeUser="Administrator"
-      />
+      {/* Sidebar (desktop only) */}
+      {!isMobile && (
+        <Sidebar 
+          theme={theme} 
+          toggleTheme={toggleTheme}
+          activeUser="Administrator"
+        />
+      )}
+      
+      {/* Mobile navigation */}
+      <MobileNavigation />
+      
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-6">
+        <Header toggleTheme={toggleTheme} theme={theme} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>
