@@ -115,6 +115,7 @@ const EnhancedAddEmployeeForm = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <EnhancedFormField
+              form={form}
               name="employeeId"
               label="Employee ID"
               placeholder="e.g. EMP-2024-001"
@@ -123,6 +124,7 @@ const EnhancedAddEmployeeForm = () => {
             />
             
             <EnhancedFormField
+              form={form}
               name="role"
               label="Role"
               type="select"
@@ -140,18 +142,21 @@ const EnhancedAddEmployeeForm = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <EnhancedFormField
+              form={form}
               name="firstName"
               label="First Name"
               isRequired={true}
             />
             
             <EnhancedFormField
+              form={form}
               name="middleName"
               label="Middle Name"
               description="Optional"
             />
             
             <EnhancedFormField
+              form={form}
               name="lastName"
               label="Last Name"
               isRequired={true}
@@ -165,6 +170,7 @@ const EnhancedAddEmployeeForm = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <EnhancedFormField
+              form={form}
               name="gender"
               label="Gender"
               type="select"
@@ -176,6 +182,7 @@ const EnhancedAddEmployeeForm = () => {
             />
             
             <EnhancedFormField
+              form={form}
               name="phone"
               label="Phone"
               type="tel"
@@ -185,6 +192,7 @@ const EnhancedAddEmployeeForm = () => {
           </div>
 
           <EnhancedFormField
+            form={form}
             name="email"
             label="Email"
             type="email"
@@ -199,6 +207,7 @@ const EnhancedAddEmployeeForm = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <EnhancedFormField
+              form={form}
               name="shift"
               label="Shift"
               type="select"
@@ -212,6 +221,7 @@ const EnhancedAddEmployeeForm = () => {
             
             {form.watch('role') === 'teacher' && (
               <EnhancedFormField
+                form={form}
                 name="section"
                 label="Section"
                 type="select"
@@ -227,6 +237,7 @@ const EnhancedAddEmployeeForm = () => {
           
           {form.watch('role') === 'teacher' && (
             <EnhancedFormField
+              form={form}
               name="subjects"
               label="Subjects"
               type="text"
