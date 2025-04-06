@@ -57,7 +57,7 @@ const employeeFormSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
 
-const AddEmployeeForm = () => {
+const EnhancedAddEmployeeForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -76,6 +76,7 @@ const AddEmployeeForm = () => {
       email: null,
       subjects: null,
     },
+    mode: 'onChange', // Validate on change for better user feedback
   });
 
   const onSubmit = async (data: EmployeeFormValues) => {
@@ -233,9 +234,9 @@ const AddEmployeeForm = () => {
               description="Enter subjects separated by commas"
               onChange={(value) => {
                 const subjects = value 
-                  ? value.toString().split(',').map(s => s.trim()).filter(Boolean) 
+                  ? String(value).split(',').map(s => s.trim()).filter(Boolean) 
                   : null;
-                form.setValue('subjects', subjects);
+                form.setValue('subjects', subjects as any);
               }}
             />
           )}
@@ -255,4 +256,4 @@ const AddEmployeeForm = () => {
   );
 };
 
-export default AddEmployeeForm;
+export default EnhancedAddEmployeeForm;
