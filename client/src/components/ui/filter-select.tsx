@@ -18,6 +18,7 @@ interface FilterSelectProps {
 }
 
 // Helper function to transform empty string values to "all"
+// Ensuring no empty string values are ever passed to SelectItem
 const transformValue = (value: string) => value === '' ? 'all' : value;
 const reverseTransformValue = (value: string) => value === 'all' ? '' : value;
 

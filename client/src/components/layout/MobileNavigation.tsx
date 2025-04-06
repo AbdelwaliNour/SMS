@@ -16,9 +16,9 @@ interface NavItemProps {
 
 const NavItem = ({ icon, label, href, isActive, onClick }: NavItemProps) => (
   <Link href={href}>
-    <a
+    <div
       className={cn(
-        "flex items-center space-x-3 px-6 py-4 border-l-4 transition-colors duration-200",
+        "flex items-center space-x-3 px-6 py-4 border-l-4 transition-colors duration-200 cursor-pointer",
         isActive 
           ? "border-blue bg-blue/10 text-blue" 
           : "border-transparent hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -27,7 +27,7 @@ const NavItem = ({ icon, label, href, isActive, onClick }: NavItemProps) => (
     >
       <div className="flex-shrink-0 w-6">{icon}</div>
       <span className="text-base font-medium">{label}</span>
-    </a>
+    </div>
   </Link>
 );
 
