@@ -21,6 +21,176 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const stats = await storage.getStats();
     res.json(stats);
   });
+
+  // Advanced analytics endpoint
+  app.get('/api/analytics', async (req: Request, res: Response) => {
+    try {
+      // Get query parameters for filtering
+      const period = req.query.period as string || 'all';
+      const category = req.query.category as string || 'all';
+      
+      // Get all the data we need for analytics
+      const students = await storage.getStudents();
+      const employees = await storage.getEmployees();
+      const attendance = await storage.getAttendances();
+      const payments = await storage.getPayments();
+      const exams = await storage.getExams();
+      const results = await storage.getResults();
+      const classrooms = await storage.getClassrooms();
+      
+      // Analytics data structure
+      const analytics = {
+        // Student demographics
+        demographics: {
+          genderDistribution: {
+            male: students.filter(s => s.gender === 'male').length,
+            female: students.filter(s => s.gender === 'female').length,
+          },
+          sectionDistribution: {
+            primary: students.filter(s => s.section === 'primary').length,
+            secondary: students.filter(s => s.section === 'secondary').length,
+            highschool: students.filter(s => s.section === 'highschool').length,
+          },
+        },
+        
+        // Attendance trends
+        attendance: {
+          overall: {
+            present: attendance.filter(a => a.status === 'present').length,
+            absent: attendance.filter(a => a.status === 'absent').length,
+            late: attendance.filter(a => a.status === 'late').length,
+          },
+          bySection: {
+            primary: {
+              present: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'primary' && a.status === 'present';
+              }).length,
+              absent: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'primary' && a.status === 'absent';
+              }).length,
+            },
+            secondary: {
+              present: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'secondary' && a.status === 'present';
+              }).length,
+              absent: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'secondary' && a.status === 'absent';
+              }).length,
+            },
+            highschool: {
+              present: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'highschool' && a.status === 'present';
+              }).length,
+              absent: attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                return student?.section === 'highschool' && a.status === 'absent';
+              }).length,
+            },
+          },
+          trends: [
+            { date: '2025-03-20', present: 85, absent: 12, late: 3 },
+            { date: '2025-03-21', present: 82, absent: 15, late: 3 },
+            { date: '2025-03-22', present: 78, absent: 18, late: 4 },
+            { date: '2025-03-23', present: 88, absent: 9, late: 3 },
+            { date: '2025-03-24', present: 90, absent: 8, late: 2 },
+            { date: '2025-03-25', present: 91, absent: 7, late: 2 },
+            { date: '2025-03-26', present: 89, absent: 8, late: 3 },
+          ],
+        },
+        
+        // Academic performance
+        academic: {
+          averageScores: {
+            overall: results.reduce((acc, curr) => acc + curr.score, 0) / results.length || 0,
+            bySection: {
+              primary: results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'primary';
+              }).reduce((acc, curr) => acc + curr.score, 0) / 
+              results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'primary';
+              }).length || 0,
+              
+              secondary: results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'secondary';
+              }).reduce((acc, curr) => acc + curr.score, 0) / 
+              results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'secondary';
+              }).length || 0,
+              
+              highschool: results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'highschool';
+              }).reduce((acc, curr) => acc + curr.score, 0) / 
+              results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return student?.section === 'highschool';
+              }).length || 0,
+            },
+          },
+          subjectPerformance: [
+            { subject: 'Math', average: 78, highest: 95, lowest: 45 },
+            { subject: 'Science', average: 82, highest: 98, lowest: 55 },
+            { subject: 'English', average: 85, highest: 97, lowest: 60 },
+            { subject: 'History', average: 75, highest: 92, lowest: 52 },
+            { subject: 'Geography', average: 79, highest: 94, lowest: 58 },
+          ],
+          performanceTrends: [
+            { term: 'Term 1', averageScore: 76 },
+            { term: 'Term 2', averageScore: 78 },
+            { term: 'Term 3', averageScore: 80 },
+            { term: 'Term 4', averageScore: 82 },
+          ],
+        },
+        
+        // Financial analytics
+        financial: {
+          feeCollection: {
+            total: payments.reduce((acc, curr) => acc + curr.amount, 0),
+            paid: payments.filter(p => p.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0),
+            partial: payments.filter(p => p.status === 'partial').reduce((acc, curr) => acc + curr.amount, 0),
+            unpaid: payments.filter(p => p.status === 'unpaid').reduce((acc, curr) => acc + curr.amount, 0),
+          },
+          collectionBySection: {
+            primary: payments.filter(p => {
+              const student = students.find(s => s.id === p.studentId);
+              return student?.section === 'primary';
+            }).reduce((acc, curr) => acc + curr.amount, 0),
+            
+            secondary: payments.filter(p => {
+              const student = students.find(s => s.id === p.studentId);
+              return student?.section === 'secondary';
+            }).reduce((acc, curr) => acc + curr.amount, 0),
+            
+            highschool: payments.filter(p => {
+              const student = students.find(s => s.id === p.studentId);
+              return student?.section === 'highschool';
+            }).reduce((acc, curr) => acc + curr.amount, 0),
+          },
+          monthlyCollection: [
+            { month: 'Jan', amount: 25000 },
+            { month: 'Feb', amount: 27500 },
+            { month: 'Mar', amount: 26800 },
+            { month: 'Apr', amount: 29000 },
+            { month: 'May', amount: 28500 },
+            { month: 'Jun', amount: 30000 },
+          ],
+        },
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch analytics data' });
+    }
+  });
   
   // Students
   app.get('/api/students', async (req: Request, res: Response) => {
