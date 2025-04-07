@@ -12,14 +12,14 @@ import { Badge } from '@/components/ui/badge';
 import { getGenderDisplayName } from '@/lib/utils';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import EmployeesTableSkeleton from './EmployeesTableSkeleton';
-import { useNavigate } from 'react-router-dom'; // Added import for useNavigate
+import { useLocation } from 'wouter'; // Added import for useNavigate
 
 interface EmployeesTableProps {
   onAddEmployee: () => void;
 }
 
 const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
-  const navigate = useNavigate(); // Added useNavigate hook
+  const [, navigate] = useLocation(); // Added useNavigate hook
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
