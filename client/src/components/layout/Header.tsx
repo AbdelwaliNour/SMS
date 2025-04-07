@@ -62,14 +62,16 @@ const Header = ({ theme, toggleTheme }: HeaderProps) => {
       )}
 
       {/* Search Bar - Full on desktop, icon-only on mobile */}
-      <div className={cn(
-        "relative transition-all duration-300 ease-in-out",
-        isMobile 
-          ? isSearchOpen 
-            ? "w-full absolute left-0 top-0 z-20 bg-white dark:bg-gray-900 p-3"
-            : "w-auto" 
-          : "w-96"
-      )}>
+      <div
+        className={cn(
+          "relative transition-all duration-300 ease-in-out",
+          isMobile
+            ? isSearchOpen
+              ? "w-full absolute left-0 top-0 z-20 bg-white dark:bg-gray-900 p-3"
+              : "w-auto"
+            : "w-96",
+        )}
+      >
         {isMobile && !isSearchOpen ? (
           <Button
             size="icon"
@@ -101,10 +103,7 @@ const Header = ({ theme, toggleTheme }: HeaderProps) => {
                   Cancel
                 </Button>
               )}
-              <button
-                onClick={handleSearch}
-                className="h-full px-3 text-blue"
-              >
+              <button onClick={handleSearch} className="h-full px-3 text-blue">
                 <Search className="h-5 w-5" />
               </button>
             </div>
@@ -115,7 +114,7 @@ const Header = ({ theme, toggleTheme }: HeaderProps) => {
       {/* Date & Time - Centered on desktop, hidden on mobile */}
       {!isMobile && (
         <div className="absolute left-1/2 transform -translate-x-1/2 text-center hidden md:block">
-          <p className="text-xl font-bold text-blue">{formattedTime}</p>
+          <p className="text-xl text-blue">{formattedTime}</p>
           <p className="text-gray-600 dark:text-gray-300 text-sm">
             {formattedDate}
           </p>
@@ -131,9 +130,13 @@ const Header = ({ theme, toggleTheme }: HeaderProps) => {
           className="w-9 h-9 md:w-10 md:h-10 rounded-full text-gray-600 dark:text-gray-300"
           onClick={toggleTheme}
         >
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
         </Button>
-        
+
         {/* Only show these on desktop or when search is closed on mobile */}
         {(!isMobile || !isSearchOpen) && (
           <>

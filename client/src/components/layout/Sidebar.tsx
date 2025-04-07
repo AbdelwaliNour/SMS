@@ -62,7 +62,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
         </div>
 
         <div className="px-4 mt-6">
-          <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
             PROFILES
           </h3>
           <Link
@@ -128,7 +128,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
         </div>
 
         <div className="px-4 mt-6">
-          <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
             WORK
           </h3>
           <Link
@@ -191,6 +191,11 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
             </svg>
             Results
           </Link>
+        </div>
+        <div className="px-4 mt-6">
+          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
+            others
+          </h3>
           <Link
             href="/student-performance"
             className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/student-performance" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
@@ -209,7 +214,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Performance
+            Performances
           </Link>
           <Link
             href="/reports"
@@ -249,7 +254,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Time Tables
+            Schedules
           </Link>
         </div>
       </nav>
@@ -259,11 +264,11 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
         <div className="flex items-center">
           <img src={userAvatar} alt="User" className="w-10 h-10 rounded-full" />
           <div className="ml-3">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-medium text-black-800 dark:text-white-200">
               {activeUser}
             </p>
           </div>
-          <button className="ml-auto text-gray-500 dark:text-gray-400">
+          <button className="ml-auto text-black-500 dark:text-white-400">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
