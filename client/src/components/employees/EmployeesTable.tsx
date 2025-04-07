@@ -12,12 +12,14 @@ import { Badge } from '@/components/ui/badge';
 import { getGenderDisplayName } from '@/lib/utils';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import EmployeesTableSkeleton from './EmployeesTableSkeleton';
+import { useNavigate } from 'react-router-dom'; // Added import for useNavigate
 
 interface EmployeesTableProps {
   onAddEmployee: () => void;
 }
 
 const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
+  const navigate = useNavigate(); // Added useNavigate hook
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const { toast } = useToast();
@@ -28,7 +30,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this employee?')) return;
-    
+
     try {
       await apiRequest('DELETE', `/api/employees/${id}`);
       toast({
@@ -70,7 +72,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         const fullName = `${employee.firstName} ${employee.lastName}`;
         return (
           <div className="flex justify-center">
-            <ProfileAvatar 
+            <ProfileAvatar
               name={fullName}
               size="md"
               fallbackIcon="user"
@@ -88,8 +90,8 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
       header: 'Name',
       cell: ({ row }) => {
         const firstName = row.original.firstName;
-        const middleName = row.original.middleName 
-          ? `${row.original.middleName.charAt(0)}. ` 
+        const middleName = row.original.middleName
+          ? `${row.original.middleName.charAt(0)}. `
           : '';
         const lastName = row.original.lastName;
         return `${firstName} ${middleName}${lastName}`;
@@ -121,8 +123,8 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
     {
       accessorKey: 'shift',
       header: 'Shift',
-      cell: ({ row }) => row.original.shift 
-        ? row.original.shift.charAt(0).toUpperCase() + row.original.shift.slice(1) 
+      cell: ({ row }) => row.original.shift
+        ? row.original.shift.charAt(0).toUpperCase() + row.original.shift.slice(1)
         : 'N/A',
     },
     {
@@ -170,11 +172,12 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
         <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
           <div className="flex items-center">
+            <img src="/logo2.svg" alt="Logo" className="h-8 w-auto" /> {/* Changed logo */}
             <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">Employees List</h2>
           </div>
-          <Button 
+          <Button
             className="bg-blue hover:bg-blue/90 text-white rounded-full shadow-md hover:shadow-lg transition-all"
-            onClick={onAddEmployee}
+            onClick={() => navigate('/add-employee')} // Updated onClick
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -182,7 +185,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
             Add Employee
           </Button>
         </div>
-        
+
         {isLoading ? (
           <EmployeesTableSkeleton />
         ) : error ? (
@@ -214,8 +217,8 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
             <DialogTitle>Edit Employee</DialogTitle>
           </DialogHeader>
           {selectedEmployee && (
-            <EditEmployeeForm 
-              employee={selectedEmployee} 
+            <EditEmployeeForm
+              employee={selectedEmployee}
               onSuccess={() => {
                 setIsEditModalOpen(false);
                 setSelectedEmployee(null);

@@ -129,7 +129,7 @@ export default function ResponsiveStudentsList({ onAddStudent }: ResponsiveStude
             className="h-8 w-8 p-0 text-blue rounded-full"
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(student.id);
+              navigate(`/edit-student/${student.id}`);
             }}
           >
             <Pencil size={16} />
