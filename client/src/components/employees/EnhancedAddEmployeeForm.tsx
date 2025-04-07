@@ -82,10 +82,12 @@ const EnhancedAddEmployeeForm = () => {
   const onSubmit = async (data: EmployeeFormValues) => {
     setLoading(true);
     try {
-      // If subjects is provided as a string, convert it to an array
+      // Convert subjects string to array if provided
       const formattedData = {
         ...data,
-        subjects: data.subjects || null,
+        subjects: data.subjects ? data.subjects.toString().split(',').map(s => s.trim()) : null,
+        salary: 0, // Add default salary
+        dateOfBirth: new Date().toISOString().split('T')[0], // Add default date
       };
 
       await apiRequest('POST', '/api/employees', formattedData);
@@ -95,6 +97,7 @@ const EnhancedAddEmployeeForm = () => {
       });
       queryClient.invalidateQueries({ queryKey: ['/api/employees'] });
       form.reset();
+      window.location.href = '/employees';
     } catch (error) {
       toast({
         title: 'Error',
