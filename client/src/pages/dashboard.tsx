@@ -1,40 +1,18 @@
+
 import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
-import StatCard from '@/components/dashboard/StatCard';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import StudentsTable from '@/components/students/StudentsTable';
 import { useLocation } from 'wouter';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Avatar } from '@/components/ui/avatar';
+import { Bell, Users, GraduationCap, School, TrendingUp } from 'lucide-react';
+import StudentsTable from '@/components/students/StudentsTable';
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
   
-  interface StatsData {
-    students: {
-      total: number;
-      male: number;
-      female: number;
-      present: number;
-      absent: number;
-    };
-    classrooms: {
-      total: number;
-      capacity: number;
-      sections: {
-        primary: number;
-        secondary: number;
-        highschool: number;
-      };
-    };
-    employees: {
-      total: number;
-      teachers: number;
-      staff: number;
-    };
-  }
-
-  const { data: stats, isLoading, error } = useQuery<StatsData>({
+  const { data: stats, isLoading, error } = useQuery({
     queryKey: ['/api/stats'],
   });
 
@@ -64,80 +42,94 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Facility Card */}
-        <StatCard
-          title="FACILITY"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
-          }
-          stat1={{
-            label: "Capacity",
-            value: stats?.classrooms?.capacity || 1000
-          }}
-          stat2={{
-            label: "Students",
-            value: stats?.students?.total || 750
-          }}
-        />
-        
-        {/* Students Card */}
-        <StatCard
-          title="STUDENTS"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-              />
-            </svg>
-          }
-          stat1={{
-            label: "Male",
-            value: stats?.students?.male || 350
-          }}
-          stat2={{
-            label: "Female",
-            value: stats?.students?.female || 400
-          }}
-        />
-        
-        {/* Status Card */}
-        <StatCard
-          title="STATUS"
-          icon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-              />
-            </svg>
-          }
-          stat1={{
-            label: "Present",
-            value: stats?.students?.present || 700
-          }}
-          stat2={{
-            label: "Absent",
-            value: stats?.students?.absent || 50
-          }}
-        />
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-aldrich mb-2">Welcome Back!</h1>
+            <p className="text-gray-600 dark:text-gray-400">Here's what's happening in your school today</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" size="icon">
+              <Bell className="h-5 w-5" />
+            </Button>
+            <Avatar className="h-12 w-12" />
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue/20">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <Users className="h-5 w-5 text-blue" />
+              <TrendingUp className="h-4 w-4 text-green" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold">{stats?.students?.total || 0}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Students</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green/20">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <GraduationCap className="h-5 w-5 text-green" />
+              <TrendingUp className="h-4 w-4 text-green" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold">{stats?.students?.present || 0}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Present Today</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow/20">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <School className="h-5 w-5 text-yellow" />
+              <TrendingUp className="h-4 w-4 text-green" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold">{stats?.classrooms?.total || 0}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Classes</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red/20">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <Users className="h-5 w-5 text-red" />
+              <TrendingUp className="h-4 w-4 text-green" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold">{stats?.employees?.total || 0}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total Staff</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       
       {/* Students Table */}
-      <StudentsTable onAddStudent={goToAddStudent} />
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-aldrich text-xl">Recent Students</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <StudentsTable onAddStudent={goToAddStudent} />
+        </CardContent>
+      </Card>
     </Layout>
   );
 }
