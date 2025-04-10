@@ -44,31 +44,14 @@ function Router() {
 }
 
 function App() {
-  const [theme, setTheme] = useState<AppTheme>(() => {
-    // Check for stored theme preference or use preferred color scheme
-    const savedTheme = localStorage.getItem("theme") as AppTheme | null;
-    return (
-      savedTheme ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light")
-    );
-  });
-
-  // Update HTML class when theme changes
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="app min-h-screen">
-        <Router />
-        <Toaster />
-      </div>
+      <ThemeProvider defaultTheme="system" storageKey="app-theme">
+        <div className="app min-h-screen">
+          <Router />
+          <Toaster />
+        </div>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
