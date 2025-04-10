@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.text-gradient {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
