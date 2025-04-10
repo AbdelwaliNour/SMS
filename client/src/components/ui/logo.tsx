@@ -1,9 +1,12 @@
-import React from 'react';
+
+import { useTheme } from '@/components/theme-provider';
 
 export const Logo = () => {
+  const { theme } = useTheme();
+  
   return (
     <img 
-      src="/logo2.svg" 
+      src={theme === 'dark' ? "/logo1.svg" : "/logo2.svg"}
       alt="School Management System" 
       className="h-8 w-auto"
     />
