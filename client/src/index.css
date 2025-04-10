@@ -31,7 +31,7 @@
     --sidebar-accent-foreground: 0 0% 9%;
     --sidebar-border: 0 0% 89.8%;
     --sidebar-ring: 202 100% 50%;
-    
+
     /* Custom colors */
     --blue: 202 100% 50%;
     --green: 138 100% 38.2%;
@@ -40,7 +40,7 @@
     --primary-text: 0 0% 0%;
     --secondary-text: 0 0% 45.9%;
     --divider: 0 0% 74.1%;
-    
+
     --radius: 0.5rem;
   }
 
@@ -85,7 +85,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Homenaje', sans-serif;
+    font-family: 'Aldrich', sans-serif;
     font-size: 140%;
   }
 
@@ -171,31 +171,31 @@
   .blue {
     color: #00A1FF;
   }
-  
+
   .green {
     color: #00C445;
   }
-  
+
   .yellow {
     color: #FFBE00;
   }
-  
+
   .red {
     color: #F62929;
   }
-  
+
   .bg-blue {
     background-color: #00A1FF;
   }
-  
+
   .bg-green {
     background-color: #00C445;
   }
-  
+
   .bg-yellow {
     background-color: #FFBE00;
   }
-  
+
   .bg-red {
     background-color: #F62929;
   }
@@ -203,23 +203,23 @@
   .text-primaryText {
     color: #000000;
   }
-  
+
   .text-secondaryText {
     color: #757575;
   }
-  
+
   .border-divider {
     border-color: #BDBDBD;
   }
-  
+
   .bg-blue-gradient {
     background: linear-gradient(135deg, #00A1FF 0%, #0062FF 100%);
   }
-  
+
   .font-homenaje {
-    font-family: 'Homenaje', sans-serif;
+    font-family: 'Aldrich', sans-serif;
   }
-  
+
   .font-monda {
     font-family: 'Monda', sans-serif;
   }
