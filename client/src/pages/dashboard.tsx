@@ -3,11 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
 import { useLocation } from 'wouter';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { Bell, Users, GraduationCap, School, TrendingUp } from 'lucide-react';
 import StudentsTable from '@/components/students/StudentsTable';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
