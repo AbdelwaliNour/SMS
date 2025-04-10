@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
@@ -14,7 +13,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Responsi
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
-  
+
   const { data: stats, isLoading, error } = useQuery({
     queryKey: ['/api/stats'],
   });
@@ -143,55 +142,59 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card className="hover:shadow-lg transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="font-aldrich text-xl text-blue">Enrollment Trends</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={generateLineData()}>
-                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="students" stroke="#00A1FF" strokeWidth={2} dot={{ fill: '#00A1FF' }} />
-                <Line type="monotone" dataKey="attendance" stroke="#00C445" strokeWidth={2} dot={{ fill: '#00C445' }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="font-aldrich text-xl text-green">Student Distribution</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={generatePieData()}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {generatePieData().map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={['#00A1FF', '#00C445', '#FFBE00'][index % 3]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Academic Performance Card */}
+      <Card className="mb-8 hover:shadow-lg transition-all duration-300">
+        <CardHeader className="border-b border-border/20">
+          <CardTitle className="font-aldrich text-xl text-blue">Academic Performance Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <h3 className="font-medium">Average Scores</h3>
+              <Progress value={85} className="h-2" />
+              <p className="text-sm text-muted-foreground">85% Overall Performance</p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-medium">Assignments Completed</h3>
+              <Progress value={92} className="h-2" />
+              <p className="text-sm text-muted-foreground">92% Completion Rate</p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-medium">Class Participation</h3>
+              <Progress value={78} className="h-2" />
+              <p className="text-sm text-muted-foreground">78% Active Participation</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Attendance Overview Card */}
+      <Card className="mb-8 hover:shadow-lg transition-all duration-300">
+        <CardHeader className="border-b border-border/20">
+          <CardTitle className="font-aldrich text-xl text-blue">Attendance Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="p-4 bg-green/10 rounded-lg">
+              <h3 className="font-medium mb-2">Present Today</h3>
+              <p className="text-2xl font-bold text-green">{stats?.students?.present || 0}</p>
+            </div>
+            <div className="p-4 bg-yellow/10 rounded-lg">
+              <h3 className="font-medium mb-2">Late</h3>
+              <p className="text-2xl font-bold text-yellow">3</p>
+            </div>
+            <div className="p-4 bg-red/10 rounded-lg">
+              <h3 className="font-medium mb-2">Absent</h3>
+              <p className="text-2xl font-bold text-red">2</p>
+            </div>
+            <div className="p-4 bg-blue/10 rounded-lg">
+              <h3 className="font-medium mb-2">On Leave</h3>
+              <p className="text-2xl font-bold text-blue">1</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Students Table */}
       <Card className="hover:shadow-lg transition-all duration-300">
