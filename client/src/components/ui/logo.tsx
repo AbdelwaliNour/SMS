@@ -8,7 +8,7 @@ export const Logo = () => {
     <img 
       src={theme === 'dark' ? "/logo1.svg" : "/logo2.svg"}
       alt="School Management System" 
-      className="h-8 w-auto"
+      className="h-12 w-auto"
     />
   );
 };
