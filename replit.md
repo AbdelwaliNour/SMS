@@ -124,6 +124,13 @@ Changelog:
   * Created floating action button and enhanced form components
   * Updated all dashboard sections with modern card designs and interactive elements
   * Improved dark mode support with cohesive theme integration
+- June 30, 2025. Student profile enhancements completed:
+  * Added profilePhoto field to student schema with database migration
+  * Implemented automatic age calculation from dateOfBirth field
+  * Enhanced student cards to display profile photos with fallback to generated avatars
+  * Added prominent age display as blue badges throughout student interfaces
+  * Updated both main students table and responsive student list with new features
+  * Enhanced Add/Edit Student forms to include profile photo URL field
 ```
 
 ## User Preferences
