@@ -94,6 +94,12 @@ const employeeFormSchema = z.object({
   salary: z
     .number()
     .min(1, "Salary is required and must be positive"),
+
+  profilePhoto: z
+    .string()
+    .url("Please enter a valid URL")
+    .optional()
+    .or(z.literal("")),
 });
 
 type EmployeeFormData = z.infer<typeof employeeFormSchema>;
@@ -122,6 +128,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
       section: "primary",
       shift: "morning",
       salary: 0,
+      profilePhoto: "",
     },
   });
 
@@ -344,7 +351,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
               <h3 className="text-xl font-semibold text-gradient">Contact Information</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={form.control}
                 name="phone"
@@ -379,6 +386,26 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
                       />
                     </FormControl>
                     <p className="text-xs text-muted-foreground">Optional - Professional email</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="profilePhoto"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Profile Picture</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="url"
+                        placeholder="https://example.com/photo.jpg" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">Optional - URL to profile picture</p>
                     <FormMessage />
                   </FormItem>
                 )}
