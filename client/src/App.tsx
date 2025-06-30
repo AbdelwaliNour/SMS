@@ -14,6 +14,7 @@ import AddEmployee from "@/pages/add-employee";
 import Classrooms from "@/pages/classrooms";
 import EditClassroom from "@/pages/edit-classroom";
 import AddClassroom from "@/pages/add-classroom";
+import EditEmployee from "@/pages/edit-employee";
 import Finance from "@/pages/finance";
 import Exams from "@/pages/exams";
 import Attendance from "@/pages/attendance";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/edit-student/:id" component={EditStudent} />
       <Route path="/employees" component={Employees} />
       <Route path="/add-employee" component={AddEmployee} />
+      <Route path="/edit-employee/:id" component={EditEmployee} />
       <Route path="/classrooms" component={Classrooms} />
       <Route path="/add-classroom" component={AddClassroom} />
       <Route path="/edit-classroom" component={EditClassroom} />
