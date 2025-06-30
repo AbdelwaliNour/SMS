@@ -28,7 +28,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           </div>
           <div>
             <h1 className="font-bold text-lg text-foreground leading-tight">
-              EduSmart
+              Education
             </h1>
             <p className="text-xs text-muted-foreground">Management System</p>
           </div>
@@ -41,8 +41,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -71,8 +71,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/students"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/students" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/students"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -95,8 +95,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/classrooms"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/classrooms" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/classrooms"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -119,8 +119,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/employees"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/employees" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/employees"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -149,8 +149,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/attendance"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/attendance" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/attendance"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -173,8 +173,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/finance"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/finance" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/finance"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -197,8 +197,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/exams"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/exams" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/exams"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -226,8 +226,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/student-performance"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/student-performance" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/student-performance"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -250,8 +250,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/reports"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/reports" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/reports"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -274,8 +274,8 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           <Link
             href="/timetable"
             className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
-              location === "/timetable" 
-                ? "bg-primary text-primary-foreground shadow-lg" 
+              location === "/timetable"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-foreground hover:bg-primary/10 hover:text-primary"
             }`}
           >
@@ -303,7 +303,11 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
         <div className="glass-morphism p-4 rounded-xl border border-border/30 hover:border-primary/30 transition-all duration-300">
           <div className="flex items-center">
             <div className="relative">
-              <img src={userAvatar} alt="User" className="w-12 h-12 rounded-xl ring-2 ring-primary/20" />
+              <img
+                src={userAvatar}
+                alt="User"
+                className="w-12 h-12 rounded-xl ring-2 ring-primary/20"
+              />
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
             </div>
             <div className="ml-3 flex-1">
