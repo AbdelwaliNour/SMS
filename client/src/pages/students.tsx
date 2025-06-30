@@ -30,6 +30,14 @@ export default function Students() {
               </div>
             </div>
           </div>
+          
+          <button 
+            onClick={goToAddStudent}
+            className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center space-x-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Add Student</span>
+          </button>
         </div>
         
         {isMobile ? (
