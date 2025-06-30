@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import EditEmployeeForm from './EditEmployeeForm';
+import { Link } from 'wouter';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
@@ -32,8 +31,6 @@ interface EmployeesTableProps {
 
 const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
   const [, navigate] = useLocation();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     role: '',
@@ -262,18 +259,16 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
-                      onClick={() => {
-                        setSelectedEmployee(employee);
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
+                    <Link to={`/edit-employee/${employee.id}`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                    </Link>
                     <Button
                       variant="outline"
                       size="sm"
@@ -290,27 +285,7 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         </div>
       )}
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="glass-morphism border-border/30 max-w-4xl">
-          <DialogHeader>
-            <DialogTitle className="text-gradient">Edit Employee</DialogTitle>
-            <DialogDescription>
-              Update the employee information below.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedEmployee && (
-            <EditEmployeeForm
-              employee={selectedEmployee}
-              onSuccess={() => {
-                setIsEditModalOpen(false);
-                refetch();
-              }}
-              onCancel={() => setIsEditModalOpen(false)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 };
