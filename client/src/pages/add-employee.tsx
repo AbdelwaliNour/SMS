@@ -23,14 +23,6 @@ export default function AddEmployee() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
-              <Link href="/employees">
-                <Button variant="outline" size="sm" className="glass-morphism border-border/30">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Employees
-                </Button>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-3">
               <div className="p-3 bg-primary/10 rounded-xl">
                 <UserPlus className="h-6 w-6 text-primary" />
               </div>
@@ -40,6 +32,13 @@ export default function AddEmployee() {
               </div>
             </div>
           </div>
+          
+          <Link href="/employees">
+            <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Employees
+            </Button>
+          </Link>
         </div>
         
         <AddEmployeeForm onSuccess={handleSuccess} onCancel={handleCancel} />
