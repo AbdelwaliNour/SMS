@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Classroom, Employee } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { getSectionDisplayName } from '@/lib/utils';
-import EditClassroomForm from '@/components/classrooms/EditClassroomForm';
+
 import ClassroomsGridSkeleton from '@/components/classrooms/ClassroomsGridSkeleton';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -42,8 +43,7 @@ type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
 
 export default function Classrooms() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
+
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
   const [filters, setFilters] = useState({
@@ -437,8 +437,7 @@ export default function Classrooms() {
                         size="sm"
                         className="flex-1 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
                         onClick={() => {
-                          setSelectedClassroom(classroom);
-                          setIsEditModalOpen(true);
+                          window.location.href = `/edit-classroom?id=${classroom.id}`;
                         }}
                       >
                         <Edit className="h-4 w-4 mr-2" />
@@ -460,28 +459,7 @@ export default function Classrooms() {
           </div>
         )}
 
-        {/* Edit Dialog */}
-        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent className="glass-morphism border-border/30">
-            <DialogHeader>
-              <DialogTitle className="text-gradient">Edit Classroom</DialogTitle>
-              <DialogDescription>
-                Update the classroom information below.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedClassroom && (
-              <EditClassroomForm
-                classroom={selectedClassroom}
-                teachers={teachers}
-                onSuccess={() => {
-                  setIsEditModalOpen(false);
-                  refetch();
-                }}
-                onCancel={() => setIsEditModalOpen(false)}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
+
       </div>
     </Layout>
   );
