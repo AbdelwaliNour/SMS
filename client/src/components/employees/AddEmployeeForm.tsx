@@ -72,9 +72,7 @@ const employeeFormSchema = z.object({
 
   phone: z
     .string()
-    .regex(ValidationPatterns.phone, "Please enter a valid phone number")
-    .optional()
-    .or(z.literal("")),
+    .optional(),
 
   email: z
     .string()
@@ -95,8 +93,7 @@ const employeeFormSchema = z.object({
 
   salary: z
     .number()
-    .min(0, "Salary must be positive")
-    .optional(),
+    .min(1, "Salary is required and must be positive"),
 });
 
 type EmployeeFormData = z.infer<typeof employeeFormSchema>;
@@ -124,6 +121,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
       role: "teacher",
       section: "primary",
       shift: "morning",
+      salary: 0,
     },
   });
 
@@ -137,6 +135,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
         email: data.email || null,
         address: data.address || null,
         dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString().split('T')[0] : null,
+        subjects: null, // Add the missing subjects field
       };
 
       await apiRequest("POST", "/api/employees", submitData);
