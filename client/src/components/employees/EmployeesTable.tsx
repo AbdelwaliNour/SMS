@@ -1,18 +1,30 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Employee } from '@shared/schema';
-import { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import EditEmployeeForm from './EditEmployeeForm';
 import { Badge } from '@/components/ui/badge';
-import { getGenderDisplayName } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import EmployeesTableSkeleton from './EmployeesTableSkeleton';
 import { useLocation } from 'wouter';
+import { 
+  Search, 
+  Filter, 
+  Edit, 
+  Trash2, 
+  Users, 
+  UserPlus, 
+  Mail, 
+  Phone, 
+  MapPin,
+  Badge as BadgeIcon,
+  Calendar
+} from 'lucide-react';
 
 interface EmployeesTableProps {
   onAddEmployee: () => void;
@@ -22,6 +34,11 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
   const [, navigate] = useLocation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    role: '',
+    section: '',
+  });
   const { toast } = useToast();
 
   const { data: employees, isLoading, error, refetch } = useQuery<Employee[]>({
@@ -47,176 +64,239 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
     }
   };
 
-  const getRoleBadgeVariant = (role: string) => {
-    const variants: Record<string, string> = {
-      teacher: 'blue',
-      admin: 'yellow',
-      driver: 'green',
-      guard: 'red',
-      staff: 'secondary',
-      cleaner: 'secondary',
-    };
-    return variants[role] || 'secondary';
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case 'teacher':
+        return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+      case 'admin':
+        return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+      case 'staff':
+        return 'bg-green-500/10 text-green-600 border-green-500/20';
+      case 'principal':
+        return 'bg-red-500/10 text-red-600 border-red-500/20';
+      default:
+        return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+    }
+  };
+
+  const getSectionColor = (section: string) => {
+    switch (section) {
+      case 'primary':
+        return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+      case 'secondary':
+        return 'bg-green-500/10 text-green-600 border-green-500/20';
+      case 'highschool':
+        return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+      default:
+        return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+    }
+  };
+
+  const getGenderDisplayName = (gender: string) => {
+    return gender.charAt(0).toUpperCase() + gender.slice(1);
+  };
+
+  const getSectionDisplayName = (section: string) => {
+    switch (section) {
+      case 'primary':
+        return 'Primary';
+      case 'secondary':
+        return 'Secondary';
+      case 'highschool':
+        return 'High School';
+      default:
+        return section;
+    }
   };
 
   const getRoleDisplayName = (role: string) => {
-    return role.charAt(0).toUpperCase() + role.slice(1);
+    switch (role) {
+      case 'teacher':
+        return 'Teacher';
+      case 'admin':
+        return 'Administrator';
+      case 'staff':
+        return 'Staff Member';
+      case 'principal':
+        return 'Principal';
+      default:
+        return role;
+    }
   };
 
-  const columns: ColumnDef<Employee>[] = [
-    {
-      accessorKey: 'avatar',
-      header: '',
-      cell: ({ row }) => {
-        const employee = row.original;
-        const fullName = `${employee.firstName} ${employee.lastName}`;
-        return (
-          <div className="flex justify-center">
-            <ProfileAvatar
-              name={fullName}
-              size="md"
-              fallbackIcon="user"
-            />
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: 'employeeId',
-      header: 'Employee ID',
-    },
-    {
-      accessorKey: 'firstName',
-      header: 'Name',
-      cell: ({ row }) => {
-        const firstName = row.original.firstName;
-        const middleName = row.original.middleName
-          ? `${row.original.middleName.charAt(0)}. `
-          : '';
-        const lastName = row.original.lastName;
-        return `${firstName} ${middleName}${lastName}`;
-      },
-    },
-    {
-      accessorKey: 'role',
-      header: 'Role',
-      cell: ({ row }) => {
-        const role = row.original.role;
-        const variant = getRoleBadgeVariant(role);
-        return (
-          <Badge variant={variant as any} className="capitalize">
-            {getRoleDisplayName(role)}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: 'gender',
-      header: 'Gender',
-      cell: ({ row }) => getGenderDisplayName(row.original.gender),
-    },
-    {
-      accessorKey: 'section',
-      header: 'Section',
-      cell: ({ row }) => row.original.section || 'N/A',
-    },
-    {
-      accessorKey: 'shift',
-      header: 'Shift',
-      cell: ({ row }) => row.original.shift
-        ? row.original.shift.charAt(0).toUpperCase() + row.original.shift.slice(1)
-        : 'N/A',
-    },
-    {
-      accessorKey: 'phone',
-      header: 'Phone',
-      cell: ({ row }) => row.original.phone || 'N/A',
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => {
-        return (
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-blue border-blue/30 hover:bg-blue/10 hover:text-blue rounded-full w-8 h-8 p-0"
-              onClick={() => {
-                setSelectedEmployee(row.original);
-                setIsEditModalOpen(true);
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red border-red/30 hover:bg-red/10 hover:text-red rounded-full w-8 h-8 p-0"
-              onClick={() => handleDelete(row.original.id)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
+  // Filter employees based on search and filters
+  const filteredEmployees = employees?.filter(employee => {
+    const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
+                         employee.employeeId?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = !filters.role || employee.role === filters.role;
+    const matchesSection = !filters.section || employee.section === filters.section;
+    return matchesSearch && matchesRole && matchesSection;
+  }) || [];
+
+  if (isLoading) {
+    return <EmployeesTableSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 glass-morphism rounded-xl border border-border/30">
+        <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-semibold mb-2">Error loading employees</h3>
+        <p className="text-muted-foreground mb-4">Please try again later</p>
+        <Button onClick={() => refetch()} variant="outline">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-        <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
-          <div className="flex items-center">
-            <img src="/logo2.svg" alt="Logo" className="h-8 w-auto" /> {/* Changed logo */}
-            <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">Employees List</h2>
-          </div>
+    <div className="space-y-6">
+      {/* Modern Search and Filter Header */}
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search employees by name or ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 glass-morphism border-border/30 bg-background/50"
+          />
+        </div>
+        
+        <div className="flex items-center space-x-2">
           <Button
-            className="bg-blue hover:bg-blue/90 text-white rounded-full shadow-md hover:shadow-lg transition-all"
-            onClick={() => navigate('/add-employee')} // Updated onClick
+            variant="outline"
+            size="sm"
+            className="glass-morphism border-border/30"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+          <Badge variant="secondary" className="bg-primary/10 text-primary">
+            {filteredEmployees.length} employees
+          </Badge>
+        </div>
+      </div>
+
+      {/* Employees Grid */}
+      {filteredEmployees.length === 0 ? (
+        <div className="text-center py-12 glass-morphism rounded-xl border border-border/30">
+          <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No employees found</h3>
+          <p className="text-muted-foreground mb-4">
+            {searchTerm || filters.role || filters.section ? 'Try adjusting your search criteria' : 'Get started by adding your first employee'}
+          </p>
+          <Button onClick={onAddEmployee} className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90">
+            <UserPlus className="h-4 w-4 mr-2" />
             Add Employee
           </Button>
         </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredEmployees.map((employee) => {
+            const fullName = `${employee.firstName} ${employee.lastName}`;
+            
+            return (
+              <Card key={employee.id} className="card-modern glass-morphism hover:border-primary/30 transition-all duration-300 group overflow-hidden">
+                <CardContent className="p-6">
+                  {/* Employee Header */}
+                  <div className="flex items-center space-x-4 mb-4">
+                    <ProfileAvatar name={fullName} size="lg" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg leading-tight">{fullName}</h3>
+                      <p className="text-sm text-muted-foreground">{employee.employeeId}</p>
+                    </div>
+                  </div>
 
-        {isLoading ? (
-          <EmployeesTableSkeleton />
-        ) : error ? (
-          <div className="p-8">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-6 py-4 rounded-xl shadow-sm flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <h3 className="font-bold text-lg mb-1">Unable to load employees</h3>
-                <p>There was an error loading the employee data. Please refresh the page or try again later.</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={employees || []}
-            searchable
-            filterColumn="role"
-          />
-        )}
-      </div>
+                  {/* Employee Details */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Role</span>
+                      <Badge variant="outline" className={getRoleColor(employee.role)}>
+                        {getRoleDisplayName(employee.role)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Section</span>
+                      <Badge variant="outline" className={getSectionColor(employee.section)}>
+                        {getSectionDisplayName(employee.section)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Gender</span>
+                      <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20">
+                        {getGenderDisplayName(employee.gender)}
+                      </Badge>
+                    </div>
+                  </div>
 
-      {/* Edit Employee Dialog */}
+                  {/* Contact Info */}
+                  <div className="space-y-2 mb-6 p-4 bg-muted/20 rounded-lg">
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <Mail className="h-4 w-4" />
+                      <span className="truncate">{employee.email || 'No email'}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <Phone className="h-4 w-4" />
+                      <span>{employee.phone || 'No phone'}</span>
+                    </div>
+                  </div>
+
+                  {/* Employment Details */}
+                  <div className="space-y-2 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Start Date</span>
+                      <span className="font-medium">
+                        {employee.dateOfJoining ? new Date(employee.dateOfJoining).toLocaleDateString() : 'Not set'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Salary</span>
+                      <span className="font-medium text-green-600">
+                        ${employee.salary?.toLocaleString() || 'Not set'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
+                      onClick={() => {
+                        setSelectedEmployee(employee);
+                        setIsEditModalOpen(true);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/30"
+                      onClick={() => handleDelete(employee.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Edit Dialog */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="glass-morphism border-border/30 max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Edit Employee</DialogTitle>
+            <DialogTitle className="text-gradient">Edit Employee</DialogTitle>
             <DialogDescription>
-              Update employee information and details.
+              Update the employee information below.
             </DialogDescription>
           </DialogHeader>
           {selectedEmployee && (
@@ -224,18 +304,14 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
               employee={selectedEmployee}
               onSuccess={() => {
                 setIsEditModalOpen(false);
-                setSelectedEmployee(null);
                 refetch();
               }}
-              onCancel={() => {
-                setIsEditModalOpen(false);
-                setSelectedEmployee(null);
-              }}
+              onCancel={() => setIsEditModalOpen(false)}
             />
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 
