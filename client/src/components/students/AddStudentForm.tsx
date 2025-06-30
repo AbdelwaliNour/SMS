@@ -10,6 +10,7 @@ import { ValidationMessages, ValidationPatterns } from "@/lib/form-validation";
 import { EnhancedFormField } from "@/components/ui/enhanced-form-field";
 import { useLocation } from "wouter";
 import { UserPlus, User, Phone, Mail, Users2, Heart, FileImage, Award, Save, Loader2 } from "lucide-react";
+import { generateStudentId } from "@/lib/utils";
 
 const studentFormSchema = z.object({
   studentId: z
@@ -115,7 +116,7 @@ export default function AddStudentForm() {
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
-      studentId: "",
+      studentId: generateStudentId(),
       firstName: "",
       middleName: null,
       lastName: "",
@@ -197,9 +198,10 @@ export default function AddStudentForm() {
                 form={form}
                 name="studentId"
                 label="Student ID"
-                placeholder="e.g. ST-2024-001"
+                placeholder="Auto-generated"
                 isRequired={true}
-                description="Unique identifier for the student"
+                description="Auto-generated unique identifier"
+                disabled={true}
               />
 
               <EnhancedFormField

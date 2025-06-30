@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ValidationMessages, ValidationPatterns } from "@/lib/form-validation";
-import { cn } from "@/lib/utils";
+import { cn, generateEmployeeId } from "@/lib/utils";
 import { format } from "date-fns";
 import { 
   CalendarIcon, 
@@ -110,7 +110,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
-      employeeId: "",
+      employeeId: generateEmployeeId(),
       firstName: "",
       middleName: "",
       lastName: "",
@@ -182,12 +182,13 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
                     <FormLabel className="text-sm font-medium">Employee ID</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="e.g. EMP001" 
+                        placeholder="Auto-generated" 
                         {...field} 
                         className="glass-morphism border-border/30 h-11"
+                        disabled={true}
                       />
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">Unique identifier for the employee</p>
+                    <p className="text-xs text-muted-foreground">Auto-generated unique identifier</p>
                     <FormMessage />
                   </FormItem>
                 )}

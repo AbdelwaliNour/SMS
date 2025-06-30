@@ -81,3 +81,15 @@ export function getProfilePhotoUrl(profilePhoto: string | null, name: string): s
   // Fallback to avatar generator
   return generateUserAvatar(name, 200);
 }
+
+export function generateStudentId(): string {
+  const currentYear = new Date().getFullYear();
+  const randomNum = Math.floor(Math.random() * 9000) + 1000; // 4-digit number
+  return `ST-${currentYear}-${randomNum}`;
+}
+
+export function generateEmployeeId(): string {
+  const currentYear = new Date().getFullYear();
+  const randomNum = Math.floor(Math.random() * 900) + 100; // 3-digit number
+  return `E-${currentYear}-${randomNum}`;
+}

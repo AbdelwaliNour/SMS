@@ -217,8 +217,8 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Section</span>
-                      <Badge variant="outline" className={getSectionColor(employee.section)}>
-                        {getSectionDisplayName(employee.section)}
+                      <Badge variant="outline" className={getSectionColor(employee.section || 'primary')}>
+                        {getSectionDisplayName(employee.section || 'primary')}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between">
@@ -244,9 +244,9 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
                   {/* Employment Details */}
                   <div className="space-y-2 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Start Date</span>
+                      <span className="text-muted-foreground">Joined Date</span>
                       <span className="font-medium">
-                        {employee.dateOfJoining ? new Date(employee.dateOfJoining).toLocaleDateString() : 'Not set'}
+                        {employee.createdAt ? new Date(employee.createdAt).toLocaleDateString() : 'Not set'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
