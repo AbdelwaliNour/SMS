@@ -85,7 +85,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                       <Input 
                         placeholder="e.g. Room 101, Science Lab A" 
                         {...field} 
-                        className="glass-morphism border-border/30 h-11"
+                        className="glass-morphism border-0 h-11"
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -101,7 +101,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                     <FormLabel className="text-sm font-medium">Section</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                        <SelectTrigger className="glass-morphism border-0 h-11">
                           <SelectValue placeholder="Select section" />
                         </SelectTrigger>
                       </FormControl>
@@ -138,7 +138,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         value={field.value}
-                        className="glass-morphism border-border/30 h-11"
+                        className="glass-morphism border-0 h-11"
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -157,7 +157,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                       defaultValue={field.value?.toString() || ''}
                     >
                       <FormControl>
-                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                        <SelectTrigger className="glass-morphism border-0 h-11">
                           <SelectValue placeholder="Select a teacher" />
                         </SelectTrigger>
                       </FormControl>
@@ -183,7 +183,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
             type="button" 
             variant="outline" 
             onClick={onCancel}
-            className="border-border/30 hover:bg-muted/50"
+            className="border-0 hover:bg-muted/50"
           >
             Cancel
           </Button>
