@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -92,11 +92,11 @@ export default function TimeTable() {
     resolver: zodResolver(timeTableFormSchema),
     defaultValues: {
       day: 'Monday',
-      startTime: '',
-      endTime: '',
-      subject: '',
-      teacherId: '',
-      classroomId: '',
+      startTime: '08:00',
+      endTime: '09:00',
+      subject: 'Mathematics',
+      teacherId: '1',
+      classroomId: '1',
       section: 'primary',
       class: 'One',
     },
@@ -171,6 +171,9 @@ export default function TimeTable() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Time Table Entry</DialogTitle>
+                <DialogDescription>
+                  Create a new time table entry by filling out the form below.
+                </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

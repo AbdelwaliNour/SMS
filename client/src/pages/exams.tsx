@@ -3,7 +3,7 @@ import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
 import StatCard from '@/components/dashboard/StatCard';
 import ResultsTable from '@/components/results/ResultsTable';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -168,6 +168,9 @@ export default function Exams() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create New Exam</DialogTitle>
+                <DialogDescription>
+                  Create a new exam by specifying the details below.
+                </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

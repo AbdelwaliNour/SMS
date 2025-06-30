@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Classroom, Employee } from '@shared/schema';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -217,6 +217,9 @@ export default function Classrooms() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add New Classroom</DialogTitle>
+                  <DialogDescription>
+                    Create a new classroom by providing the details below.
+                  </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -375,6 +378,9 @@ export default function Classrooms() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Classroom</DialogTitle>
+              <DialogDescription>
+                Update the classroom information below.
+              </DialogDescription>
             </DialogHeader>
             {selectedClassroom && (
               <EditClassroomForm 

@@ -6,7 +6,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import EditEmployeeForm from './EditEmployeeForm';
 import { Badge } from '@/components/ui/badge';
 import { getGenderDisplayName } from '@/lib/utils';
@@ -215,6 +215,9 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Edit Employee</DialogTitle>
+            <DialogDescription>
+              Update employee information and details.
+            </DialogDescription>
           </DialogHeader>
           {selectedEmployee && (
             <EditEmployeeForm
