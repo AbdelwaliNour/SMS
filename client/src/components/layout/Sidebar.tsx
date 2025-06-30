@@ -28,9 +28,11 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           </div>
           <div>
             <h1 className="font-bold text-lg text-foreground leading-tight">
-              Education
+              EMS
             </h1>
-            <p className="text-xs text-muted-foreground">Management System</p>
+            <p className="text-xs text-muted-foreground">
+              Education Management System
+            </p>
           </div>
         </div>
       </div>
