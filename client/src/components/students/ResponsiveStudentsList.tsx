@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 import { Student } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { getSectionDisplayName, getGenderDisplayName } from '@/lib/utils';
+import { getSectionDisplayName, getGenderDisplayName, formatAgeDisplay, getProfilePhotoUrl } from '@/lib/utils';
 import { Pencil, Trash2, Phone, Mail, Calendar, MapPin, School } from 'lucide-react';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import { ResponsiveDataList, DataListColumn } from '@/components/ui/responsive-data-list';
@@ -76,10 +76,20 @@ export default function ResponsiveStudentsList({ onAddStudent }: ResponsiveStude
         const fullName = `${student.firstName} ${student.middleName ? student.middleName + ' ' : ''}${student.lastName}`;
         return (
           <div className="flex items-center">
-            <ProfileAvatar name={fullName} size="md" className="mr-3" />
+            <div className="relative mr-3">
+              <img
+                src={getProfilePhotoUrl(student.profilePhoto, fullName)}
+                alt={fullName}
+                className="w-10 h-10 rounded-full object-cover border-2 border-border/20"
+                onError={(e) => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=40`;
+                }}
+              />
+            </div>
             <div>
               <div className="font-medium text-base">{fullName}</div>
               <div className="text-sm text-gray-500">{student.studentId}</div>
+              <div className="text-xs text-gray-400">{formatAgeDisplay(student.dateOfBirth)}</div>
             </div>
           </div>
         );

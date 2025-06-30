@@ -51,3 +51,33 @@ export function calculateGrade(score: number, total: number): string {
 export function getSectionDisplayName(section: string): string {
   return section.charAt(0).toUpperCase() + section.slice(1);
 }
+
+export function calculateAge(dateOfBirth: string | null): number | null {
+  if (!dateOfBirth) return null;
+  
+  const birthDate = new Date(dateOfBirth);
+  const today = new Date();
+  
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age;
+}
+
+export function formatAgeDisplay(dateOfBirth: string | null): string {
+  const age = calculateAge(dateOfBirth);
+  if (age === null) return 'Age not set';
+  return `${age} years old`;
+}
+
+export function getProfilePhotoUrl(profilePhoto: string | null, name: string): string {
+  if (profilePhoto && profilePhoto.trim() !== '') {
+    return profilePhoto;
+  }
+  // Fallback to avatar generator
+  return generateUserAvatar(name, 200);
+}

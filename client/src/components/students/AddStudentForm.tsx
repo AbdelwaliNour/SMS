@@ -95,6 +95,12 @@ const studentFormSchema = z.object({
     .email("Please enter a valid email address")
     .nullable()
     .optional(),
+
+  profilePhoto: z
+    .string()
+    .url("Please enter a valid URL")
+    .nullable()
+    .optional(),
 });
 
 type StudentFormValues = z.infer<typeof studentFormSchema>;
@@ -125,6 +131,7 @@ export default function AddStudentForm() {
       motherName: "",
       motherPhone: "",
       motherEmail: null,
+      profilePhoto: null,
     },
   });
 
@@ -276,6 +283,16 @@ export default function AddStudentForm() {
                   { value: "Eleven", label: "Eleven" },
                   { value: "Twelve", label: "Twelve" },
                 ]}
+              />
+            </div>
+
+            <div className="mt-6">
+              <EnhancedFormField
+                form={form}
+                name="profilePhoto"
+                label="Profile Photo URL"
+                placeholder="https://example.com/photo.jpg"
+                description="Optional: URL to student's profile photo"
               />
             </div>
           </div>
