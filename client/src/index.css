@@ -12,15 +12,43 @@
 }
 
 .glass-morphism {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .dark .glass-morphism {
   background: rgba(17, 25, 40, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.125);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Light mode improvements for better contrast */
+:root {
+  --text-light: hsl(222.2, 84%, 4.9%);
+  --text-secondary-light: hsl(215.4, 16.3%, 30%);
+  --bg-card-light: hsl(0, 0%, 98%);
+  --border-light: hsl(214.3, 31.8%, 75%);
+}
+
+.dark {
+  --text-light: hsl(210, 40%, 98%);
+  --text-secondary-light: hsl(215.4, 16.3%, 65%);
+  --bg-card-light: hsl(222.2, 84%, 4.9%);
+  --border-light: hsl(217.2, 32.6%, 17.5%);
+}
+
+/* Enhanced card styling for better visibility */
+.card-modern {
+  border: 1px solid var(--border-light);
+  background: var(--bg-card-light);
+}
+
+/* Improved text contrast */
+.text-muted-foreground {
+  color: var(--text-secondary-light) !important;
 }
 
 @layer base {
@@ -36,13 +64,13 @@
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 16.3% 35%;
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 80%;
+    --input: 214.3 31.8% 85%;
     --ring: 221.2 83.2% 53.3%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
