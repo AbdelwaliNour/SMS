@@ -5,9 +5,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ValidationMessages, ValidationPatterns } from "@/lib/form-validation";
-import { EnhancedFormField } from "@/components/ui/enhanced-form-field";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { 
+  CalendarIcon, 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Briefcase, 
+  DollarSign,
+  School,
+  Users,
+  Badge as BadgeIcon,
+  Save,
+  X,
+  UserPlus
+} from "lucide-react";
 
 // Enhanced form schema with more detailed validations
 const employeeFormSchema = z.object({
@@ -34,7 +54,6 @@ const employeeFormSchema = z.object({
       ValidationPatterns.letters,
       "Please enter a valid name (letters only)",
     )
-    .nullable()
     .optional(),
 
   lastName: z
@@ -49,242 +68,463 @@ const employeeFormSchema = z.object({
 
   gender: z.enum(["male", "female"]),
 
-  role: z.enum(["teacher", "driver", "cleaner", "guard", "admin", "staff"]),
-
-  section: z.enum(["primary", "secondary", "highschool"]).nullable(),
-
-  shift: z.enum(["morning", "afternoon", "evening"]).nullable(),
+  dateOfBirth: z.date().optional(),
 
   phone: z
     .string()
     .regex(ValidationPatterns.phone, "Please enter a valid phone number")
-    .nullable()
+    .optional()
+    .or(z.literal("")),
+
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .optional()
+    .or(z.literal("")),
+
+  address: z
+    .string()
+    .max(200, ValidationMessages.max(200))
     .optional(),
 
-  email: z.string().email(ValidationMessages.email).nullable().optional(),
+  role: z.enum(["teacher", "admin", "staff", "principal"]),
 
-  subjects: z.array(z.string()).nullable().optional(),
+  section: z.enum(["primary", "secondary", "highschool"]),
+
+  shift: z.enum(["morning", "afternoon", "evening"]),
+
+  salary: z
+    .number()
+    .min(0, "Salary must be positive")
+    .optional(),
 });
 
-type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
+type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 
-const AddEmployeeForm = () => {
+interface AddEmployeeFormProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
 
-  const form = useForm<EmployeeFormValues>({
+  const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
       employeeId: "",
       firstName: "",
-      middleName: null,
+      middleName: "",
       lastName: "",
       gender: "male",
+      phone: "",
+      email: "",
+      address: "",
       role: "teacher",
-      section: null,
-      shift: null,
-      phone: null,
-      email: null,
-      subjects: null,
+      section: "primary",
+      shift: "morning",
     },
   });
 
-  const onSubmit = async (data: EmployeeFormValues) => {
-    setLoading(true);
+  const onSubmit = async (data: EmployeeFormData) => {
+    setIsSubmitting(true);
     try {
-      // If subjects is provided as a string, convert it to an array
-      const formattedData = {
+      const submitData = {
         ...data,
-        subjects: data.subjects || null,
+        middleName: data.middleName || null,
+        phone: data.phone || null,
+        email: data.email || null,
+        address: data.address || null,
+        dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString().split('T')[0] : null,
       };
 
-      await apiRequest("POST", "/api/employees", formattedData);
+      await apiRequest("POST", "/api/employees", submitData);
+      
       toast({
         title: "Success",
         description: "Employee added successfully",
       });
+      
       queryClient.invalidateQueries({ queryKey: ["/api/employees"] });
       form.reset();
-    } catch (error) {
+      onSuccess?.();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to add employee",
+        description: error.message || "Failed to add employee",
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Information Section */}
-        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-            Basic Information
-          </h3>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Personal Information Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <User className="h-5 w-5 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Personal Information</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <FormField
+                control={form.control}
+                name="employeeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Employee ID</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="e.g. EMP001" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">Unique identifier for the employee</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <EnhancedFormField
-              form={form}
-              name="employeeId"
-              label="Employee ID"
-              placeholder="e.g. EMP-2024-001"
-              isRequired={true}
-              description="Unique identifier for the employee"
-            />
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <EnhancedFormField
-              form={form}
-              name="role"
-              label="Role"
-              type="select"
-              isRequired={true}
-              options={[
-                { value: "teacher", label: "Teacher" },
-                { value: "driver", label: "Driver" },
-                { value: "cleaner", label: "Cleaner" },
-                { value: "guard", label: "Guard" },
-                { value: "admin", label: "Admin" },
-                { value: "staff", label: "Staff" },
-              ]}
-            />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">First Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="John" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <EnhancedFormField
-              form={form}
-              name="firstName"
-              label="First Name"
-              isRequired={true}
-            />
+              <FormField
+                control={form.control}
+                name="middleName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Middle Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Optional" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <EnhancedFormField
-              form={form}
-              name="middleName"
-              label="Middle Name"
-              description="Optional"
-            />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Last Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Doe" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <EnhancedFormField
-              form={form}
-              name="lastName"
-              label="Last Name"
-              isRequired={true}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Date of Birth</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "glass-morphism border-border/30 h-11 w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : "Select date"}
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Address</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Street address" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         </div>
 
         {/* Contact Information Section */}
-        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-            Contact Information
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <EnhancedFormField
-              form={form}
-              name="gender"
-              label="Gender"
-              type="select"
-              isRequired={true}
-              options={[
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
-              ]}
-            />
-
-            <EnhancedFormField
-              form={form}
-              name="phone"
-              label="Phone"
-              type="tel"
-              description="Optional"
-              placeholder="e.g. +1 (555) 123-4567"
-            />
-          </div>
-
-          <EnhancedFormField
-            form={form}
-            name="email"
-            label="Email"
-            type="email"
-            description="Optional"
-            placeholder="e.g. john.doe@example.com"
-          />
-        </div>
-
-        {/* Assignment Section */}
-        <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
-            Work Assignment
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <EnhancedFormField
-              form={form}
-              name="shift"
-              label="Shift"
-              type="select"
-              options={[
-                { value: "morning", label: "Morning" },
-                { value: "afternoon", label: "Afternoon" },
-                { value: "evening", label: "Evening" },
-              ]}
-              description="Work schedule"
-            />
-
-            {form.watch("role") === "teacher" && (
-              <EnhancedFormField
-                form={form}
-                name="section"
-                label="Section"
-                type="select"
-                options={[
-                  { value: "primary", label: "Primary" },
-                  { value: "secondary", label: "Secondary" },
-                  { value: "highschool", label: "High School" },
-                ]}
-                description="Teaching section"
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <Phone className="h-5 w-5 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Contact Information</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Phone Number</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="+1 (555) 123-4567" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">Optional - Contact number</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            )}
-          </div>
 
-          {form.watch("role") === "teacher" && (
-            <EnhancedFormField
-              form={form}
-              name="subjects"
-              label="Subjects"
-              type="text"
-              placeholder="e.g. Math, Science, History"
-              description="Enter subjects separated by commas"
-              onChange={(value) => {
-                const subjects = value
-                  ? value
-                      .toString()
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                  : null;
-                form.setValue("subjects", subjects);
-              }}
-            />
-          )}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Email Address</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="email"
+                        placeholder="john.doe@school.edu" 
+                        {...field} 
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">Optional - Professional email</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-2">
-          <Button
-            type="submit"
-            className="bg-blue hover:bg-blue/90 text-white shadow-sm hover:shadow"
-            disabled={loading}
+        {/* Employment Details Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
+                <Briefcase className="h-5 w-5 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Employment Details</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Job Role</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="teacher">Teacher</SelectItem>
+                        <SelectItem value="admin">Administrator</SelectItem>
+                        <SelectItem value="staff">Staff Member</SelectItem>
+                        <SelectItem value="principal">Principal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="section"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Section</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                          <SelectValue placeholder="Select section" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="primary">Primary School</SelectItem>
+                        <SelectItem value="secondary">Secondary School</SelectItem>
+                        <SelectItem value="highschool">High School</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="shift"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Work Shift</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="glass-morphism border-border/30 h-11">
+                          <SelectValue placeholder="Select shift" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="morning">Morning (8:00 AM - 2:00 PM)</SelectItem>
+                        <SelectItem value="afternoon">Afternoon (2:00 PM - 8:00 PM)</SelectItem>
+                        <SelectItem value="evening">Evening (6:00 PM - 10:00 PM)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="salary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Salary</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number"
+                        placeholder="50000" 
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                        className="glass-morphism border-border/30 h-11"
+                      />
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">Annual salary in USD</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-4 pt-6 border-t border-border/30">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onCancel}
+            className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600 px-6"
           >
-            {loading ? "Adding..." : "Add Employee"}
+            <X className="h-4 w-4 mr-2" />
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 px-8"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Adding...
+              </>
+            ) : (
+              <>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Employee
+              </>
+            )}
           </Button>
         </div>
       </form>
     </Form>
   );
-};
-
-export default AddEmployeeForm;
+}

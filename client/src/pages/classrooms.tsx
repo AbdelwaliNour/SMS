@@ -287,45 +287,7 @@ export default function Classrooms() {
                     </div>
                   </div>
 
-                  {/* Additional Features Section */}
-                  <div className="card-modern glass-morphism p-8 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5"></div>
-                    <div className="relative z-10">
-                      <div className="flex items-center space-x-3 mb-6">
-                        <div className="p-2 bg-green-500/10 rounded-lg">
-                          <MapPin className="h-5 w-5 text-green-600" />
-                        </div>
-                        <h3 className="text-xl font-semibold text-gradient">Room Features</h3>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
-                          <input type="checkbox" id="projector" className="rounded" />
-                          <label htmlFor="projector" className="text-sm">Projector</label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
-                          <input type="checkbox" id="ac" className="rounded" />
-                          <label htmlFor="ac" className="text-sm">Air Conditioning</label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
-                          <input type="checkbox" id="smartboard" className="rounded" />
-                          <label htmlFor="smartboard" className="text-sm">Smart Board</label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
-                          <input type="checkbox" id="lab" className="rounded" />
-                          <label htmlFor="lab" className="text-sm">Lab Equipment</label>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-6">
-                        <FormLabel className="text-sm font-medium">Additional Notes</FormLabel>
-                        <textarea 
-                          placeholder="Any special requirements, equipment, or notes about this classroom..."
-                          className="w-full mt-2 p-3 glass-morphism border-border/30 rounded-lg resize-none h-20"
-                        />
-                      </div>
-                    </div>
-                  </div>
+
                   
                   <div className="flex justify-end space-x-4 pt-6 border-t border-border/30">
                     <Button 
