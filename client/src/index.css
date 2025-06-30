@@ -51,6 +51,38 @@
   color: var(--text-secondary-light) !important;
 }
 
+/* Form background improvements for light mode */
+.glass-morphism:has(form),
+.glass-morphism form,
+form .glass-morphism {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark .glass-morphism:has(form),
+.dark .glass-morphism form,
+.dark form .glass-morphism {
+  background: rgba(17, 25, 40, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Dialog content background for better visibility */
+[data-radix-popper-content-wrapper] .glass-morphism,
+.glass-morphism[role="dialog"] {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.dark [data-radix-popper-content-wrapper] .glass-morphism,
+.dark .glass-morphism[role="dialog"] {
+  background: rgba(17, 25, 40, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
