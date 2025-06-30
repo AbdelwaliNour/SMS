@@ -172,24 +172,30 @@ export default function Classrooms() {
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="card-modern glass-morphism p-6 relative overflow-hidden">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  {/* Basic Information Section */}
+                  <div className="card-modern glass-morphism p-8 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
                     <div className="relative z-10">
-                      <h3 className="text-lg font-semibold mb-4">Classroom Details</h3>
+                      <div className="flex items-center space-x-3 mb-6">
+                        <div className="p-2 bg-blue-500/10 rounded-lg">
+                          <School className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gradient">Classroom Information</h3>
+                      </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <FormField
                           control={form.control}
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Room Name</FormLabel>
+                              <FormLabel className="text-sm font-medium">Room Name</FormLabel>
                               <FormControl>
                                 <Input 
-                                  placeholder="e.g. Room 101" 
+                                  placeholder="e.g. Room 101, Science Lab A" 
                                   {...field} 
-                                  className="glass-morphism border-border/30"
+                                  className="glass-morphism border-border/30 h-11"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -202,16 +208,16 @@ export default function Classrooms() {
                           name="section"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Section</FormLabel>
+                              <FormLabel className="text-sm font-medium">Section</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="glass-morphism border-border/30">
-                                    <SelectValue placeholder="Select section" />
+                                  <SelectTrigger className="glass-morphism border-border/30 h-11">
+                                    <SelectValue placeholder="Select educational section" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="primary">Primary</SelectItem>
-                                  <SelectItem value="secondary">Secondary</SelectItem>
+                                  <SelectItem value="primary">Primary School</SelectItem>
+                                  <SelectItem value="secondary">Secondary School</SelectItem>
                                   <SelectItem value="highschool">High School</SelectItem>
                                 </SelectContent>
                               </Select>
@@ -219,22 +225,25 @@ export default function Classrooms() {
                             </FormItem>
                           )}
                         />
-                        
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                           control={form.control}
                           name="capacity"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Capacity</FormLabel>
+                              <FormLabel className="text-sm font-medium">Student Capacity</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="number" 
-                                  placeholder="Capacity" 
+                                  placeholder="e.g. 30" 
                                   {...field}
                                   onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                                  className="glass-morphism border-border/30"
+                                  className="glass-morphism border-border/30 h-11"
                                 />
                               </FormControl>
+                              <p className="text-xs text-muted-foreground">Maximum number of students</p>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -245,25 +254,31 @@ export default function Classrooms() {
                           name="teacherId"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Assign Teacher</FormLabel>
+                              <FormLabel className="text-sm font-medium">Assign Teacher</FormLabel>
                               <Select 
                                 onValueChange={(value) => field.onChange(value ? parseInt(value) : null)} 
                                 defaultValue={field.value?.toString()}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="glass-morphism border-border/30">
-                                    <SelectValue placeholder="Select a teacher" />
+                                  <SelectTrigger className="glass-morphism border-border/30 h-11">
+                                    <SelectValue placeholder="Choose a teacher (optional)" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="">Not Assigned</SelectItem>
+                                  <SelectItem value="">No teacher assigned</SelectItem>
                                   {teachers.map((teacher) => (
                                     <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                      {teacher.firstName} {teacher.lastName}
+                                      <div className="flex items-center space-x-2">
+                                        <span>{teacher.firstName} {teacher.lastName}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {teacher.section}
+                                        </Badge>
+                                      </div>
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
+                              <p className="text-xs text-muted-foreground">Teacher can be assigned later</p>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -271,21 +286,62 @@ export default function Classrooms() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Additional Features Section */}
+                  <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-center space-x-3 mb-6">
+                        <div className="p-2 bg-green-500/10 rounded-lg">
+                          <MapPin className="h-5 w-5 text-green-600" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gradient">Room Features</h3>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
+                          <input type="checkbox" id="projector" className="rounded" />
+                          <label htmlFor="projector" className="text-sm">Projector</label>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
+                          <input type="checkbox" id="ac" className="rounded" />
+                          <label htmlFor="ac" className="text-sm">Air Conditioning</label>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
+                          <input type="checkbox" id="smartboard" className="rounded" />
+                          <label htmlFor="smartboard" className="text-sm">Smart Board</label>
+                        </div>
+                        <div className="flex items-center space-x-2 p-3 bg-muted/20 rounded-lg">
+                          <input type="checkbox" id="lab" className="rounded" />
+                          <label htmlFor="lab" className="text-sm">Lab Equipment</label>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6">
+                        <FormLabel className="text-sm font-medium">Additional Notes</FormLabel>
+                        <textarea 
+                          placeholder="Any special requirements, equipment, or notes about this classroom..."
+                          className="w-full mt-2 p-3 glass-morphism border-border/30 rounded-lg resize-none h-20"
+                        />
+                      </div>
+                    </div>
+                  </div>
                   
-                  <div className="flex justify-end space-x-3">
+                  <div className="flex justify-end space-x-4 pt-6 border-t border-border/30">
                     <Button 
                       type="button" 
                       variant="outline" 
                       onClick={() => setIsAddModalOpen(false)}
-                      className="glass-morphism border-border/30"
+                      className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600 px-6"
                     >
                       Cancel
                     </Button>
                     <Button 
                       type="submit" 
-                      className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
+                      className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 px-8"
                     >
-                      Add Classroom
+                      <School className="h-4 w-4 mr-2" />
+                      Create Classroom
                     </Button>
                   </div>
                 </form>
