@@ -4,23 +4,99 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { insertStudentSchema, Student } from '@shared/schema';
 import { useLocation } from 'wouter';
+import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
+import { ValidationMessages, ValidationPatterns } from '@/lib/form-validation';
+import { User, Phone, Mail, Heart, FileImage, Award, Save, Loader2, UserCheck } from 'lucide-react';
 
-// Extend the schema for client-side validation
-const studentFormSchema = insertStudentSchema.extend({
-  confirmEmail: z.string().email().optional(),
-}).refine(
-  (data) => !data.email || !data.confirmEmail || data.email === data.confirmEmail,
-  {
-    message: "Emails don't match",
-    path: ['confirmEmail'],
-  }
-);
+const studentFormSchema = z.object({
+  studentId: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(3, ValidationMessages.min(3))
+    .max(20, ValidationMessages.max(20)),
+
+  firstName: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(2, ValidationMessages.min(2))
+    .max(50, ValidationMessages.max(50))
+    .regex(ValidationPatterns.letters, "Please enter a valid name (letters only)"),
+
+  middleName: z
+    .string()
+    .max(50, ValidationMessages.max(50))
+    .regex(ValidationPatterns.letters, "Please enter a valid name (letters only)")
+    .nullable()
+    .optional(),
+
+  lastName: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(2, ValidationMessages.min(2))
+    .max(50, ValidationMessages.max(50))
+    .regex(ValidationPatterns.letters, "Please enter a valid name (letters only)"),
+
+  gender: z.enum(["male", "female"]),
+
+  dateOfBirth: z.string().min(1, ValidationMessages.required),
+
+  section: z.enum(["primary", "secondary", "highschool"]),
+
+  class: z.string().min(1, ValidationMessages.required),
+
+  phone: z
+    .string()
+    .nullable()
+    .optional(),
+
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .nullable()
+    .optional(),
+
+  fatherName: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(2, ValidationMessages.min(2))
+    .max(100, ValidationMessages.max(100)),
+
+  fatherPhone: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(10, ValidationMessages.min(10))
+    .max(15, ValidationMessages.max(15))
+    .regex(ValidationPatterns.phone, "Please enter a valid phone number"),
+
+  fatherEmail: z
+    .string()
+    .email("Please enter a valid email address")
+    .nullable()
+    .optional(),
+
+  motherName: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(2, ValidationMessages.min(2))
+    .max(100, ValidationMessages.max(100)),
+
+  motherPhone: z
+    .string()
+    .min(1, ValidationMessages.required)
+    .min(10, ValidationMessages.min(10))
+    .max(15, ValidationMessages.max(15))
+    .regex(ValidationPatterns.phone, "Please enter a valid phone number"),
+
+  motherEmail: z
+    .string()
+    .email("Please enter a valid email address")
+    .nullable()
+    .optional(),
+});
 
 type StudentFormValues = z.infer<typeof studentFormSchema>;
 
@@ -31,68 +107,66 @@ interface EditStudentFormProps {
 const EditStudentForm: React.FC<EditStudentFormProps> = ({ student }) => {
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedCertificate, setUploadedCertificate] = useState<string | null>(null);
 
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
+      studentId: '',
       firstName: '',
       middleName: null,
       lastName: '',
       gender: 'male',
       dateOfBirth: '',
-      phone: '',
-      email: '',
-      confirmEmail: '',
       section: 'primary',
       class: 'One',
-      studentId: '',
+      phone: null,
+      email: null,
       fatherName: '',
       fatherPhone: '',
-      fatherEmail: '',
+      fatherEmail: null,
       motherName: '',
       motherPhone: '',
-      motherEmail: '',
+      motherEmail: null,
     },
   });
 
-  // Initialize form with student data
+  // Populate form with student data when component mounts
   useEffect(() => {
     if (student) {
       form.reset({
-        firstName: student.firstName,
+        studentId: student.studentId || '',
+        firstName: student.firstName || '',
         middleName: student.middleName || null,
-        lastName: student.lastName,
-        gender: student.gender,
+        lastName: student.lastName || '',
+        gender: student.gender || 'male',
         dateOfBirth: student.dateOfBirth || '',
-        phone: student.phone || '',
-        email: student.email || '',
-        confirmEmail: student.email || '',
-        section: student.section,
-        class: student.class,
-        studentId: student.studentId,
+        section: student.section || 'primary',
+        class: student.class || 'One',
+        phone: student.phone || null,
+        email: student.email || null,
         fatherName: student.fatherName || '',
         fatherPhone: student.fatherPhone || '',
-        fatherEmail: student.fatherEmail || '',
+        fatherEmail: student.fatherEmail || null,
         motherName: student.motherName || '',
         motherPhone: student.motherPhone || '',
-        motherEmail: student.motherEmail || '',
+        motherEmail: student.motherEmail || null,
       });
     }
   }, [student, form]);
 
   const onSubmit = async (data: StudentFormValues) => {
+    setLoading(true);
     try {
-      // Remove confirmEmail as it's not part of the schema
-      const { confirmEmail, ...studentData } = data;
-      
-      await apiRequest('PATCH', `/api/students/${student.id}`, studentData);
+      await apiRequest('PATCH', `/api/students/${student.id}`, data);
       toast({
         title: 'Success',
         description: 'Student updated successfully',
       });
       queryClient.invalidateQueries({ queryKey: ['/api/students'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/students', student.id] });
       navigate('/students');
     } catch (error) {
       toast({
@@ -100,28 +174,10 @@ const EditStudentForm: React.FC<EditStudentFormProps> = ({ student }) => {
         description: 'Failed to update student',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   };
-
-  const genderOptions = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-  ];
-
-  const sectionOptions = [
-    { value: 'primary', label: 'Primary' },
-    { value: 'secondary', label: 'Secondary' },
-    { value: 'highschool', label: 'High School' },
-  ];
-
-  const classOptions = [
-    { value: 'One', label: 'One' },
-    { value: 'Two', label: 'Two' },
-    { value: 'Three', label: 'Three' },
-    { value: 'Four', label: 'Four' },
-    { value: 'Five', label: 'Five' },
-    { value: 'Six', label: 'Six' },
-  ];
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -146,417 +202,360 @@ const EditStudentForm: React.FC<EditStudentFormProps> = ({ student }) => {
   };
 
   return (
-    <div className="bg-blue text-white rounded-lg shadow-lg w-full max-w-4xl mx-auto overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-2xl font-homenaje text-center mb-6">Edit Student: {student.firstName} {student.lastName}</h2>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="mb-6">
-              <h3 className="text-lg mb-4">Student Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <Input 
-                            placeholder="First Name" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field} 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="middleName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Middle Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <Input 
-                            placeholder="Middle Name" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <Input 
-                            placeholder="Last Name" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field} 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Basic Information Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <User className="h-5 w-5 text-blue-600" />
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="dateOfBirth"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date of Birth</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <Input 
-                            type="date" 
-                            placeholder="Date of Birth" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          <Input 
-                            type="tel" 
-                            placeholder="Phone Number" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          <Input 
-                            type="email" 
-                            placeholder="Email" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="gender"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Gender</FormLabel>
-                      <div className="flex space-x-4 mt-2">
-                        {genderOptions.map((option) => (
-                          <label key={option.value} className="flex items-center">
-                            <input
-                              type="radio"
-                              className="form-radio h-4 w-4 mr-2"
-                              value={option.value}
-                              checked={field.value === option.value}
-                              onChange={() => field.onChange(option.value)}
-                            />
-                            <span className="flex items-center">
-                              {option.value === 'male' ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                              )}
-                              {option.label}
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="section"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Section</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="bg-white bg-opacity-20 border-white border-opacity-20 text-white">
-                            <SelectValue placeholder="Select section" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {sectionOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="class"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Class</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="bg-white bg-opacity-20 border-white border-opacity-20 text-white">
-                            <SelectValue placeholder="Select class" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {classOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <h3 className="text-xl font-semibold text-gradient">Basic Information</h3>
             </div>
-            
-            <div className="mb-6">
-              <h3 className="text-lg mb-4">Guardian Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <EnhancedFormField
+                form={form}
+                name="studentId"
+                label="Student ID"
+                placeholder="e.g. ST-2024-001"
+                isRequired={true}
+                description="Unique identifier for the student"
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="section"
+                label="Section"
+                type="select"
+                isRequired={true}
+                options={[
+                  { value: "primary", label: "Primary" },
+                  { value: "secondary", label: "Secondary" },
+                  { value: "highschool", label: "High School" },
+                ]}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <EnhancedFormField
+                form={form}
+                name="firstName"
+                label="First Name"
+                isRequired={true}
+                placeholder="Enter first name"
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="middleName"
+                label="Middle Name"
+                description="Optional"
+                placeholder="Enter middle name"
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="lastName"
+                label="Last Name"
+                isRequired={true}
+                placeholder="Enter last name"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <EnhancedFormField
+                form={form}
+                name="gender"
+                label="Gender"
+                type="select"
+                isRequired={true}
+                options={[
+                  { value: "male", label: "Male" },
+                  { value: "female", label: "Female" },
+                ]}
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="dateOfBirth"
+                label="Date of Birth"
+                type="date"
+                isRequired={true}
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="class"
+                label="Class"
+                type="select"
+                isRequired={true}
+                options={[
+                  { value: "One", label: "One" },
+                  { value: "Two", label: "Two" },
+                  { value: "Three", label: "Three" },
+                  { value: "Four", label: "Four" },
+                  { value: "Five", label: "Five" },
+                  { value: "Six", label: "Six" },
+                  { value: "Seven", label: "Seven" },
+                  { value: "Eight", label: "Eight" },
+                  { value: "Nine", label: "Nine" },
+                  { value: "Ten", label: "Ten" },
+                  { value: "Eleven", label: "Eleven" },
+                  { value: "Twelve", label: "Twelve" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Information Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <Phone className="h-5 w-5 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Contact Information</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <EnhancedFormField
+                form={form}
+                name="phone"
+                label="Phone Number"
+                placeholder="e.g. +1 234 567 8901"
+                description="Optional - Student's phone number"
+              />
+
+              <EnhancedFormField
+                form={form}
+                name="email"
+                label="Email Address"
+                type="email"
+                placeholder="student@example.com"
+                description="Optional - Student's email address"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Parent Information Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-red-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-orange-500/10 rounded-lg">
+                <Heart className="h-5 w-5 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Parent Information</h3>
+            </div>
+
+            {/* Father's Information */}
+            <div className="space-y-6 mb-8">
+              <h4 className="text-lg font-medium text-muted-foreground border-b border-border/30 pb-2">
+                Father's Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <EnhancedFormField
+                  form={form}
                   name="fatherName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Father's Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <Input 
-                            placeholder="Father's Name" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Father's Name"
+                  isRequired={true}
+                  placeholder="Enter father's full name"
                 />
-                <FormField
-                  control={form.control}
+
+                <EnhancedFormField
+                  form={form}
                   name="fatherPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Father's Phone</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          <Input 
-                            type="tel" 
-                            placeholder="Father's Phone" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Father's Phone"
+                  isRequired={true}
+                  placeholder="e.g. +1 234 567 8901"
                 />
-                <FormField
-                  control={form.control}
+
+                <EnhancedFormField
+                  form={form}
                   name="fatherEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Father's Email</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          <Input 
-                            type="email" 
-                            placeholder="Father's Email" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Father's Email"
+                  type="email"
+                  placeholder="father@example.com"
+                  description="Optional"
                 />
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <FormField
-                  control={form.control}
+            </div>
+
+            {/* Mother's Information */}
+            <div className="space-y-6">
+              <h4 className="text-lg font-medium text-muted-foreground border-b border-border/30 pb-2">
+                Mother's Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <EnhancedFormField
+                  form={form}
                   name="motherName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mother's Name</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <Input 
-                            placeholder="Mother's Name" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Mother's Name"
+                  isRequired={true}
+                  placeholder="Enter mother's full name"
                 />
-                <FormField
-                  control={form.control}
+
+                <EnhancedFormField
+                  form={form}
                   name="motherPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mother's Phone</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          <Input 
-                            type="tel" 
-                            placeholder="Mother's Phone" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Mother's Phone"
+                  isRequired={true}
+                  placeholder="e.g. +1 234 567 8901"
                 />
-                <FormField
-                  control={form.control}
+
+                <EnhancedFormField
+                  form={form}
                   name="motherEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mother's Email</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 top-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          <Input 
-                            type="email" 
-                            placeholder="Mother's Email" 
-                            className="bg-white bg-opacity-20 pl-10 border-white border-opacity-20 text-white placeholder-white placeholder-opacity-70" 
-                            {...field}
-                            value={field.value || ''}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Mother's Email"
+                  type="email"
+                  placeholder="mother@example.com"
+                  description="Optional"
                 />
               </div>
             </div>
-            
-            <div className="flex justify-end space-x-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="border-white border-opacity-20 text-white"
-                onClick={() => navigate('/students')}
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                className="bg-white text-blue hover:bg-white/90"
-              >
-                Update Student
-              </Button>
+          </div>
+        </div>
+
+        {/* Document Upload Section */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-purple-500/10 rounded-lg">
+                <FileImage className="h-5 w-5 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gradient">Documents & Photo</h3>
             </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Profile Photo Upload */}
+              <div className="space-y-4">
+                <label className="block text-sm font-medium mb-2">Profile Photo</label>
+                <div className="border-2 border-dashed border-border/30 rounded-xl p-6 text-center hover:border-primary/30 transition-colors">
+                  {uploadedImage ? (
+                    <div className="space-y-4">
+                      <img
+                        src={uploadedImage}
+                        alt="Uploaded profile"
+                        className="mx-auto h-24 w-24 object-cover rounded-full"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUploadedImage(null)}
+                      >
+                        Remove Photo
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <User className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          id="profile-upload"
+                        />
+                        <label
+                          htmlFor="profile-upload"
+                          className="cursor-pointer text-primary hover:text-primary/80"
+                        >
+                          Click to upload profile photo
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          PNG, JPG up to 10MB
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Certificate Upload */}
+              <div className="space-y-4">
+                <label className="block text-sm font-medium mb-2">Birth Certificate</label>
+                <div className="border-2 border-dashed border-border/30 rounded-xl p-6 text-center hover:border-primary/30 transition-colors">
+                  {uploadedCertificate ? (
+                    <div className="space-y-4">
+                      <Award className="mx-auto h-12 w-12 text-green-600" />
+                      <p className="text-sm text-green-600">Certificate uploaded</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setUploadedCertificate(null)}
+                      >
+                        Remove Certificate
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <Award className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <div>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={handleCertificateUpload}
+                          className="hidden"
+                          id="certificate-upload"
+                        />
+                        <label
+                          htmlFor="certificate-upload"
+                          className="cursor-pointer text-primary hover:text-primary/80"
+                        >
+                          Click to upload birth certificate
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          PDF, PNG, JPG up to 10MB
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-end space-x-4 pt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/students')}
+            className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white px-8"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Updating Student...
+              </>
+            ) : (
+              <>
+                <UserCheck className="h-4 w-4 mr-2" />
+                Update Student
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 
