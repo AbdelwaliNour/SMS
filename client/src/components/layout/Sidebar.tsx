@@ -126,7 +126,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -138,21 +138,25 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            Employees
+            <span className="font-medium">Employees</span>
           </Link>
         </div>
 
-        <div className="px-4 mt-6">
-          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
-            WORK
+        <div className="px-4 space-y-1 mt-6">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-4">
+            Operations
           </h3>
           <Link
             href="/attendance"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/attendance" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/attendance" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -164,15 +168,19 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
               />
             </svg>
-            Attendances
+            <span className="font-medium">Attendance</span>
           </Link>
           <Link
             href="/finance"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/finance" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/finance" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -184,15 +192,19 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            Finances
+            <span className="font-medium">Finance</span>
           </Link>
           <Link
             href="/exams"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/exams" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/exams" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -204,20 +216,24 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            Results
+            <span className="font-medium">Exams</span>
           </Link>
         </div>
-        <div className="px-4 mt-6">
-          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
-            others
+        <div className="px-4 space-y-1 mt-6">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-4">
+            Analytics
           </h3>
           <Link
             href="/student-performance"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/student-performance" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/student-performance" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -229,15 +245,19 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Performances
+            <span className="font-medium">Performance</span>
           </Link>
           <Link
             href="/reports"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/reports" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/reports" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -249,15 +269,19 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            Reports
+            <span className="font-medium">Reports</span>
           </Link>
           <Link
             href="/timetable"
-            className={`flex items-center py-2 px-4 rounded-md ${location === "/timetable" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/timetable" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -269,36 +293,42 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Schedules
+            <span className="font-medium">Timetable</span>
           </Link>
         </div>
       </nav>
 
-      {/* User Profile */}
-      <div className="p-4 border-t border-divider dark:border-gray-700">
-        <div className="flex items-center">
-          <img src={userAvatar} alt="User" className="w-10 h-10 rounded-full" />
-          <div className="ml-3">
-            <p className="text-sm font-medium text-black-800 dark:text-white-200">
-              {activeUser}
-            </p>
+      {/* Modern User Profile Section */}
+      <div className="p-4 border-t border-border/30 mt-auto">
+        <div className="glass-morphism p-4 rounded-xl border border-border/30 hover:border-primary/30 transition-all duration-300">
+          <div className="flex items-center">
+            <div className="relative">
+              <img src={userAvatar} alt="User" className="w-12 h-12 rounded-xl ring-2 ring-primary/20" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm font-semibold text-foreground">
+                {activeUser}
+              </p>
+              <p className="text-xs text-muted-foreground">Administrator</p>
+            </div>
+            <button className="p-2 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+            </button>
           </div>
-          <button className="ml-auto text-black-500 dark:text-white-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-          </button>
         </div>
       </div>
     </div>
