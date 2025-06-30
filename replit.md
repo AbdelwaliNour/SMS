@@ -131,6 +131,12 @@ Changelog:
   * Added prominent age display as blue badges throughout student interfaces
   * Updated both main students table and responsive student list with new features
   * Enhanced Add/Edit Student forms to include profile photo URL field
+- June 30, 2025. Employee and student form improvements completed:
+  * Added automatic ID generation for students (ST-YYYY-####) and employees (E-YYYY-###)
+  * Made ID fields readonly with auto-generated values in both add and edit forms
+  * Redesigned EditEmployeeForm with modern glass-morphism styling to match AddEmployeeForm
+  * Updated EnhancedFormField components with consistent styling and validation
+  * Fixed database schema compatibility issues and null value handling
 ```
 
 ## User Preferences
