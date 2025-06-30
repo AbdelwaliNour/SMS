@@ -62,6 +62,7 @@ export const employees = pgTable("employees", {
   salary: integer("salary").notNull(),
   shift: shiftEnum("shift"),
   subjects: text("subjects").array(),
+  profilePhoto: text("profile_photo"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
