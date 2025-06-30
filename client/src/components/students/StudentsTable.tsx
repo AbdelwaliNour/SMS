@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { getSectionDisplayName, getGenderDisplayName } from '@/lib/utils';
+import { getSectionDisplayName, getGenderDisplayName, formatAgeDisplay, getProfilePhotoUrl } from '@/lib/utils';
 import { Link } from 'wouter';
 import { Search, Edit, BarChart3, Trash2, Users, Filter, Mail, Phone } from 'lucide-react';
 import StudentsTableSkeleton from './StudentsTableSkeleton';
@@ -126,10 +126,20 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                 <CardContent className="p-6">
                   {/* Student Header */}
                   <div className="flex items-center space-x-4 mb-4">
-                    <ProfileAvatar name={fullName} size="lg" />
+                    <div className="relative">
+                      <img
+                        src={getProfilePhotoUrl(student.profilePhoto, fullName)}
+                        alt={fullName}
+                        className="w-16 h-16 rounded-full object-cover border-2 border-border/20"
+                        onError={(e) => {
+                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=64`;
+                        }}
+                      />
+                    </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg leading-tight">{fullName}</h3>
                       <p className="text-sm text-muted-foreground">{student.studentId}</p>
+                      <p className="text-xs text-muted-foreground">{formatAgeDisplay(student.dateOfBirth)}</p>
                     </div>
                   </div>
 

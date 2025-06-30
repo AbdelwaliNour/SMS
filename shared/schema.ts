@@ -42,6 +42,7 @@ export const students = pgTable("students", {
   motherName: text("mother_name"),
   motherPhone: text("mother_phone"),
   motherEmail: text("mother_email"),
+  profilePhoto: text("profile_photo"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
