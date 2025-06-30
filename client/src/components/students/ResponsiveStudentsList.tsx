@@ -78,11 +78,11 @@ export default function ResponsiveStudentsList({ onAddStudent }: ResponsiveStude
           <div className="flex items-center">
             <div className="relative mr-3">
               <img
-                src={getProfilePhotoUrl(student.profilePhoto, fullName)}
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=40`}
                 alt={fullName}
-                className="w-10 h-10 rounded-full object-cover border-2 border-border/20"
+                className="w-10 h-10 rounded-full object-cover border-2 border-border/20 bg-gray-100"
                 onError={(e) => {
-                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=40`;
+                  console.log('Image load error for:', fullName, e.currentTarget.src);
                 }}
               />
             </div>

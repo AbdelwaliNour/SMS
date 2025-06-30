@@ -128,11 +128,13 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="relative">
                       <img
-                        src={getProfilePhotoUrl(student.profilePhoto, fullName)}
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=64`}
                         alt={fullName}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-border/20"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-border/20 bg-gray-100"
                         onError={(e) => {
-                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=64`;
+                          console.log('Image load error for:', fullName, e.currentTarget.src);
+                          // Set a different fallback
+                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName.split(' ')[0])}&background=00A1FF&color=fff&size=64`;
                         }}
                       />
                     </div>
