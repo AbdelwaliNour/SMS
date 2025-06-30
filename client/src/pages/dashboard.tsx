@@ -341,43 +341,179 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Modern Students Management Section */}
-      <div className="card-modern glass-morphism p-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-indigo-500/5"></div>
-        <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-violet-500/10 rounded-xl">
-                <Users className="h-6 w-6 text-violet-600" />
+      {/* Modern Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Enrollment Trends Chart */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 bg-blue-500/10 rounded-xl">
+                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gradient">Enrollment Trends</h3>
+                  <p className="text-muted-foreground">Monthly student registration</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gradient">Student Management</h2>
-                <p className="text-muted-foreground">Monitor and manage student enrollment</p>
-              </div>
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+                +15% this month
+              </Badge>
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                className="glass-morphism border-border/30 hover:border-violet-500/30 transition-all duration-300"
-              >
-                <FileCheck className="h-4 w-4 mr-2" />
-                View All
-              </Button>
-              <Button 
-                onClick={goToAddStudent} 
-                className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg transition-all duration-300 hover:scale-105"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Add Student
-              </Button>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={[
+                  { month: 'Jan', students: 120, target: 100 },
+                  { month: 'Feb', students: 135, target: 120 },
+                  { month: 'Mar', students: 148, target: 140 },
+                  { month: 'Apr', students: 162, target: 160 },
+                  { month: 'May', students: 178, target: 180 },
+                  { month: 'Jun', students: 195, target: 200 }
+                ]}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis dataKey="month" className="text-muted-foreground" />
+                  <YAxis className="text-muted-foreground" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                    }} 
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="students" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={3}
+                    dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 6 }}
+                    name="Enrolled Students"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="target" 
+                    stroke="hsl(var(--muted-foreground))" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={{ fill: 'hsl(var(--muted-foreground))', strokeWidth: 2, r: 4 }}
+                    name="Target"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
+        </div>
 
-          <div className="glass-morphism rounded-xl border border-border/30 overflow-hidden">
-            <div className="p-6">
-              <StudentsTable onAddStudent={goToAddStudent} />
+        {/* Grade Distribution Chart */}
+        <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 bg-emerald-500/10 rounded-xl">
+                  <BarChart3 className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gradient">Grade Distribution</h3>
+                  <p className="text-muted-foreground">Student performance overview</p>
+                </div>
+              </div>
+              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                Excellent
+              </Badge>
             </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'A Grade', value: 35, color: '#10b981' },
+                      { name: 'B Grade', value: 28, color: '#3b82f6' },
+                      { name: 'C Grade', value: 22, color: '#f59e0b' },
+                      { name: 'D Grade', value: 12, color: '#ef4444' },
+                      { name: 'F Grade', value: 3, color: '#6b7280' }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={40}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {[
+                      { name: 'A Grade', value: 35, color: '#10b981' },
+                      { name: 'B Grade', value: 28, color: '#3b82f6' },
+                      { name: 'C Grade', value: 22, color: '#f59e0b' },
+                      { name: 'D Grade', value: 12, color: '#ef4444' },
+                      { name: 'F Grade', value: 3, color: '#6b7280' }
+                    ].map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                    }} 
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Section */}
+      <div className="card-modern glass-morphism p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+        <div className="relative z-10">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-3 bg-purple-500/10 rounded-xl">
+              <Users className="h-6 w-6 text-purple-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gradient">Quick Actions</h2>
+              <p className="text-muted-foreground">Manage your school efficiently</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Button 
+              onClick={goToAddStudent}
+              className="p-6 h-auto flex flex-col items-center space-y-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              <Users className="h-6 w-6" />
+              <span className="font-medium">Add Student</span>
+            </Button>
+            
+            <Button 
+              variant="outline"
+              className="p-6 h-auto flex flex-col items-center space-y-2 glass-morphism border-border/30 hover:border-emerald-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <School className="h-6 w-6" />
+              <span className="font-medium">New Class</span>
+            </Button>
+            
+            <Button 
+              variant="outline"
+              className="p-6 h-auto flex flex-col items-center space-y-2 glass-morphism border-border/30 hover:border-amber-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <FileCheck className="h-6 w-6" />
+              <span className="font-medium">Reports</span>
+            </Button>
+            
+            <Button 
+              variant="outline"
+              className="p-6 h-auto flex flex-col items-center space-y-2 glass-morphism border-border/30 hover:border-red-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <Bell className="h-6 w-6" />
+              <span className="font-medium">Alerts</span>
+            </Button>
           </div>
         </div>
       </div>
