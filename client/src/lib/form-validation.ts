@@ -10,6 +10,7 @@ export const ValidationMessages = {
   max: (length: number) => `Cannot exceed ${length} characters`,
   email: "Please enter a valid email address",
   phone: "Please enter a valid phone number",
+  name: "Please enter a valid name using only letters, spaces, hyphens, and apostrophes",
   numeric: "Please enter a valid number",
   date: "Please enter a valid date",
   url: "Please enter a valid URL",
@@ -22,6 +23,7 @@ export const ValidationMessages = {
  */
 export const ValidationPatterns = {
   letters: /^[A-Za-z\s]+$/,
+  name: /^[A-Za-z\s'-]+$/,
   alphanumeric: /^[A-Za-z0-9\s]+$/,
   numeric: /^\d+$/,
   phone: /^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
