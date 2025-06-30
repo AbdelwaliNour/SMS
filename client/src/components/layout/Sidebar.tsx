@@ -19,33 +19,36 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
   );
 
   return (
-    <div className="w-64 h-full bg-white dark:bg-gray-900 border-r border-divider dark:border-gray-700 flex flex-col">
-      {/* Logo */}
-      <div className="p-4 flex items-center">
-        <Logo size={48} />
-        <div className="ml-2">
-          <h1 className="font-homenaje text-xl text-black dark:text-white leading-none">
-            Education
-          </h1>
-          <h1 className="font-homenaje text-xl text-black dark:text-white leading-none">
-            Management
-          </h1>
-          <h1 className="font-homenaje text-xl text-black dark:text-white leading-none">
-            System
-          </h1>
+    <div className="w-64 h-full glass-morphism border-r border-border/50 flex flex-col backdrop-blur-xl">
+      {/* Modern Logo Section */}
+      <div className="p-6 border-b border-border/30">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-primary/10 rounded-xl">
+            <Logo size={40} />
+          </div>
+          <div>
+            <h1 className="font-bold text-lg text-foreground leading-tight">
+              EduSmart
+            </h1>
+            <p className="text-xs text-muted-foreground">Management System</p>
+          </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 pt-6">
-        <div className="px-4 mb-2">
+      {/* Modern Navigation */}
+      <nav className="flex-1 py-6 space-y-2">
+        <div className="px-4">
           <Link
             href="/"
-            className={`flex items-center py-2 px-4 rounded-md ${location === "/" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -57,21 +60,25 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            Dashboard
+            <span className="font-medium">Dashboard</span>
           </Link>
         </div>
 
-        <div className="px-4 mt-6">
-          <h3 className="text-sm font-bold underline text-black-500 dark:text-white-400 uppercase tracking-wider mb-2">
-            PROFILES
+        <div className="px-4 space-y-1">
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-4">
+            Management
           </h3>
           <Link
             href="/students"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/students" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/students" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -83,15 +90,19 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
               />
             </svg>
-            Students
+            <span className="font-medium">Students</span>
           </Link>
           <Link
             href="/classrooms"
-            className={`flex items-center py-2 px-4 rounded-md mb-1 ${location === "/classrooms" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/classrooms" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
+              className="h-5 w-5 mr-3 transition-transform group-hover:scale-110"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -103,11 +114,15 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
               />
             </svg>
-            Class Rooms
+            <span className="font-medium">Classrooms</span>
           </Link>
           <Link
             href="/employees"
-            className={`flex items-center py-2 px-4 rounded-md ${location === "/employees" ? "bg-blue text-white" : "text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"}`}
+            className={`flex items-center py-3 px-4 rounded-xl transition-all duration-300 group ${
+              location === "/employees" 
+                ? "bg-primary text-primary-foreground shadow-lg" 
+                : "text-foreground hover:bg-primary/10 hover:text-primary"
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

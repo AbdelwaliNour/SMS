@@ -35,7 +35,7 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-800">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
       {/* Sidebar (desktop only) */}
       {!isMobile && (
         <Sidebar 
@@ -50,8 +50,10 @@ const Layout = ({ children }: LayoutProps) => {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header toggleTheme={toggleTheme} theme={theme} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <div className="animate-fade-in">
+            {children}
+          </div>
         </main>
       </div>
     </div>

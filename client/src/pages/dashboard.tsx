@@ -59,85 +59,119 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6 mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-aldrich mb-2 text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue to-purple-600">Welcome Back!</h1>
-            <p className="text-gray-600 dark:text-gray-400">Here's what's happening in your school today</p>
+      {/* Modern Welcome Section */}
+      <div className="card-modern glass-morphism p-8 mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5"></div>
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="space-y-3">
+            <h1 className="text-4xl font-bold text-gradient mb-2">Welcome Back!</h1>
+            <p className="text-muted-foreground text-lg">Here's what's happening in your school today</p>
+            <div className="flex items-center space-x-4 mt-4">
+              <Badge variant="secondary" className="px-3 py-1">
+                <GraduationCap className="h-4 w-4 mr-2" />
+                {stats?.students?.total || 0} Students Enrolled
+              </Badge>
+              <Badge variant="outline" className="px-3 py-1">
+                <School className="h-4 w-4 mr-2" />
+                Academic Year 2024-25
+              </Badge>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="icon" className="rounded-xl hover:bg-blue/10">
+            <Button variant="outline" size="icon" className="rounded-xl hover:bg-primary/10 glass-morphism border-border/30">
               <Bell className="h-5 w-5" />
             </Button>
-            <Avatar className="h-12 w-12 ring-2 ring-blue/20" />
+            <Avatar className="h-14 w-14 ring-2 ring-primary/20 ring-offset-2 ring-offset-background" />
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Modern Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue/20 hover:shadow-lg transition-all duration-300">
-          <CardHeader className="pb-2">
+        <Card className="card-modern card-modern-hover relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <CardHeader className="pb-2 relative z-10">
             <div className="flex items-center justify-between">
-              <div className="p-2 bg-blue/10 rounded-xl">
-                <Users className="h-5 w-5 text-blue" />
+              <div className="p-3 bg-blue-500/10 rounded-xl">
+                <Users className="h-6 w-6 text-blue-600" />
               </div>
-              <Badge variant="outline" className="bg-green/10 text-green border-green/20">
-                <TrendingUp className="h-4 w-4 mr-1" />
+              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20 animate-pulse">
+                <TrendingUp className="h-3 w-3 mr-1" />
                 +12%
               </Badge>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold text-blue">{stats?.students?.total || 0}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Students</p>
+          <CardContent className="relative z-10">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats?.students?.total || 0}</h2>
+              <p className="text-sm text-muted-foreground font-medium">Total Students</p>
+              <Progress value={85} className="h-2" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green/20">
-          <CardHeader className="pb-2">
+        <Card className="card-modern card-modern-hover relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <CardHeader className="pb-2 relative z-10">
             <div className="flex items-center justify-between">
-              <GraduationCap className="h-5 w-5 text-green" />
-              <TrendingUp className="h-4 w-4 text-green" />
+              <div className="p-3 bg-green-500/10 rounded-xl">
+                <GraduationCap className="h-6 w-6 text-green-600" />
+              </div>
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                98%
+              </Badge>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold">{stats?.students?.present || 0}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Present Today</p>
+          <CardContent className="relative z-10">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-green-600 dark:text-green-400">{stats?.students?.present || 0}</h2>
+              <p className="text-sm text-muted-foreground font-medium">Present Today</p>
+              <Progress value={92} className="h-2" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow/20">
-          <CardHeader className="pb-2">
+        <Card className="card-modern card-modern-hover relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <CardHeader className="pb-2 relative z-10">
             <div className="flex items-center justify-between">
-              <School className="h-5 w-5 text-yellow" />
-              <TrendingUp className="h-4 w-4 text-green" />
+              <div className="p-3 bg-yellow-500/10 rounded-xl">
+                <School className="h-6 w-6 text-yellow-600" />
+              </div>
+              <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/20">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                +5
+              </Badge>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold">{stats?.classrooms?.total || 0}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Classes</p>
+          <CardContent className="relative z-10">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{stats?.classrooms?.total || 0}</h2>
+              <p className="text-sm text-muted-foreground font-medium">Total Classes</p>
+              <Progress value={75} className="h-2" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red/20">
-          <CardHeader className="pb-2">
+        <Card className="card-modern card-modern-hover relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <CardHeader className="pb-2 relative z-10">
             <div className="flex items-center justify-between">
-              <Users className="h-5 w-5 text-red" />
-              <TrendingUp className="h-4 w-4 text-green" />
+              <div className="p-3 bg-red-500/10 rounded-xl">
+                <Users className="h-6 w-6 text-red-600" />
+              </div>
+              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                +8%
+              </Badge>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-1">
-              <h2 className="text-3xl font-bold">{stats?.employees?.total || 0}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Staff</p>
+          <CardContent className="relative z-10">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-red-600 dark:text-red-400">{stats?.employees?.total || 0}</h2>
+              <p className="text-sm text-muted-foreground font-medium">Total Staff</p>
+              <Progress value={68} className="h-2" />
             </div>
           </CardContent>
         </Card>
