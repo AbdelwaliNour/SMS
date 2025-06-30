@@ -139,7 +139,11 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg leading-tight">{fullName}</h3>
                       <p className="text-sm text-muted-foreground">{student.studentId}</p>
-                      <p className="text-xs text-muted-foreground">{formatAgeDisplay(student.dateOfBirth)}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-xs">
+                          {formatAgeDisplay(student.dateOfBirth)}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
 

@@ -89,7 +89,11 @@ export default function ResponsiveStudentsList({ onAddStudent }: ResponsiveStude
             <div>
               <div className="font-medium text-base">{fullName}</div>
               <div className="text-sm text-gray-500">{student.studentId}</div>
-              <div className="text-xs text-gray-400">{formatAgeDisplay(student.dateOfBirth)}</div>
+              <div className="mt-1">
+                <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-xs">
+                  {formatAgeDisplay(student.dateOfBirth)}
+                </Badge>
+              </div>
             </div>
           </div>
         );
