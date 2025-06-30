@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Attendance, Student } from '@shared/schema';
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
@@ -356,6 +356,9 @@ export default function AttendancePage() {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add Attendance Record</DialogTitle>
+                  <DialogDescription>
+                    Record student attendance for the selected date.
+                  </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
