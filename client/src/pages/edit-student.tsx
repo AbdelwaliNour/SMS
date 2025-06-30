@@ -15,7 +15,7 @@ export default function EditStudent() {
   const [studentId, setStudentId] = useState<number>(parseInt(id));
 
   const { data: student, isLoading, error } = useQuery<Student>({
-    queryKey: ['/api/students', studentId],
+    queryKey: [`/api/students/${studentId}`],
     enabled: !!studentId,
   });
 

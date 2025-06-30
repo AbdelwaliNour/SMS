@@ -166,7 +166,7 @@ const EditStudentForm: React.FC<EditStudentFormProps> = ({ student }) => {
         description: 'Student updated successfully',
       });
       queryClient.invalidateQueries({ queryKey: ['/api/students'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/students', student.id] });
+      queryClient.invalidateQueries({ queryKey: [`/api/students/${student.id}`] });
       navigate('/students');
     } catch (error) {
       toast({
