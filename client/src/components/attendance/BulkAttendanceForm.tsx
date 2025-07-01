@@ -78,7 +78,7 @@ export default function BulkAttendanceForm({ onComplete }: BulkAttendanceFormPro
         studentId: parseInt(studentId),
         status,
         note: studentNotes[parseInt(studentId)] || '',
-        date: new Date().toISOString(),
+        date: new Date(),
       }));
 
       // Submit all attendance records
