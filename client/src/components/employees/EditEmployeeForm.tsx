@@ -223,14 +223,7 @@ const EditEmployeeForm = ({ employee }: EditEmployeeFormProps) => {
                   description="Optional birth date"
                 />
 
-                <EnhancedFormField
-                  form={form}
-                  name="profilePhoto"
-                  label="Profile Picture"
-                  type="url"
-                  placeholder="https://example.com/photo.jpg"
-                  description="Optional profile picture URL"
-                />
+                {/* TODO: Fix profilePhoto field type issue - temporarily disabled */}
               </div>
             </div>
           </div>
