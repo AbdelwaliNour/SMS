@@ -124,7 +124,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
       status: "unpaid",
       type: "tuition",
       academicYear: `${currentYear}-${currentYear + 1}`,
-      term: "Fall",
+      term: "First Term",
     },
   });
 
@@ -134,14 +134,20 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
   const addPaymentMutation = useMutation({
     mutationFn: async (data: PaymentFormData) => {
+      console.log("Form data before submission:", data);
+      
       const paymentData: Partial<InsertPayment> = {
         ...data,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
       };
       
+      console.log("Payment data being sent to API:", paymentData);
+      
       const response = await apiRequest("POST", "/api/payments", paymentData);
       if (!response.ok) {
-        throw new Error("Failed to add payment");
+        const errorData = await response.text();
+        console.error("API Error Response:", errorData);
+        throw new Error(`Failed to add payment: ${response.status} ${response.statusText}`);
       }
       return response.json();
     },
