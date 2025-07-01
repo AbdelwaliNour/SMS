@@ -44,7 +44,7 @@ const studentFormSchema = z.object({
 
   dateOfBirth: z.string().min(1, ValidationMessages.required),
 
-  section: z.enum(["primary", "secondary", "highschool"]),
+  section: z.enum(["primary", "intermediate", "secondary"]),
 
   class: z.string().min(1, ValidationMessages.required),
 
@@ -213,7 +213,7 @@ export default function AddStudentForm() {
                 options={[
                   { value: "primary", label: "Primary" },
                   { value: "secondary", label: "Secondary" },
-                  { value: "highschool", label: "High School" },
+                  { value: "intermediate", label: "Intermediate" },
                 ]}
               />
             </div>

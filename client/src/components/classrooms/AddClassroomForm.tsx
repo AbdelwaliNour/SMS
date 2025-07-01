@@ -13,14 +13,14 @@ import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
 
 const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
-  section: z.enum(['primary', 'secondary', 'highschool']),
+  section: z.enum(['primary', 'intermediate', 'secondary']),
   capacity: z.string().transform(val => parseInt(val)).pipe(z.number().min(1, "Capacity must be at least 1")),
   teacherId: z.string().transform(val => val === "0" || val === "" ? null : parseInt(val)),
 });
 
 type ClassroomFormValues = {
   name: string;
-  section: 'primary' | 'secondary' | 'highschool';
+  section: 'primary' | 'intermediate' | 'secondary';
   capacity: string;
   teacherId: string;
 };
@@ -105,7 +105,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
                 options={[
                   { value: "primary", label: "Primary" },
                   { value: "secondary", label: "Secondary" },
-                  { value: "highschool", label: "High School" },
+                  { value: "intermediate", label: "Intermediate" },
                 ]}
                 description="Educational level for this classroom"
               />

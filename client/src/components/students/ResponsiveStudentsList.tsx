@@ -245,7 +245,7 @@ export default function ResponsiveStudentsList({ onAddStudent }: ResponsiveStude
             { value: '', label: 'All Sections' },
             { value: 'primary', label: 'Primary' },
             { value: 'secondary', label: 'Secondary' },
-            { value: 'highschool', label: 'High School' },
+            { value: 'intermediate', label: 'Intermediate' },
           ]}
           value={filters.section}
           onChange={(value) => setFilters({ ...filters, section: value })}

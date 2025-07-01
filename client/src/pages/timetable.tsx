@@ -36,7 +36,7 @@ const timeTableFormSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   teacherId: z.string().min(1, "Teacher is required"),
   classroomId: z.string().min(1, "Classroom is required"),
-  section: z.enum(['primary', 'secondary', 'highschool']),
+  section: z.enum(['primary', 'intermediate', 'secondary']),
   class: z.string().min(1, "Class is required"),
 });
 
@@ -57,10 +57,10 @@ export default function TimeTable() {
     { id: 3, day: 'Monday', startTime: '10:00', endTime: '11:00', subject: 'Science', teacher: 'Mr. Davis', classroom: 'Room 103', section: 'primary', class: 'Three' },
     { id: 4, day: 'Tuesday', startTime: '08:00', endTime: '09:00', subject: 'Arabic', teacher: 'Mr. Ahmed', classroom: 'Room 101', section: 'primary', class: 'Three' },
     { id: 5, day: 'Tuesday', startTime: '09:00', endTime: '10:00', subject: 'Islamic Studies', teacher: 'Mr. Farooq', classroom: 'Room 102', section: 'primary', class: 'Three' },
-    { id: 6, day: 'Wednesday', startTime: '08:00', endTime: '09:00', subject: 'History', teacher: 'Mrs. Brown', classroom: 'Room 104', section: 'secondary', class: 'Seven' },
-    { id: 7, day: 'Wednesday', startTime: '09:00', endTime: '10:00', subject: 'Geography', teacher: 'Mr. Wilson', classroom: 'Room 105', section: 'secondary', class: 'Seven' },
-    { id: 8, day: 'Thursday', startTime: '08:00', endTime: '09:00', subject: 'Physics', teacher: 'Dr. Thompson', classroom: 'Lab 201', section: 'highschool', class: 'Eleven' },
-    { id: 9, day: 'Thursday', startTime: '09:00', endTime: '10:00', subject: 'Chemistry', teacher: 'Dr. Martin', classroom: 'Lab 202', section: 'highschool', class: 'Eleven' },
+    { id: 6, day: 'Wednesday', startTime: '08:00', endTime: '09:00', subject: 'History', teacher: 'Mrs. Brown', classroom: 'Room 104', section: 'intermediate', class: 'Seven' },
+    { id: 7, day: 'Wednesday', startTime: '09:00', endTime: '10:00', subject: 'Geography', teacher: 'Mr. Wilson', classroom: 'Room 105', section: 'intermediate', class: 'Seven' },
+    { id: 8, day: 'Thursday', startTime: '08:00', endTime: '09:00', subject: 'Physics', teacher: 'Dr. Thompson', classroom: 'Lab 201', section: 'secondary', class: 'Eleven' },
+    { id: 9, day: 'Thursday', startTime: '09:00', endTime: '10:00', subject: 'Chemistry', teacher: 'Dr. Martin', classroom: 'Lab 202', section: 'secondary', class: 'Eleven' },
     { id: 10, day: 'Friday', startTime: '08:00', endTime: '09:00', subject: 'Physical Education', teacher: 'Coach Anderson', classroom: 'Sports Hall', section: 'primary', class: 'Four' },
   ];
 
@@ -128,8 +128,8 @@ export default function TimeTable() {
   const todaySchedules = timeTableData.filter(entry => entry.day === new Date().toLocaleDateString('en-US', { weekday: 'long' })).length;
   const uniqueSubjects = Array.from(new Set(timeTableData.map(entry => entry.subject))).length;
   const primarySchedules = timeTableData.filter(entry => entry.section === 'primary').length;
+  const intermediateSchedules = timeTableData.filter(entry => entry.section === 'intermediate').length;
   const secondarySchedules = timeTableData.filter(entry => entry.section === 'secondary').length;
-  const highschoolSchedules = timeTableData.filter(entry => entry.section === 'highschool').length;
 
   // Filter data based on search and filters
   const filteredData = timeTableData.filter(entry => {
@@ -335,8 +335,8 @@ export default function TimeTable() {
                                 </FormControl>
                                 <SelectContent>
                                   <SelectItem value="primary">Primary</SelectItem>
+                                  <SelectItem value="intermediate">Intermediate</SelectItem>
                                   <SelectItem value="secondary">Secondary</SelectItem>
-                                  <SelectItem value="highschool">High School</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -494,7 +494,7 @@ export default function TimeTable() {
           <Card className="glass-morphism border-border/30 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-cyan-700 dark:text-cyan-300">Secondary Classes</h3>
+                <h3 className="font-semibold text-cyan-700 dark:text-cyan-300">Intermediate Classes</h3>
                 <div className="flex items-center">
                   <ArrowUpRight className="h-4 w-4 text-blue-500 mr-1" />
                   <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full dark:bg-blue-900/20">+5%</span>
@@ -502,12 +502,12 @@ export default function TimeTable() {
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-cyan-600">{secondarySchedules}</span>
+                  <span className="text-2xl font-bold text-cyan-600">{intermediateSchedules}</span>
                   <span className="text-sm text-muted-foreground">schedules</span>
                 </div>
-                <Progress value={(secondarySchedules / totalSchedules) * 100} className="h-3 bg-cyan-100 dark:bg-cyan-900/20" />
+                <Progress value={(intermediateSchedules / totalSchedules) * 100} className="h-3 bg-cyan-100 dark:bg-cyan-900/20" />
                 <p className="text-sm text-muted-foreground">
-                  {Math.round((secondarySchedules / totalSchedules) * 100)}% of total schedules
+                  {Math.round((intermediateSchedules / totalSchedules) * 100)}% of total schedules
                 </p>
               </div>
             </CardContent>
@@ -516,7 +516,7 @@ export default function TimeTable() {
           <Card className="glass-morphism border-border/30 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-blue-700 dark:text-blue-300">High School Classes</h3>
+                <h3 className="font-semibold text-blue-700 dark:text-blue-300">Secondary Classes</h3>
                 <div className="flex items-center">
                   <TrendingUp className="h-4 w-4 text-indigo-500 mr-1" />
                   <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full dark:bg-indigo-900/20">+15%</span>
@@ -524,12 +524,12 @@ export default function TimeTable() {
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-blue-600">{highschoolSchedules}</span>
+                  <span className="text-2xl font-bold text-blue-600">{secondarySchedules}</span>
                   <span className="text-sm text-muted-foreground">schedules</span>
                 </div>
-                <Progress value={(highschoolSchedules / totalSchedules) * 100} className="h-3 bg-blue-100 dark:bg-blue-900/20" />
+                <Progress value={(secondarySchedules / totalSchedules) * 100} className="h-3 bg-blue-100 dark:bg-blue-900/20" />
                 <p className="text-sm text-muted-foreground">
-                  {Math.round((highschoolSchedules / totalSchedules) * 100)}% of total schedules
+                  {Math.round((secondarySchedules / totalSchedules) * 100)}% of total schedules
                 </p>
               </div>
             </CardContent>
@@ -574,8 +574,8 @@ export default function TimeTable() {
                       <SelectContent>
                         <SelectItem value="all">All Sections</SelectItem>
                         <SelectItem value="primary">Primary</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
                         <SelectItem value="secondary">Secondary</SelectItem>
-                        <SelectItem value="highschool">High School</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={selectedClass} onValueChange={setSelectedClass}>
@@ -646,11 +646,11 @@ export default function TimeTable() {
                               <div className="flex items-center space-x-2">
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                   schedule.section === 'primary' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/20' :
-                                  schedule.section === 'secondary' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/20' :
+                                  schedule.section === 'intermediate' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/20' :
                                   'bg-blue-100 text-blue-700 dark:bg-blue-900/20'
                                 }`}>
                                   {schedule.section === 'primary' ? 'Primary' : 
-                                   schedule.section === 'secondary' ? 'Secondary' : 'High School'}
+                                   schedule.section === 'intermediate' ? 'Intermediate' : 'Secondary'}
                                 </span>
                                 <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium">
                                   Class {schedule.class}
