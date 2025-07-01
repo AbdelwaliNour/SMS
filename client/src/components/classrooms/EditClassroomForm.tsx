@@ -139,34 +139,36 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-              className="glass-morphism border-border/30 hover:border-red-500/30"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="glass-morphism bg-primary/90 hover:bg-primary border-primary/30"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Update Classroom
-                </>
-              )}
-            </Button>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+            <div className="flex justify-end space-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-white/10 border-2 border-gray-300 hover:bg-red-50 hover:border-red-300 text-gray-700 font-medium rounded-lg transition-all duration-200"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg border-2 border-blue-600 hover:border-blue-700 transition-all duration-200 shadow-lg"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Update Classroom
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>
