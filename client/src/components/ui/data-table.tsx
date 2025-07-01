@@ -59,12 +59,12 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="rounded-md border shadow bg-white dark:bg-gray-900">
         <Table>
-          <TableHeader className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+          <TableHeader className="bg-gradient-to-r from-blue-100 via-purple-100 to-cyan-100 dark:from-blue-900/30 dark:via-purple-900/30 dark:to-cyan-900/30 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+              <TableRow key={headerGroup.id} className="hover:bg-gradient-to-r hover:from-blue-200 hover:via-purple-200 hover:to-cyan-200 dark:hover:from-blue-800/40 dark:hover:via-purple-800/40 dark:hover:to-cyan-800/40 transition-all duration-200">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-semibold text-gray-900 dark:text-gray-100 py-4 px-6 text-sm uppercase tracking-wide">
+                    <TableHead key={header.id} className="font-semibold text-gray-900 dark:text-white py-4 px-6 text-sm uppercase tracking-wide bg-gradient-to-br from-transparent via-white/20 to-transparent dark:from-transparent dark:via-white/5 dark:to-transparent">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
