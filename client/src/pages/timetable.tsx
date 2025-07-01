@@ -803,7 +803,7 @@ export default function TimeTable() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="schedules" className="space-y-6">
-          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted glass-morphism border-border/30 p-1 text-white">
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted glass-morphism border-border/30 p-1">
             <TabsTrigger value="schedules" className="data-[state=active]:bg-teal-100 data-[state=active]:text-teal-700 dark:data-[state=active]:bg-teal-900/30">
               Schedules
             </TabsTrigger>
