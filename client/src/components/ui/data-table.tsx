@@ -59,12 +59,12 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="rounded-md border shadow bg-white dark:bg-gray-900">
         <Table>
-          <TableHeader className="bg-blue text-white">
+          <TableHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white sticky top-0 z-10 shadow-lg">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-blue-600">
+              <TableRow key={headerGroup.id} className="hover:bg-gradient-to-r hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 transition-all duration-200">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-homenaje text-white">
+                    <TableHead key={header.id} className="font-semibold text-white py-4 px-6 text-sm tracking-wide uppercase border-r border-white/20 last:border-r-0 backdrop-blur-sm">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
