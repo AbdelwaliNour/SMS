@@ -24,7 +24,7 @@ const Sidebar = ({ theme, toggleTheme, activeUser }: SidebarProps) => {
       <div className="p-6 border-b border-border/30">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-primary/10 rounded-xl">
-            <Logo size={40} />
+            <Logo size={56} />
           </div>
           <div>
             <h1 className="font-bold text-lg text-foreground leading-tight">
