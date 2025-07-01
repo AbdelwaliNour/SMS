@@ -357,101 +357,100 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
               {/* Payment Details Card */}
               <Card className="glass-morphism border-blue-200/50 dark:border-blue-800/50 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/20">
-                <CardHeader className="bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 -m-6 mb-0 p-6 rounded-t-lg">
-                  <CardTitle className="text-lg flex items-center text-blue-700 dark:text-blue-300">
-                    <div className="p-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg mr-2">
-                      <CreditCard className="h-5 w-5 text-white" />
-                    </div>
-                    Payment Details
-                  </CardTitle>
-                </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Status */}
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium">Payment Status</FormLabel>
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                              <SelectTrigger className="h-12">
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {paymentStatuses.map((status) => (
-                                <SelectItem key={status.value} value={status.value}>
-                                  <div className="flex items-center space-x-2">
-                                    <Badge className={status.color}>
-                                      {status.label}
-                                    </Badge>
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Payment Method */}
-                    <FormField
-                      control={form.control}
-                      name="method"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium">Payment Method</FormLabel>
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <FormControl>
-                              <SelectTrigger className="h-12">
-                                <SelectValue placeholder="Select payment method" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {paymentMethods.map((method) => {
-                                const Icon = method.icon;
-                                return (
-                                  <SelectItem key={method.value} value={method.value}>
+                  {/* Payment Details */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-medium flex items-center text-blue-700 dark:text-blue-300">
+                      <div className="p-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg mr-2">
+                        <CreditCard className="h-5 w-5 text-white" />
+                      </div>
+                      Payment Details
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Status */}
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-medium">Payment Status</FormLabel>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger className="h-12">
+                                  <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {paymentStatuses.map((status) => (
+                                  <SelectItem key={status.value} value={status.value}>
                                     <div className="flex items-center space-x-2">
-                                      <Icon className="h-4 w-4" />
-                                      <span>{method.label}</span>
+                                      <Badge className={status.color}>
+                                        {status.label}
+                                      </Badge>
                                     </div>
                                   </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    {/* Due Date */}
-                    <FormField
-                      control={form.control}
-                      name="dueDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            Due Date
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="date"
-                              className="h-12"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      {/* Payment Method */}
+                      <FormField
+                        control={form.control}
+                        name="method"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-medium">Payment Method</FormLabel>
+                            <Select value={field.value} onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger className="h-12">
+                                  <SelectValue placeholder="Select payment method" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {paymentMethods.map((method) => {
+                                  const Icon = method.icon;
+                                  return (
+                                    <SelectItem key={method.value} value={method.value}>
+                                      <div className="flex items-center space-x-2">
+                                        <Icon className="h-4 w-4" />
+                                        <span>{method.label}</span>
+                                      </div>
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-
+                      {/* Due Date */}
+                      <FormField
+                        control={form.control}
+                        name="dueDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-medium flex items-center">
+                              <Calendar className="h-4 w-4 mr-2" />
+                              Due Date
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="date"
+                                className="h-12"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
 
                   <Separator />
@@ -519,7 +518,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                     </div>
                   </div>
 
-
+                  <Separator />
 
                   {/* Notes */}
                   <FormField
