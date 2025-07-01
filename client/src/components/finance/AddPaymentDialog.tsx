@@ -210,7 +210,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                 <CardContent className="space-y-6">
                   {/* Payment Overview */}
                   <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center text-emerald-700 dark:text-emerald-300">
+                    <h4 className="text-lg font-medium flex items-center text-emerald-700 dark:text-emerald-300 p-4">
                       <div className="p-1.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg mr-2">
                         <Receipt className="h-5 w-5 text-white" />
                       </div>
@@ -363,7 +363,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                 <CardContent className="space-y-6">
                   {/* Payment Details */}
                   <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center text-blue-700 dark:text-blue-300">
+                    <h4 className="text-lg font-medium flex items-center text-blue-700 dark:text-blue-300 p-4">
                       <div className="p-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg mr-2">
                         <CreditCard className="h-5 w-5 text-white" />
                       </div>
@@ -460,7 +460,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
                   {/* Academic Information */}
                   <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center text-purple-700 dark:text-purple-300">
+                    <h4 className="text-lg font-medium flex items-center text-purple-700 dark:text-purple-300 p-4">
                       <div className="p-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-2">
                         <BookOpen className="h-5 w-5 text-white" />
                       </div>
