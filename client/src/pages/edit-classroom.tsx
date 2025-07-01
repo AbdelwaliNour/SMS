@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import Layout from '@/components/layout/Layout';
@@ -8,16 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { Classroom, Employee } from '@shared/schema';
 
-export default function EditClassroom() {
-  const [location] = useLocation();
-  const [classroomId, setClassroomId] = useState<string | null>(null);
+interface EditClassroomProps {
+  params: { id: string };
+}
 
-  useEffect(() => {
-    // Extract classroom ID from URL parameters
-    const params = new URLSearchParams(location.split('?')[1] || '');
-    const id = params.get('id');
-    setClassroomId(id);
-  }, [location]);
+export default function EditClassroom({ params }: EditClassroomProps) {
+  const classroomId = params.id;
 
   const { data: classrooms } = useQuery<Classroom[]>({
     queryKey: ['/api/classrooms'],
