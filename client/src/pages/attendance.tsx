@@ -148,7 +148,7 @@ export default function AttendancePage() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      <div className="space-y-8">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2">
