@@ -249,6 +249,8 @@ Changelog:
   * Resolved TypeScript errors in ResultsTable component related to null profile photos and dates
   * Enhanced filtering logic in reports page with proper search, type, and status filtering
   * Ensured consistent filter behavior across classrooms, attendance, finance, and results pages
+  * Fixed hover colors for all action buttons to ensure proper dark mode compatibility
+  * Enhanced button styling with proper dark theme hover states for better user experience
 ```
 
 ## User Preferences

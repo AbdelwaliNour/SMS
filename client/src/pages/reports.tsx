@@ -78,7 +78,7 @@ const Reports = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" className="hover:bg-indigo-50 hover:border-indigo-200 transition-all duration-200">
+            <Button variant="outline" size="sm" className="hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-900/20 dark:hover:border-indigo-700 transition-all duration-200">
               <Download className="h-4 w-4 mr-2" />
               Export All
             </Button>
@@ -422,7 +422,7 @@ const Reports = () => {
                       <p className="text-sm text-muted-foreground">Student results analysis</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-900/20 dark:hover:border-emerald-700 transition-colors">
                     <Download className="h-4 w-4 mr-2" />
                     Schedule Report
                   </Button>
@@ -440,7 +440,7 @@ const Reports = () => {
                       <p className="text-sm text-muted-foreground">Revenue and expenses</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-blue-900/20 dark:hover:border-blue-700 transition-colors">
                     <Download className="h-4 w-4 mr-2" />
                     Schedule Report
                   </Button>
@@ -458,7 +458,7 @@ const Reports = () => {
                       <p className="text-sm text-muted-foreground">Daily attendance tracking</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full hover:bg-purple-50 hover:border-purple-200 dark:hover:bg-purple-900/20 dark:hover:border-purple-700 transition-colors">
                     <Download className="h-4 w-4 mr-2" />
                     Schedule Report
                   </Button>
@@ -664,7 +664,7 @@ const ReportsTable = ({
                 </div>
 
                 <div className="flex space-x-2 relative z-10">
-                  <Button variant="outline" size="sm" className="flex-1 hover:bg-indigo-50 hover:border-indigo-200 transition-colors text-xs">
+                  <Button variant="outline" size="sm" className="flex-1 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-900/20 dark:hover:border-indigo-700 transition-colors text-xs">
                     <Download className="h-3 w-3 mr-1" />
                     Download
                   </Button>

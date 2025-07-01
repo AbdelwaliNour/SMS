@@ -94,7 +94,7 @@ const StudentPerformance = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" className="hover:bg-amber-50 hover:border-amber-200 transition-all duration-200">
+            <Button variant="outline" size="sm" className="hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-900/20 dark:hover:border-amber-700 transition-all duration-200">
               <Download className="h-4 w-4 mr-2" />
               Export Report
             </Button>
@@ -684,7 +684,7 @@ const PerformanceTable = ({
                 </div>
 
                 <div className="flex space-x-2 relative z-10">
-                  <Button variant="outline" size="sm" className="flex-1 hover:bg-amber-50 hover:border-amber-200 transition-colors text-xs">
+                  <Button variant="outline" size="sm" className="flex-1 hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-900/20 dark:hover:border-amber-700 transition-colors text-xs">
                     <Eye className="h-3 w-3 mr-1" />
                     View Details
                   </Button>
