@@ -129,10 +129,6 @@ export default function AttendancePage() {
     }
   };
 
-  const getStudentInfo = (studentId: number) => {
-    return students?.find(s => s.id === studentId);
-  };
-
   // Functions for the new table-based attendance form
   const updateStudentStatus = (studentId: number, status: 'present' | 'absent' | 'late') => {
     setStudentStatuses(prev => ({
@@ -226,6 +222,53 @@ export default function AttendancePage() {
   const attendanceRate = attendanceStats.total > 0 
     ? Math.round((attendanceStats.present / attendanceStats.total) * 100)
     : 0;
+
+  const getStudentInfo = (studentId: number) => {
+    return students?.find(s => s.id === studentId);
+  };
+
+  // Filter attendance data based on current filters
+  const filteredAttendance = attendance?.filter(record => {
+    let matches = true;
+
+    // Search filter
+    if (searchTerm) {
+      const student = getStudentInfo(record.studentId);
+      const fullName = student ? `${student.firstName} ${student.lastName}`.toLowerCase() : '';
+      const studentId = student?.studentId?.toLowerCase() || '';
+      matches = matches && (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        studentId.includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Status filter
+    if (filters.status) {
+      matches = matches && record.status === filters.status;
+    }
+
+    // Date filter
+    if (filters.date && record.date) {
+      const recordDate = new Date(record.date);
+      const today = new Date();
+      
+      switch (filters.date) {
+        case 'today':
+          matches = matches && recordDate.toDateString() === today.toDateString();
+          break;
+        case 'week':
+          const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+          matches = matches && recordDate >= weekAgo;
+          break;
+        case 'month':
+          const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+          matches = matches && recordDate >= monthAgo;
+          break;
+      }
+    }
+
+    return matches;
+  }) || [];
 
   const columns: ColumnDef<Attendance>[] = [
     {
@@ -430,19 +473,61 @@ export default function AttendancePage() {
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
-          <span className="font-semibold">Quick Actions</span>
+          <span className="font-semibold">Quick Actions & Status</span>
         </div>
       ),
       cell: ({ row }) => {
         const currentStatus = row.original.status;
         
+        const getStatusDisplay = (status: string) => {
+          switch (status) {
+            case 'present':
+              return {
+                label: 'Present',
+                color: 'text-emerald-700 dark:text-emerald-300',
+                bg: 'bg-emerald-100 dark:bg-emerald-900/30',
+                icon: <CheckCircle className="w-4 h-4" />
+              };
+            case 'late':
+              return {
+                label: 'Late',
+                color: 'text-amber-700 dark:text-amber-300',
+                bg: 'bg-amber-100 dark:bg-amber-900/30',
+                icon: <Clock className="w-4 h-4" />
+              };
+            case 'absent':
+              return {
+                label: 'Absent',
+                color: 'text-red-700 dark:text-red-300',
+                bg: 'bg-red-100 dark:bg-red-900/30',
+                icon: <XCircle className="w-4 h-4" />
+              };
+            default:
+              return {
+                label: 'Unknown',
+                color: 'text-gray-700 dark:text-gray-300',
+                bg: 'bg-gray-100 dark:bg-gray-900/30',
+                icon: <XCircle className="w-4 h-4" />
+              };
+          }
+        };
+
+        const statusDisplay = getStatusDisplay(currentStatus);
+        
         return (
-          <div className="flex items-center space-x-2 py-2">
+          <div className="flex items-center space-x-4 py-2">
+            {/* Current Status Display */}
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border ${statusDisplay.bg} ${statusDisplay.color} border-current/20`}>
+              {statusDisplay.icon}
+              <span className="font-semibold text-sm">{statusDisplay.label}</span>
+            </div>
+            
+            {/* Quick Action Buttons */}
             <div className="flex space-x-1.5 bg-white dark:bg-gray-800 rounded-2xl p-2 border-2 border-gray-200 dark:border-gray-600 shadow-lg">
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
+                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'present' 
                     ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105 ring-2 ring-emerald-300' 
                     : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:shadow-md'
@@ -450,12 +535,12 @@ export default function AttendancePage() {
                 onClick={() => handleUpdateAttendance(row.original.id, 'present')}
                 title="Mark Present"
               >
-                <CheckCircle className="w-5 h-5" />
+                <CheckCircle className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
+                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'late' 
                     ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 scale-105 ring-2 ring-amber-300' 
                     : 'hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:shadow-md'
@@ -463,12 +548,12 @@ export default function AttendancePage() {
                 onClick={() => handleUpdateAttendance(row.original.id, 'late')}
                 title="Mark Late"
               >
-                <Clock className="w-5 h-5" />
+                <Clock className="w-4 h-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
+                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'absent' 
                     ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 scale-105 ring-2 ring-red-300' 
                     : 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:shadow-md'
@@ -476,7 +561,7 @@ export default function AttendancePage() {
                 onClick={() => handleUpdateAttendance(row.original.id, 'absent')}
                 title="Mark Absent"
               >
-                <XCircle className="w-5 h-5" />
+                <XCircle className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -853,7 +938,7 @@ export default function AttendancePage() {
             ) : (
               <DataTable
                 columns={columns}
-                data={attendance || []}
+                data={filteredAttendance}
               />
             )}
           </CardContent>
