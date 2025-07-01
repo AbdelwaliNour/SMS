@@ -228,7 +228,7 @@ export default function Finance() {
                     <AlertTriangle className="h-5 w-5 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-red-600 text-[25px]">Unpaid Students</h3>
+                    <h3 className="font-semibold text-red-600 text-[23px]">Unpaid Students</h3>
                     <p className="text-sm text-muted-foreground">Outstanding fees</p>
                   </div>
                 </div>
