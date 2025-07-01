@@ -531,53 +531,53 @@ export default function AttendancePage() {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-500/10 dark:to-cyan-500/10">
+          <Card className="glass-morphism border-blue-300 dark:border-blue-500/50 bg-gradient-to-br from-blue-100 via-blue-50 to-cyan-100 dark:from-blue-600/20 dark:via-blue-500/20 dark:to-cyan-600/20 shadow-lg shadow-blue-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Total Records</CardTitle>
-              <ClipboardList className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-200">Total Records</CardTitle>
+              <ClipboardList className="h-5 w-5 text-blue-700 dark:text-blue-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.total}</div>
-              <div className="text-xs text-gray-600 dark:text-blue-200 mt-1">
+              <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">{attendanceStats.total}</div>
+              <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">
                 All attendance records
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10">
+          <Card className="glass-morphism border-emerald-300 dark:border-emerald-500/50 bg-gradient-to-br from-emerald-100 via-green-50 to-emerald-100 dark:from-emerald-600/20 dark:via-green-500/20 dark:to-emerald-600/20 shadow-lg shadow-emerald-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Present</CardTitle>
-              <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <CardTitle className="text-sm font-medium text-emerald-800 dark:text-emerald-200">Present</CardTitle>
+              <CheckCircle className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.present}</div>
-              <div className="text-xs text-gray-600 dark:text-emerald-200 mt-1">
+              <div className="text-3xl font-bold text-emerald-900 dark:text-emerald-100">{attendanceStats.present}</div>
+              <div className="text-xs text-emerald-700 dark:text-emerald-300 mt-1">
                 {attendanceRate}% attendance rate
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-500/10 dark:to-yellow-500/10">
+          <Card className="glass-morphism border-amber-300 dark:border-amber-500/50 bg-gradient-to-br from-amber-100 via-yellow-50 to-amber-100 dark:from-amber-600/20 dark:via-yellow-500/20 dark:to-amber-600/20 shadow-lg shadow-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Late Arrivals</CardTitle>
-              <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <CardTitle className="text-sm font-medium text-amber-800 dark:text-amber-200">Late Arrivals</CardTitle>
+              <Clock className="h-5 w-5 text-amber-700 dark:text-amber-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.late}</div>
-              <div className="text-xs text-gray-600 dark:text-amber-200 mt-1">
+              <div className="text-3xl font-bold text-amber-900 dark:text-amber-100">{attendanceStats.late}</div>
+              <div className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                 Need attention
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10">
+          <Card className="glass-morphism border-red-300 dark:border-red-500/50 bg-gradient-to-br from-red-100 via-rose-50 to-red-100 dark:from-red-600/20 dark:via-rose-500/20 dark:to-red-600/20 shadow-lg shadow-red-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Absent</CardTitle>
-              <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <CardTitle className="text-sm font-medium text-red-800 dark:text-red-200">Absent</CardTitle>
+              <XCircle className="h-5 w-5 text-red-700 dark:text-red-300" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.absent}</div>
-              <div className="text-xs text-gray-600 dark:text-red-200 mt-1">
+              <div className="text-3xl font-bold text-red-900 dark:text-red-100">{attendanceStats.absent}</div>
+              <div className="text-xs text-red-700 dark:text-red-300 mt-1">
                 Requires follow-up
               </div>
             </CardContent>
