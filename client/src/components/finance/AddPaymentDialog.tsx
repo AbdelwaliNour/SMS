@@ -183,18 +183,13 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
     (status) => status.value === form.watch("status")
   );
 
-  const defaultTrigger = (
-    <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
-      <Plus className="h-4 w-4 mr-2" />
-      Add Payment
-    </Button>
-  );
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      {trigger && (
+        <DialogTrigger asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-4xl w-full max-h-[90vh] flex flex-col glass-morphism border-border/30 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/80 dark:from-emerald-950/20 dark:via-background dark:to-blue-950/20 overflow-hidden">
         <DialogHeader className="pb-6 border-b border-emerald-200/50 dark:border-emerald-800/50 flex-shrink-0 bg-gradient-to-r from-emerald-100/50 to-teal-100/50 dark:from-emerald-900/30 dark:to-teal-900/30 -m-6 mb-0 p-6 rounded-t-lg">
           <DialogTitle className="text-2xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center">
