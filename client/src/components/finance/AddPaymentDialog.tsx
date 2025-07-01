@@ -195,7 +195,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] flex flex-col glass-morphism border-border/30 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/80 dark:from-emerald-950/20 dark:via-background dark:to-blue-950/20">
+      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] flex flex-col glass-morphism border-border/30 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/80 dark:from-emerald-950/20 dark:via-background dark:to-blue-950/20 overflow-hidden">
         <DialogHeader className="pb-6 border-b border-emerald-200/50 dark:border-emerald-800/50 flex-shrink-0 bg-gradient-to-r from-emerald-100/50 to-teal-100/50 dark:from-emerald-900/30 dark:to-teal-900/30 -m-6 mb-0 p-6 rounded-t-lg">
           <DialogTitle className="text-2xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center">
             <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg mr-3">
@@ -208,7 +208,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto py-6 min-h-0">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 min-h-0">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Payment Overview Card */}
@@ -306,7 +306,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                       <FormItem>
                         <FormLabel className="text-base font-medium text-purple-700 dark:text-purple-300">Payment Type</FormLabel>
                         <FormControl>
-                          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                             {paymentTypes.map((type) => {
                               const Icon = type.icon;
                               const isSelected = field.value === type.value;
