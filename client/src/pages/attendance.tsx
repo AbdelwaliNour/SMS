@@ -229,30 +229,6 @@ export default function AttendancePage() {
 
   const columns: ColumnDef<Attendance>[] = [
     {
-      id: 'select',
-      header: ({ table }) => (
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={table.getIsAllPageRowsSelected()}
-            onChange={(value) => table.toggleAllPageRowsSelected(!!value.target.checked)}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Select All</span>
-        </div>
-      ),
-      cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.getIsSelected()}
-          onChange={(value) => row.toggleSelected(!!value.target.checked)}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
       accessorKey: 'student',
       header: ({ column }) => (
         <div className="flex items-center space-x-2">
