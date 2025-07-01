@@ -147,7 +147,6 @@ export default function AttendancePage() {
         studentId: parseInt(studentId),
         status,
         note: studentNotes[parseInt(studentId)] || '',
-        date: new Date(),
       }));
 
       let successCount = 0;
