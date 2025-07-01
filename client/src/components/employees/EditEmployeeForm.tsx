@@ -10,7 +10,7 @@ import { ValidationMessages, ValidationPatterns } from '@/lib/form-validation';
 import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
 import { Employee } from '@shared/schema';
 import { useLocation } from 'wouter';
-import { User, Phone, Mail, Heart, FileImage, Award, Save, Loader2, UserCheck, Briefcase } from 'lucide-react';
+import { User, Phone, Mail, Heart, FileImage, Award, Save, Loader2, UserCheck, Briefcase, X } from 'lucide-react';
 
 const employeeFormSchema = z.object({
   employeeId: z.string().min(1, ValidationMessages.required),
@@ -310,8 +310,9 @@ const EditEmployeeForm = ({ employee }: EditEmployeeFormProps) => {
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="btn-outline"
+              className="px-6 py-2 bg-white/10 border-2 border-gray-300 hover:bg-red-50 hover:border-red-300 text-gray-700 font-medium rounded-lg transition-all duration-200"
             >
+              <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
             <Button

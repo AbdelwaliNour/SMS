@@ -528,7 +528,7 @@ export default function AddEmployeeForm({ onSuccess, onCancel }: AddEmployeeForm
             type="button" 
             variant="outline" 
             onClick={onCancel}
-            className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600 px-6"
+            className="px-6 py-2 bg-white/10 border-2 border-gray-300 hover:bg-red-50 hover:border-red-300 text-gray-700 font-medium rounded-lg transition-all duration-200"
           >
             <X className="h-4 w-4 mr-2" />
             Cancel
