@@ -586,7 +586,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                   type="button"
                   variant="outline"
                   onClick={() => setIsOpen(false)}
-                  className="min-w-[120px] border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-700 dark:text-rose-300 dark:hover:bg-rose-950/20"
+                  className="min-w-[120px] glass-morphism border-gradient-to-r from-slate-300 to-gray-300 dark:from-slate-600 dark:to-gray-600 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-gray-800 text-slate-700 dark:text-slate-300 hover:from-slate-100 hover:to-gray-100 dark:hover:from-slate-700 dark:hover:to-gray-700 shadow-lg shadow-slate-500/25 hover:shadow-xl hover:shadow-slate-500/30 transition-all duration-300"
                 >
                   Cancel
                 </Button>
