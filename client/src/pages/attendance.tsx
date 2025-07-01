@@ -164,7 +164,6 @@ export default function AttendancePage() {
       
       const attendanceRecords = recordsToSubmit.map(([studentId, status]) => ({
         studentId: parseInt(studentId),
-        date: selectedDate, // Send as date string, let the server handle conversion
         status,
         note: studentNotes[parseInt(studentId)] || '',
       }));
