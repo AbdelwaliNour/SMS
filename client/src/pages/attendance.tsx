@@ -274,7 +274,7 @@ export default function AttendancePage() {
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-green-600">Present Students</h3>
+                    <h3 className="font-semibold text-green-600 text-[23px]">Present Students</h3>
                     <p className="text-sm text-muted-foreground">Students marked present</p>
                   </div>
                 </div>
