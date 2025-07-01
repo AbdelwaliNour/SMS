@@ -10,7 +10,7 @@ import { insertStudentSchema, Student } from '@shared/schema';
 import { useLocation } from 'wouter';
 import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
 import { ValidationMessages, ValidationPatterns } from '@/lib/form-validation';
-import { User, Phone, Mail, Heart, FileImage, Award, Save, Loader2, UserCheck } from 'lucide-react';
+import { User, Phone, Mail, Heart, FileImage, Award, Save, Loader2, UserCheck, X } from 'lucide-react';
 
 const studentFormSchema = z.object({
   studentId: z
@@ -550,8 +550,9 @@ const EditStudentForm: React.FC<EditStudentFormProps> = ({ student }) => {
             type="button"
             variant="outline"
             onClick={() => navigate('/students')}
-            className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600"
+            className="px-6 py-2 bg-gray-100 border-2 border-gray-400 hover:bg-red-100 hover:border-red-400 hover:text-red-700 text-gray-800 font-medium rounded-lg transition-all duration-200 shadow-sm"
           >
+            <X className="h-4 w-4 mr-2" />
             Cancel
           </Button>
           <Button
