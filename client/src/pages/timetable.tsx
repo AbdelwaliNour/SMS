@@ -373,13 +373,29 @@ export default function TimeTable() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Subject</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="e.g., Mathematics, English, Science" 
-                                {...field} 
-                                className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                              />
-                            </FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                                  <SelectValue placeholder="Select a subject" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Mathematics">Mathematics</SelectItem>
+                                <SelectItem value="English">English</SelectItem>
+                                <SelectItem value="Science">Science</SelectItem>
+                                <SelectItem value="Physics">Physics</SelectItem>
+                                <SelectItem value="Chemistry">Chemistry</SelectItem>
+                                <SelectItem value="Biology">Biology</SelectItem>
+                                <SelectItem value="History">History</SelectItem>
+                                <SelectItem value="Geography">Geography</SelectItem>
+                                <SelectItem value="Art">Art</SelectItem>
+                                <SelectItem value="Music">Music</SelectItem>
+                                <SelectItem value="Physical Education">Physical Education</SelectItem>
+                                <SelectItem value="Computer Science">Computer Science</SelectItem>
+                                <SelectItem value="Literature">Literature</SelectItem>
+                                <SelectItem value="Social Studies">Social Studies</SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -391,13 +407,27 @@ export default function TimeTable() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Class</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="e.g., Grade 1, Grade 5, Class 10" 
-                                {...field} 
-                                className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                              />
-                            </FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                                  <SelectValue placeholder="Select a class" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="Grade 1">Grade 1</SelectItem>
+                                <SelectItem value="Grade 2">Grade 2</SelectItem>
+                                <SelectItem value="Grade 3">Grade 3</SelectItem>
+                                <SelectItem value="Grade 4">Grade 4</SelectItem>
+                                <SelectItem value="Grade 5">Grade 5</SelectItem>
+                                <SelectItem value="Grade 6">Grade 6</SelectItem>
+                                <SelectItem value="Grade 7">Grade 7</SelectItem>
+                                <SelectItem value="Grade 8">Grade 8</SelectItem>
+                                <SelectItem value="Grade 9">Grade 9</SelectItem>
+                                <SelectItem value="Grade 10">Grade 10</SelectItem>
+                                <SelectItem value="Grade 11">Grade 11</SelectItem>
+                                <SelectItem value="Grade 12">Grade 12</SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -409,13 +439,25 @@ export default function TimeTable() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Teacher Name</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="e.g., Dr. Smith, Mrs. Johnson" 
-                                {...field} 
-                                className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                              />
-                            </FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                                  <SelectValue placeholder="Select a teacher" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {employees.filter(emp => emp.role === 'teacher').map((teacher) => (
+                                  <SelectItem key={teacher.id} value={`${teacher.firstName} ${teacher.lastName}`}>
+                                    {teacher.firstName} {teacher.lastName}
+                                  </SelectItem>
+                                ))}
+                                {employees.filter(emp => emp.role === 'teacher').length === 0 && (
+                                  <SelectItem value="No Teachers Available" disabled>
+                                    No Teachers Available
+                                  </SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -427,13 +469,25 @@ export default function TimeTable() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Classroom</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="e.g., Room 101, Lab A, Library" 
-                                {...field} 
-                                className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                              />
-                            </FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                                  <SelectValue placeholder="Select a classroom" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {classrooms.map((classroom) => (
+                                  <SelectItem key={classroom.id} value={classroom.name}>
+                                    {classroom.name}
+                                  </SelectItem>
+                                ))}
+                                {classrooms.length === 0 && (
+                                  <SelectItem value="No Classrooms Available" disabled>
+                                    No Classrooms Available
+                                  </SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -868,13 +922,29 @@ export default function TimeTable() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Subject</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="e.g., Mathematics, English, Science" 
-                            {...field} 
-                            className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                          />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                              <SelectValue placeholder="Select a subject" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Mathematics">Mathematics</SelectItem>
+                            <SelectItem value="English">English</SelectItem>
+                            <SelectItem value="Science">Science</SelectItem>
+                            <SelectItem value="Physics">Physics</SelectItem>
+                            <SelectItem value="Chemistry">Chemistry</SelectItem>
+                            <SelectItem value="Biology">Biology</SelectItem>
+                            <SelectItem value="History">History</SelectItem>
+                            <SelectItem value="Geography">Geography</SelectItem>
+                            <SelectItem value="Art">Art</SelectItem>
+                            <SelectItem value="Music">Music</SelectItem>
+                            <SelectItem value="Physical Education">Physical Education</SelectItem>
+                            <SelectItem value="Computer Science">Computer Science</SelectItem>
+                            <SelectItem value="Literature">Literature</SelectItem>
+                            <SelectItem value="Social Studies">Social Studies</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -886,13 +956,27 @@ export default function TimeTable() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Class</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="e.g., Grade 1, Grade 5, Class 10" 
-                            {...field} 
-                            className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                          />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                              <SelectValue placeholder="Select a class" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Grade 1">Grade 1</SelectItem>
+                            <SelectItem value="Grade 2">Grade 2</SelectItem>
+                            <SelectItem value="Grade 3">Grade 3</SelectItem>
+                            <SelectItem value="Grade 4">Grade 4</SelectItem>
+                            <SelectItem value="Grade 5">Grade 5</SelectItem>
+                            <SelectItem value="Grade 6">Grade 6</SelectItem>
+                            <SelectItem value="Grade 7">Grade 7</SelectItem>
+                            <SelectItem value="Grade 8">Grade 8</SelectItem>
+                            <SelectItem value="Grade 9">Grade 9</SelectItem>
+                            <SelectItem value="Grade 10">Grade 10</SelectItem>
+                            <SelectItem value="Grade 11">Grade 11</SelectItem>
+                            <SelectItem value="Grade 12">Grade 12</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -904,13 +988,25 @@ export default function TimeTable() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Teacher Name</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="e.g., Dr. Smith, Mrs. Johnson" 
-                            {...field} 
-                            className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                          />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                              <SelectValue placeholder="Select a teacher" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {employees.filter(emp => emp.role === 'teacher').map((teacher) => (
+                              <SelectItem key={teacher.id} value={`${teacher.firstName} ${teacher.lastName}`}>
+                                {teacher.firstName} {teacher.lastName}
+                              </SelectItem>
+                            ))}
+                            {employees.filter(emp => emp.role === 'teacher').length === 0 && (
+                              <SelectItem value="No Teachers Available" disabled>
+                                No Teachers Available
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -922,13 +1018,25 @@ export default function TimeTable() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300">Classroom</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="e.g., Room 101, Lab A, Library" 
-                            {...field} 
-                            className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                          />
-                        </FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-11 bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500">
+                              <SelectValue placeholder="Select a classroom" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {classrooms.map((classroom) => (
+                              <SelectItem key={classroom.id} value={classroom.name}>
+                                {classroom.name}
+                              </SelectItem>
+                            ))}
+                            {classrooms.length === 0 && (
+                              <SelectItem value="No Classrooms Available" disabled>
+                                No Classrooms Available
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
