@@ -333,7 +333,7 @@ export default function AttendancePage() {
                     <XCircle className="h-5 w-5 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-red-600">Absent Students</h3>
+                    <h3 className="font-semibold text-red-600 text-[23px]">Absent Students</h3>
                     <p className="text-sm text-muted-foreground">Students marked absent</p>
                   </div>
                 </div>
