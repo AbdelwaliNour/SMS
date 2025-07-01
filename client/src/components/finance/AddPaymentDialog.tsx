@@ -189,13 +189,15 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col glass-morphism border-border/30">
-        <DialogHeader className="pb-6 border-b border-border/30 flex-shrink-0">
-          <DialogTitle className="text-2xl font-semibold text-primary flex items-center">
-            <DollarSign className="h-6 w-6 mr-3" />
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col glass-morphism border-border/30 bg-gradient-to-br from-emerald-50/80 via-white to-blue-50/80 dark:from-emerald-950/20 dark:via-background dark:to-blue-950/20">
+        <DialogHeader className="pb-6 border-b border-emerald-200/50 dark:border-emerald-800/50 flex-shrink-0 bg-gradient-to-r from-emerald-100/50 to-teal-100/50 dark:from-emerald-900/30 dark:to-teal-900/30 -m-6 mb-0 p-6 rounded-t-lg">
+          <DialogTitle className="text-2xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center">
+            <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg mr-3">
+              <DollarSign className="h-6 w-6 text-white" />
+            </div>
             Add New Payment
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-emerald-700 dark:text-emerald-300">
             Create a new payment record with comprehensive details and tracking information.
           </DialogDescription>
         </DialogHeader>
@@ -204,10 +206,12 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Payment Overview Card */}
-              <Card className="glass-morphism border-border/30">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <Receipt className="h-5 w-5 mr-2" />
+              <Card className="glass-morphism border-emerald-200/50 dark:border-emerald-800/50 bg-gradient-to-br from-emerald-50/30 to-green-50/30 dark:from-emerald-950/20 dark:to-green-950/20">
+                <CardHeader className="bg-gradient-to-r from-emerald-100/50 to-green-100/50 dark:from-emerald-900/30 dark:to-green-900/30 -m-6 mb-0 p-6 rounded-t-lg">
+                  <CardTitle className="text-lg flex items-center text-emerald-700 dark:text-emerald-300">
+                    <div className="p-1.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg mr-2">
+                      <Receipt className="h-5 w-5 text-white" />
+                    </div>
                     Payment Overview
                   </CardTitle>
                 </CardHeader>
@@ -219,8 +223,10 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                       name="studentId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center">
-                            <User className="h-4 w-4 mr-2" />
+                          <FormLabel className="text-base font-medium flex items-center text-blue-700 dark:text-blue-300">
+                            <div className="p-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded mr-2">
+                              <User className="h-4 w-4 text-white" />
+                            </div>
                             Student
                           </FormLabel>
                           <Select
@@ -260,8 +266,10 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                       name="amount"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center">
-                            <DollarSign className="h-4 w-4 mr-2" />
+                          <FormLabel className="text-base font-medium flex items-center text-green-700 dark:text-green-300">
+                            <div className="p-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded mr-2">
+                              <DollarSign className="h-4 w-4 text-white" />
+                            </div>
                             Amount ($)
                           </FormLabel>
                           <FormControl>
@@ -287,7 +295,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                     name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base font-medium">Payment Type</FormLabel>
+                        <FormLabel className="text-base font-medium text-purple-700 dark:text-purple-300">Payment Type</FormLabel>
                         <FormControl>
                           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                             {paymentTypes.map((type) => {
@@ -327,8 +335,10 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base font-medium flex items-center">
-                          <FileText className="h-4 w-4 mr-2" />
+                        <FormLabel className="text-base font-medium flex items-center text-orange-700 dark:text-orange-300">
+                          <div className="p-1 bg-gradient-to-r from-orange-500 to-yellow-500 rounded mr-2">
+                            <FileText className="h-4 w-4 text-white" />
+                          </div>
                           Description
                         </FormLabel>
                         <FormControl>
@@ -346,10 +356,12 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
               </Card>
 
               {/* Payment Details Card */}
-              <Card className="glass-morphism border-border/30">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <CreditCard className="h-5 w-5 mr-2" />
+              <Card className="glass-morphism border-blue-200/50 dark:border-blue-800/50 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/20">
+                <CardHeader className="bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 -m-6 mb-0 p-6 rounded-t-lg">
+                  <CardTitle className="text-lg flex items-center text-blue-700 dark:text-blue-300">
+                    <div className="p-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg mr-2">
+                      <CreditCard className="h-5 w-5 text-white" />
+                    </div>
                     Payment Details
                   </CardTitle>
                 </CardHeader>
@@ -466,8 +478,10 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
                   {/* Academic Information */}
                   <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center">
-                      <BookOpen className="h-5 w-5 mr-2" />
+                    <h4 className="text-lg font-medium flex items-center text-purple-700 dark:text-purple-300">
+                      <div className="p-1.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mr-2">
+                        <BookOpen className="h-5 w-5 text-white" />
+                      </div>
                       Academic Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -529,8 +543,10 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
                   {/* Installment Information */}
                   <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center">
-                      <Calculator className="h-5 w-5 mr-2" />
+                    <h4 className="text-lg font-medium flex items-center text-teal-700 dark:text-teal-300">
+                      <div className="p-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg mr-2">
+                        <Calculator className="h-5 w-5 text-white" />
+                      </div>
                       Installment Plan (Optional)
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -584,7 +600,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base font-medium">Additional Notes</FormLabel>
+                        <FormLabel className="text-base font-medium text-rose-700 dark:text-rose-300">Additional Notes</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Enter any additional notes about this payment..."
@@ -601,11 +617,11 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
 
               {/* Payment Summary */}
               {form.watch("amount") > 0 && (
-                <Card className="glass-morphism border-border/30 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20">
-                  <CardContent className="p-6">
+                <Card className="glass-morphism border-gradient-to-r from-emerald-300 to-teal-300 dark:from-emerald-700 dark:to-teal-700 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/30 dark:via-teal-950/30 dark:to-cyan-950/30 shadow-xl shadow-emerald-500/10">
+                  <CardContent className="p-6 bg-gradient-to-r from-emerald-100/20 to-teal-100/20 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
-                        <h4 className="text-lg font-semibold">Payment Summary</h4>
+                        <h4 className="text-lg font-semibold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">Payment Summary</h4>
                         <div className="flex items-center space-x-4">
                           {selectedPaymentType && (
                             <Badge className="bg-primary/10 text-primary">
@@ -620,7 +636,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-bold text-primary">
+                        <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                           ${form.watch("amount")?.toFixed(2) || "0.00"}
                         </div>
                         {form.watch("installmentNumber") && form.watch("totalInstallments") && (
@@ -635,19 +651,19 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-6 border-t border-border/30">
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-800 dark:to-teal-800 bg-gradient-to-r from-emerald-50/30 to-teal-50/30 dark:from-emerald-950/20 dark:to-teal-950/20 -mx-6 px-6 pb-6">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsOpen(false)}
-                  className="min-w-[120px]"
+                  className="min-w-[120px] border-rose-300 text-rose-700 hover:bg-rose-50 dark:border-rose-700 dark:text-rose-300 dark:hover:bg-rose-950/20"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={addPaymentMutation.isPending}
-                  className="min-w-[120px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                  className="min-w-[120px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300"
                 >
                   {addPaymentMutation.isPending ? "Adding..." : "Add Payment"}
                 </Button>
