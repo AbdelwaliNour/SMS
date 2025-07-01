@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { Employee } from '@shared/schema';
 import { School, Users, Save, X, UserCheck } from 'lucide-react';
 import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
@@ -14,7 +15,7 @@ const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
   section: z.enum(['primary', 'secondary', 'highschool']),
   capacity: z.number().min(1, "Capacity must be at least 1"),
-  teacherId: z.union([z.number(), z.null()]).nullable(),
+  teacherId: z.string().transform(val => val === "" ? null : parseInt(val)),
 });
 
 type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
@@ -40,7 +41,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
       name: '',
       section: 'primary',
       capacity: 30,
-      teacherId: null,
+      teacherId: '',
     },
   });
 
@@ -67,7 +68,8 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Information Section */}
         <div className="card-modern glass-morphism p-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5"></div>
@@ -119,9 +121,9 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
                 label="Assigned Teacher"
                 type="select"
                 options={[
-                  { value: null, label: "No teacher assigned" },
+                  { value: "", label: "No teacher assigned" },
                   ...teachers.map(teacher => ({
-                    value: teacher.id,
+                    value: teacher.id.toString(),
                     label: `${teacher.firstName} ${teacher.lastName}`,
                   })),
                 ]}
@@ -161,7 +163,8 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
             )}
           </Button>
         </div>
-      </form>
+        </form>
+      </Form>
     </div>
   );
 };

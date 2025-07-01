@@ -137,6 +137,13 @@ Changelog:
   * Redesigned EditEmployeeForm with modern glass-morphism styling to match AddEmployeeForm
   * Updated EnhancedFormField components with consistent styling and validation
   * Fixed database schema compatibility issues and null value handling
+- June 30, 2025. Profile picture and classroom management enhancements:
+  * Added profilePhoto field to employee schema and database migration
+  * Enhanced AddEmployeeForm and EditEmployeeForm with profile picture URL field
+  * Fixed edit classroom routing from /edit-classroom to /edit-classroom/:id
+  * Modernized AddClassroomForm with glass-morphism design and EnhancedFormField components
+  * Added delete classroom functionality with confirmation dialog and proper error handling
+  * Removed FloatingActionButton from students page as requested
 ```
 
 ## User Preferences

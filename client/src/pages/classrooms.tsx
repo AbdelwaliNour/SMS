@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
 import { Classroom, Employee } from '@shared/schema';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { Input } from '@/components/ui/input';
@@ -29,6 +31,7 @@ export default function Classrooms() {
   const [filters, setFilters] = useState({
     section: '',
   });
+  const { toast } = useToast();
 
   const { data: classrooms, isLoading, error } = useQuery<Classroom[]>({
     queryKey: ['/api/classrooms'],
@@ -44,6 +47,27 @@ export default function Classrooms() {
     if (!teacherId) return null;
     const teacher = teachers.find(t => t.id === teacherId);
     return teacher ? `${teacher.firstName} ${teacher.lastName}` : null;
+  };
+
+  const handleDeleteClassroom = async (classroomId: number, classroomName: string) => {
+    if (!confirm(`Are you sure you want to delete classroom "${classroomName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await apiRequest('DELETE', `/api/classrooms/${classroomId}`);
+      await queryClient.invalidateQueries({ queryKey: ['/api/classrooms'] });
+      toast({
+        title: "Success",
+        description: `Classroom "${classroomName}" has been deleted successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete classroom. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Filter classrooms based on search and filters
@@ -161,7 +185,12 @@ export default function Classrooms() {
                           <Edit className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600"
+                        onClick={() => handleDeleteClassroom(classroom.id, classroom.name)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
