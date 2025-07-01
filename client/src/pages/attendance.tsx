@@ -301,7 +301,7 @@ export default function AttendancePage() {
                     <Clock className="h-5 w-5 text-amber-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-amber-600">Late Arrivals</h3>
+                    <h3 className="font-semibold text-amber-600 text-[23px]">Late Arrivals</h3>
                     <p className="text-sm text-muted-foreground">Students marked late</p>
                   </div>
                 </div>
