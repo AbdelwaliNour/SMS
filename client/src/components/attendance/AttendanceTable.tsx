@@ -70,11 +70,11 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
           break;
         case 'week':
           const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-          matches = matches && recordDate >= weekAgo;
+          matches = matches && recordDate.getTime() >= weekAgo.getTime();
           break;
         case 'month':
           const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-          matches = matches && recordDate >= monthAgo;
+          matches = matches && recordDate.getTime() >= monthAgo.getTime();
           break;
       }
     }
@@ -226,7 +226,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
           <div className="grid gap-4">
             {filteredAttendance.map((record) => {
               const student = getStudentInfo(record.studentId);
-              const dateInfo = formatDate(record.date);
+              const dateInfo = formatDate(typeof record.date === 'string' ? record.date : record.date.toISOString());
               const age = student?.dateOfBirth 
                 ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() 
                 : null;

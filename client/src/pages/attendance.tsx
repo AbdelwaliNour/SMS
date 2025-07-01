@@ -330,7 +330,7 @@ export default function AttendancePage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-red-500/10 rounded-lg">
-                    <XCircle className="h-5 w-5 text-red-600" />
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-red-600 text-[23px]">Absent Students</h3>
