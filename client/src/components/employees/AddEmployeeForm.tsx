@@ -92,7 +92,7 @@ const employeeFormSchema = z.object({
   shift: z.enum(["morning", "afternoon", "evening"]),
 
   salary: z
-    .number()
+    .coerce.number()
     .min(1, "Salary is required and must be positive"),
 
   profilePhoto: z
