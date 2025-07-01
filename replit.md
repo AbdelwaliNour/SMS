@@ -192,6 +192,14 @@ Changelog:
   * Fixed API submission issues by removing date field (using database default timestamp)
   * Added real-time visual feedback for selected attendance status with color-coded buttons
   * Enhanced user experience with live counters showing filtered students and marked attendance
+- July 1, 2025. Comprehensive payment system redesign and enhancement:
+  * Enhanced payments schema with comprehensive fields: type, method, receipt number, notes, terms, installments
+  * Added new payment enums: payment_type (tuition, fees, books, etc.), payment_method (cash, card, etc.), extended payment_status
+  * Created comprehensive AddPaymentDialog with modern design and extensive payment options
+  * Redesigned PaymentsTable with enhanced filtering by status and payment type
+  * Added visual payment type badges and improved status indicators
+  * Implemented installment payment tracking and academic year/term organization
+  * Added payment method tracking and receipt number management
 ```
 
 ## User Preferences
