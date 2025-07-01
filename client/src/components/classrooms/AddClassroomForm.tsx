@@ -140,7 +140,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
             variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="glass-morphism border-border/30 hover:border-red-500/30"
+            className="px-6 py-2 bg-white/10 border-2 border-gray-300 hover:bg-red-50 hover:border-red-300 text-gray-700 font-medium rounded-lg transition-all duration-200"
           >
             <X className="h-4 w-4 mr-2" />
             Cancel
