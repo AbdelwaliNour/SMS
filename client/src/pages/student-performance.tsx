@@ -481,7 +481,7 @@ const StudentPerformance = () => {
                       <Users className="h-5 w-5 text-purple-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">Class Report</h3>
+                      <h3 className="font-semibold text-[25px]">Class Report</h3>
                       <p className="text-sm text-muted-foreground">Class performance</p>
                     </div>
                   </div>
