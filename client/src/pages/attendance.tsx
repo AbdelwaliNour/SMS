@@ -64,6 +64,7 @@ export default function AttendancePage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [studentStatuses, setStudentStatuses] = useState<Record<number, 'present' | 'absent' | 'late'>>({});
   const [studentNotes, setStudentNotes] = useState<Record<number, string>>({});
+  const [selectedClass, setSelectedClass] = useState('');
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['/api/stats'],
@@ -163,7 +164,7 @@ export default function AttendancePage() {
       
       const attendanceRecords = recordsToSubmit.map(([studentId, status]) => ({
         studentId: parseInt(studentId),
-        date: new Date(selectedDate).toISOString(),
+        date: selectedDate, // Send as date string, let the server handle conversion
         status,
         note: studentNotes[parseInt(studentId)] || '',
       }));
@@ -176,7 +177,7 @@ export default function AttendancePage() {
         try {
           await apiRequest('POST', '/api/attendance', record);
           successCount++;
-        } catch (recordError) {
+        } catch (recordError: any) {
           console.error('Failed to save record for student:', record.studentId, recordError);
           errors.push({
             studentId: record.studentId,
@@ -201,15 +202,15 @@ export default function AttendancePage() {
       } else {
         toast({
           title: 'Error',
-          description: `Failed to save attendance records. ${errors.length > 0 ? `First error: ${errors[0].error.message || 'Unknown error'}` : ''}`,
+          description: `Failed to save attendance records. ${errors.length > 0 ? `First error: ${(errors[0].error as any)?.message || 'Unknown error'}` : ''}`,
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Bulk attendance submission error:', error);
       toast({
         title: 'Error',
-        description: `Failed to save attendance records: ${error.message || 'Unknown error'}`,
+        description: `Failed to save attendance records: ${error?.message || 'Unknown error'}`,
         variant: 'destructive',
       });
     }
@@ -689,14 +690,29 @@ export default function AttendancePage() {
                             <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Record Attendance</h3>
                           </div>
-                          <div className="flex items-center space-x-4">
-                            <label className="text-gray-900 dark:text-white font-medium">Date:</label>
-                            <input
-                              type="date"
-                              value={selectedDate}
-                              onChange={(e) => setSelectedDate(e.target.value)}
-                              className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:border-emerald-500"
-                            />
+                          <div className="flex items-center space-x-6">
+                            <div className="flex items-center space-x-2">
+                              <label className="text-gray-900 dark:text-white font-medium">Class:</label>
+                              <select
+                                value={selectedClass}
+                                onChange={(e) => setSelectedClass(e.target.value)}
+                                className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:border-emerald-500"
+                              >
+                                <option value="">All Classes</option>
+                                {Array.from(new Set(students?.map(s => s.class) || [])).sort().map(cls => (
+                                  <option key={cls} value={cls}>{cls}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <label className="text-gray-900 dark:text-white font-medium">Date:</label>
+                              <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:border-emerald-500"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -715,7 +731,7 @@ export default function AttendancePage() {
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                              {students?.map((student, index) => (
+                              {students?.filter(student => selectedClass === '' || student.class === selectedClass).map((student, index) => (
                                 <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                   {/* Student Info */}
                                   <td className="px-6 py-4">
