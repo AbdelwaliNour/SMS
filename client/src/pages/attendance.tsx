@@ -631,7 +631,7 @@ export default function AttendancePage() {
                       Record Attendance
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-white/98 to-blue-50/50 dark:from-gray-900/95 dark:to-slate-900/95 max-w-2xl">
+                  <DialogContent className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-white/98 to-blue-50/50 dark:from-gray-900/95 dark:to-slate-900/95 max-w-7xl w-[95vw]">
                     <DialogHeader className="space-y-4 pb-6 border-b border-gray-200 dark:border-white/10">
                       <div className="flex items-center space-x-4">
                         <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
