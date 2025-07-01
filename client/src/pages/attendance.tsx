@@ -575,137 +575,213 @@ export default function AttendancePage() {
                       Record Attendance
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-white/95 to-gray-50/95 dark:from-gray-900/90 dark:to-slate-900/90 max-w-md">
-                    <DialogHeader>
-                      <DialogTitle className="text-gray-900 dark:text-white text-xl flex items-center space-x-2">
-                        <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                        <span>Record New Attendance</span>
-                      </DialogTitle>
-                      <DialogDescription className="text-gray-600 dark:text-blue-100">
-                        Add a new attendance record for a student on the selected date.
-                      </DialogDescription>
+                  <DialogContent className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-white/98 to-blue-50/50 dark:from-gray-900/95 dark:to-slate-900/95 max-w-2xl">
+                    <DialogHeader className="space-y-4 pb-6 border-b border-gray-200 dark:border-white/10">
+                      <div className="flex items-center space-x-4">
+                        <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                          <Calendar className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <DialogTitle className="text-gray-900 dark:text-white text-2xl font-bold">
+                            Record Student Attendance
+                          </DialogTitle>
+                          <DialogDescription className="text-gray-600 dark:text-blue-100 text-base mt-1">
+                            Create a new attendance record with detailed information and notes
+                          </DialogDescription>
+                        </div>
+                      </div>
                     </DialogHeader>
+                    
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
-                        <FormField
-                          control={form.control}
-                          name="studentId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-900 dark:text-white font-medium">Select Student</FormLabel>
-                              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-6">
+                        {/* Student Selection Section */}
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-center space-x-3 mb-4">
+                            <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Student Information</h3>
+                          </div>
+                          <FormField
+                            control={form.control}
+                            name="studentId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Select Student</FormLabel>
+                                <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
+                                  <FormControl>
+                                    <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-500 h-14 text-base">
+                                      <SelectValue placeholder="Choose a student from the list" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent className="max-h-60">
+                                    {students?.map((student) => (
+                                      <SelectItem key={student.id} value={student.id.toString()} className="py-3">
+                                        <div className="flex items-center space-x-4">
+                                          <img 
+                                            src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 40)}
+                                            alt={`${student.firstName} ${student.lastName}`}
+                                            className="w-10 h-10 rounded-full ring-2 ring-blue-200"
+                                          />
+                                          <div className="flex flex-col">
+                                            <span className="font-semibold">{student.firstName} {student.lastName}</span>
+                                            <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                              <span>ID: {student.studentId}</span>
+                                              <span>•</span>
+                                              <span>{student.section}</span>
+                                              <span>•</span>
+                                              <span>Class {student.class}</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Date and Status Section */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl p-6 border border-emerald-200 dark:border-emerald-700">
+                            <div className="flex items-center space-x-3 mb-4">
+                              <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Selection</h3>
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name="date"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Attendance Date</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      type="date" 
+                                      {...field} 
+                                      className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-emerald-500 h-12 text-base"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-700">
+                            <div className="flex items-center space-x-3 mb-4">
+                              <ClipboardList className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Attendance Status</h3>
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name="status"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Student Status</FormLabel>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-purple-500 h-12 text-base">
+                                        <SelectValue placeholder="Select attendance status" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="present" className="py-3">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                                            <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold">Present</div>
+                                            <div className="text-sm text-gray-500">Student attended class</div>
+                                          </div>
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="late" className="py-3">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                                            <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold">Late Arrival</div>
+                                            <div className="text-sm text-gray-500">Student arrived after start time</div>
+                                          </div>
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="absent" className="py-3">
+                                        <div className="flex items-center space-x-3">
+                                          <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                                            <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                                          </div>
+                                          <div>
+                                            <div className="font-semibold">Absent</div>
+                                            <div className="text-sm text-gray-500">Student did not attend</div>
+                                          </div>
+                                        </div>
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Notes Section */}
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6 border border-amber-200 dark:border-amber-700">
+                          <div className="flex items-center space-x-3 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Additional Information</h3>
+                          </div>
+                          <FormField
+                            control={form.control}
+                            name="note"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Notes & Comments</FormLabel>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400">
-                                    <SelectValue placeholder="Choose a student" />
-                                  </SelectTrigger>
+                                  <textarea
+                                    placeholder="Add any relevant notes, reasons for absence, or additional comments..."
+                                    {...field}
+                                    rows={4}
+                                    className="w-full px-4 py-3 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 resize-none text-base"
+                                  />
                                 </FormControl>
-                                <SelectContent>
-                                  {students?.map((student) => (
-                                    <SelectItem key={student.id} value={student.id.toString()}>
-                                      <div className="flex items-center space-x-3">
-                                        <img 
-                                          src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 32)}
-                                          alt={`${student.firstName} ${student.lastName}`}
-                                          className="w-6 h-6 rounded-full"
-                                        />
-                                        <span>{student.firstName} {student.lastName}</span>
-                                        <span className="text-xs text-gray-500">({student.studentId})</span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="date"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-900 dark:text-white font-medium">Attendance Date</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="date" 
-                                  {...field} 
-                                  className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="status"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-900 dark:text-white font-medium">Attendance Status</FormLabel>
-                              <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400">
-                                    <SelectValue placeholder="Select status" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="present">
-                                    <div className="flex items-center space-x-2">
-                                      <CheckCircle className="h-4 w-4 text-emerald-500" />
-                                      <span>Present</span>
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="late">
-                                    <div className="flex items-center space-x-2">
-                                      <Clock className="h-4 w-4 text-amber-500" />
-                                      <span>Late</span>
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="absent">
-                                    <div className="flex items-center space-x-2">
-                                      <XCircle className="h-4 w-4 text-red-500" />
-                                      <span>Absent</span>
-                                    </div>
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="note"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-900 dark:text-white font-medium">Additional Notes</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder="Optional notes or comments..." 
-                                  {...field} 
-                                  className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 focus:border-blue-400"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-white/10">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setIsAddModalOpen(false)}
-                            className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10"
-                          >
-                            Cancel
-                          </Button>
-                          <Button 
-                            type="submit" 
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add Record
-                          </Button>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                  Optional: Provide context or additional details about the attendance record
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-white/10">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            All fields marked with * are required
+                          </div>
+                          <div className="flex space-x-4">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => setIsAddModalOpen(false)}
+                              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-6 py-3 text-base"
+                            >
+                              <XCircle className="h-4 w-4 mr-2" />
+                              Cancel
+                            </Button>
+                            <Button 
+                              type="submit" 
+                              className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200"
+                            >
+                              <Plus className="h-5 w-5 mr-2" />
+                              Create Attendance Record
+                            </Button>
+                          </div>
                         </div>
                       </form>
                     </Form>
