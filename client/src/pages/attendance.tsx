@@ -60,6 +60,9 @@ type AttendanceFormValues = z.infer<typeof attendanceFormSchema>;
 
 export default function AttendancePage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedClass, setSelectedClass] = useState('');
+  const [studentStatuses, setStudentStatuses] = useState<Record<number, 'present' | 'absent' | 'late'>>({});
+  const [studentNotes, setStudentNotes] = useState<Record<number, string>>({});
   const { toast } = useToast();
 
   const handleAddAttendance = () => {
@@ -112,6 +115,84 @@ export default function AttendancePage() {
     }
   };
 
+  // Functions for bulk attendance handling
+  const updateStudentStatus = (studentId: number, status: 'present' | 'absent' | 'late') => {
+    setStudentStatuses(prev => ({
+      ...prev,
+      [studentId]: status
+    }));
+  };
+
+  const updateStudentNotes = (studentId: number, note: string) => {
+    setStudentNotes(prev => ({
+      ...prev,
+      [studentId]: note
+    }));
+  };
+
+  const handleBulkSubmit = async () => {
+    try {
+      const recordsToSubmit = Object.entries(studentStatuses);
+      
+      if (recordsToSubmit.length === 0) {
+        toast({
+          title: 'No Records Selected',
+          description: 'Please mark attendance status for at least one student',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      const attendanceRecords = recordsToSubmit.map(([studentId, status]) => ({
+        studentId: parseInt(studentId),
+        status,
+        note: studentNotes[parseInt(studentId)] || '',
+        date: new Date(),
+      }));
+
+      let successCount = 0;
+      let errors = [];
+      
+      for (const record of attendanceRecords) {
+        try {
+          await apiRequest('POST', '/api/attendance', record);
+          successCount++;
+        } catch (recordError: any) {
+          console.error('Failed to save record for student:', record.studentId, recordError);
+          errors.push({
+            studentId: record.studentId,
+            error: recordError
+          });
+        }
+      }
+
+      if (successCount > 0) {
+        toast({
+          title: 'Success',
+          description: `Attendance recorded for ${successCount} students${errors.length > 0 ? ` (${errors.length} failed)` : ''}`,
+        });
+        
+        queryClient.invalidateQueries({ queryKey: ['/api/attendance'] });
+        
+        // Reset state and close dialog
+        setStudentStatuses({});
+        setStudentNotes({});
+        setIsAddModalOpen(false);
+      }
+
+      if (errors.length > 0) {
+        console.error('Some records failed to save:', errors);
+      }
+    } catch (error: any) {
+      console.error('Bulk attendance submission error:', error);
+      toast({
+        title: 'Error',
+        description: `Failed to save attendance records: ${error?.message || 'Unknown error'}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
   // Calculate comprehensive attendance statistics
   const totalStudents = students?.length || 0;
   const todayAttendance = attendance?.filter(a => {
@@ -137,6 +218,19 @@ export default function AttendancePage() {
   const todayAttendanceRate = todayAttendance.length > 0
     ? Math.round((attendanceStats.todayPresent / todayAttendance.length) * 100)
     : 0;
+
+  // Filter students by selected class for dialog
+  const filteredStudents = students?.filter(student => {
+    if (!selectedClass) return true;
+    return student.class === selectedClass;
+  }) || [];
+
+  // Get unique classes for filter
+  const availableClasses = students 
+    ? students.map(s => s.class).filter(Boolean).filter((value, index, arr) => arr.indexOf(value) === index)
+    : [];
+
+  const selectedCount = Object.keys(studentStatuses).length;
 
   if (isLoading || statsLoading) {
     return (
@@ -533,13 +627,13 @@ export default function AttendancePage() {
             
             {/* Class Filter and Info */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-b border-border/30">
-              <Select defaultValue="">
+              <Select value={selectedClass} onValueChange={setSelectedClass}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filter by class" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All Classes</SelectItem>
-                  {students && Array.from(new Set(students.map(s => s.class).filter(Boolean))).map((className) => (
+                  {availableClasses.map((className) => (
                     <SelectItem key={className} value={className}>
                       Class {className}
                     </SelectItem>
@@ -552,19 +646,25 @@ export default function AttendancePage() {
                   <Calendar className="h-3 w-3 mr-1" />
                   {new Date().toLocaleDateString()}
                 </Badge>
+                
+                {selectedCount > 0 && (
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                    {selectedCount} marked
+                  </Badge>
+                )}
               </div>
             </div>
             
             {/* Students Table */}
             <div className="flex-1 overflow-hidden">
-              {students?.length === 0 ? (
+              {filteredStudents.length === 0 ? (
                 <div className="text-center py-12">
                   <Users className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
                   <h3 className="text-lg font-semibold text-muted-foreground mb-2">
                     No Students Found
                   </h3>
                   <p className="text-muted-foreground">
-                    No students available to record attendance
+                    {selectedClass ? `No students found in class ${selectedClass}` : 'No students available to record attendance'}
                   </p>
                 </div>
               ) : (
@@ -586,7 +686,7 @@ export default function AttendancePage() {
                     
                     {/* Table Body */}
                     <div className="max-h-80 overflow-y-auto">
-                      {students?.map((student) => {
+                      {filteredStudents.map((student) => {
                         const age = student.dateOfBirth 
                           ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() 
                           : null;
@@ -651,7 +751,12 @@ export default function AttendancePage() {
                                 <Button
                                   variant="outline" 
                                   size="sm"
-                                  className="h-7 w-7 p-0 border-green-300 text-green-700 hover:bg-green-50 dark:border-green-600 dark:text-green-400 dark:hover:bg-green-900/20"
+                                  className={`h-7 w-7 p-0 ${
+                                    studentStatuses[student.id] === 'present'
+                                      ? 'bg-green-500 text-white border-green-500 hover:bg-green-600'
+                                      : 'border-green-300 text-green-700 hover:bg-green-50 dark:border-green-600 dark:text-green-400 dark:hover:bg-green-900/20'
+                                  }`}
+                                  onClick={() => updateStudentStatus(student.id, 'present')}
                                   title="Present"
                                 >
                                   <CheckCircle className="h-3 w-3" />
@@ -659,7 +764,12 @@ export default function AttendancePage() {
                                 <Button
                                   variant="outline" 
                                   size="sm"
-                                  className="h-7 w-7 p-0 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/20"
+                                  className={`h-7 w-7 p-0 ${
+                                    studentStatuses[student.id] === 'late'
+                                      ? 'bg-amber-500 text-white border-amber-500 hover:bg-amber-600'
+                                      : 'border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/20'
+                                  }`}
+                                  onClick={() => updateStudentStatus(student.id, 'late')}
                                   title="Late"
                                 >
                                   <Clock className="h-3 w-3" />
@@ -667,7 +777,12 @@ export default function AttendancePage() {
                                 <Button
                                   variant="outline" 
                                   size="sm"
-                                  className="h-7 w-7 p-0 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20"
+                                  className={`h-7 w-7 p-0 ${
+                                    studentStatuses[student.id] === 'absent'
+                                      ? 'bg-red-500 text-white border-red-500 hover:bg-red-600'
+                                      : 'border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20'
+                                  }`}
+                                  onClick={() => updateStudentStatus(student.id, 'absent')}
                                   title="Absent"
                                 >
                                   <XCircle className="h-3 w-3" />
@@ -678,6 +793,8 @@ export default function AttendancePage() {
                               <div className="col-span-2">
                                 <Input
                                   placeholder="Note..."
+                                  value={studentNotes[student.id] || ''}
+                                  onChange={(e) => updateStudentNotes(student.id, e.target.value)}
                                   className="text-sm h-8"
                                 />
                               </div>
@@ -694,7 +811,7 @@ export default function AttendancePage() {
             {/* Footer with Submit Button */}
             <div className="flex justify-between items-center pt-4 border-t border-border/30">
               <div className="text-sm text-muted-foreground">
-                {students?.length || 0} students • 0 marked
+                {filteredStudents.length} students • {selectedCount} marked
               </div>
               <div className="flex gap-2">
                 <Button 
@@ -704,10 +821,12 @@ export default function AttendancePage() {
                   Cancel
                 </Button>
                 <Button 
+                  onClick={handleBulkSubmit}
+                  disabled={selectedCount === 0}
                   className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Save Attendance (0)
+                  Save Attendance ({selectedCount})
                 </Button>
               </div>
             </div>
