@@ -182,18 +182,13 @@ export default function RecordAttendanceDialog({ trigger }: RecordAttendanceDial
 
   const selectedCount = Object.keys(studentStatuses).length;
 
-  const defaultTrigger = (
-    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-      <Plus className="h-4 w-4 mr-2" />
-      Record Attendance
-    </Button>
-  );
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      {trigger && (
+        <DialogTrigger asChild>
+          {trigger}
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden glass-morphism border-border/30">
         <DialogHeader className="pb-4 border-b border-border/30">
           <DialogTitle className="text-xl font-semibold text-primary flex items-center">
