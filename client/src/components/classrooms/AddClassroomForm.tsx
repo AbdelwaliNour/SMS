@@ -41,7 +41,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
       name: '',
       section: 'primary',
       capacity: 30,
-      teacherId: '',
+      teacherId: 0,
     },
   });
 
@@ -121,7 +121,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
                 label="Assigned Teacher"
                 type="select"
                 options={[
-                  { value: "", label: "No teacher assigned" },
+                  { value: "0", label: "No teacher assigned" },
                   ...teachers.map(teacher => ({
                     value: teacher.id.toString(),
                     label: `${teacher.firstName} ${teacher.lastName}`,

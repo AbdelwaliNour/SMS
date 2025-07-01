@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Search, Bell, Settings, Sun, Moon } from "lucide-react";
+import { Search, Bell, Settings, Sun, Moon, HelpCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AppTheme } from "@/App";
 import { cn } from "@/lib/utils";
@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
 interface HeaderProps {
   theme: AppTheme;
   toggleTheme: () => void;
+  onShowTour?: () => void;
 }
 
-const Header = ({ theme, toggleTheme }: HeaderProps) => {
+const Header = ({ theme, toggleTheme, onShowTour }: HeaderProps) => {
   const isMobile = useIsMobile();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState("");
@@ -151,6 +152,17 @@ const Header = ({ theme, toggleTheme }: HeaderProps) => {
                 </span>
               </Button>
             </div>
+            {onShowTour && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="w-10 h-10 rounded-xl hover:bg-primary/10 transition-all duration-300"
+                onClick={onShowTour}
+                title="Start Tour"
+              >
+                <HelpCircle className="h-5 w-5 text-blue-600" />
+              </Button>
+            )}
             <Button
               size="icon"
               className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-blue hover:bg-blue/90 text-white"

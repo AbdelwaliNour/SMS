@@ -36,7 +36,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
       name: classroom.name || '',
       section: classroom.section,
       capacity: classroom.capacity || 30,
-      teacherId: classroom.teacherId ? classroom.teacherId.toString() : '',
+      teacherId: classroom.teacherId || 0,
     },
   });
 
@@ -45,7 +45,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
       name: classroom.name,
       section: classroom.section,
       capacity: classroom.capacity,
-      teacherId: classroom.teacherId ? classroom.teacherId.toString() : '',
+      teacherId: classroom.teacherId || 0,
     });
   }, [classroom, form]);
 
@@ -126,7 +126,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                   label="Assigned Teacher"
                   type="select"
                   options={[
-                    { value: "", label: "No teacher assigned" },
+                    { value: "0", label: "No teacher assigned" },
                     ...teachers.map(teacher => ({
                       value: teacher.id.toString(),
                       label: `${teacher.firstName} ${teacher.lastName}`,
