@@ -34,7 +34,7 @@ const employeeFormSchema = z.object({
   role: z.enum(['teacher', 'driver', 'cleaner', 'guard', 'admin', 'staff']),
   section: z.enum(['primary', 'secondary', 'highschool']),
   shift: z.enum(['morning', 'afternoon', 'evening']),
-  salary: z.number().min(0, "Salary must be positive"),
+  salary: z.coerce.number().min(0, "Salary must be positive"),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>;
