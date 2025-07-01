@@ -60,6 +60,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
       });
       onSuccess();
     } catch (error) {
+      console.error('Update error:', error);
       toast({
         title: 'Error',
         description: 'Failed to update classroom',
