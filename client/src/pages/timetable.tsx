@@ -44,6 +44,8 @@ type TimeTableFormValues = z.infer<typeof timeTableFormSchema>;
 
 export default function TimeTable() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingSchedule, setEditingSchedule] = useState<typeof timeTableData[0] | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSection, setSelectedSection] = useState('all');
   const [selectedClass, setSelectedClass] = useState('all');
@@ -93,6 +95,51 @@ export default function TimeTable() {
       toast({
         title: 'Error',
         description: 'Failed to add timetable entry',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleEdit = (schedule: typeof timeTableData[0]) => {
+    setEditingSchedule(schedule);
+    form.reset({
+      day: schedule.day,
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+      subject: schedule.subject,
+      teacherId: '1', // Default teacher ID
+      classroomId: '1', // Default classroom ID
+      section: schedule.section as 'primary' | 'intermediate' | 'secondary',
+      class: schedule.class,
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleDelete = (schedule: typeof timeTableData[0]) => {
+    if (window.confirm(`Are you sure you want to delete the ${schedule.subject} schedule for ${schedule.day}?`)) {
+      toast({
+        title: 'Success',
+        description: 'Schedule deleted successfully',
+      });
+    }
+  };
+
+  const onEditSubmit = async (data: TimeTableFormValues) => {
+    try {
+      console.log('Updating TimeTable Entry:', data);
+      
+      toast({
+        title: 'Success',
+        description: 'Timetable entry updated successfully',
+      });
+      
+      setIsEditModalOpen(false);
+      setEditingSchedule(null);
+      form.reset();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update timetable entry',
         variant: 'destructive',
       });
     }
@@ -388,6 +435,224 @@ export default function TimeTable() {
                   </Form>
                 </DialogContent>
               </Dialog>
+              
+              {/* Edit Schedule Dialog */}
+              <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="max-w-4xl">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center">
+                      <Edit className="h-5 w-5 mr-2 text-teal-600" />
+                      Edit Schedule Entry
+                    </DialogTitle>
+                    <DialogDescription>
+                      Update the schedule entry details below.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="day"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Day of Week</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select day" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {days.map((day) => (
+                                    <SelectItem key={day} value={day}>
+                                      {day}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="subject"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Subject</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select subject" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {subjects.map((subject) => (
+                                    <SelectItem key={subject} value={subject}>
+                                      {subject}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="startTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Start Time</FormLabel>
+                              <FormControl>
+                                <Input type="time" {...field} className="glass-morphism border-border/30" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="endTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>End Time</FormLabel>
+                              <FormControl>
+                                <Input type="time" {...field} className="glass-morphism border-border/30" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="teacherId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Teacher</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select teacher" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {teachers.map((teacher) => (
+                                    <SelectItem key={teacher.id} value={teacher.id}>
+                                      {teacher.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="classroomId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Classroom</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select classroom" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {classrooms.map((classroom) => (
+                                    <SelectItem key={classroom.id} value={classroom.id}>
+                                      {classroom.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="section"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Section</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select section" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="primary">Primary</SelectItem>
+                                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                                  <SelectItem value="secondary">Secondary</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="class"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Class</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="glass-morphism border-border/30">
+                                    <SelectValue placeholder="Select class" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="One">One</SelectItem>
+                                  <SelectItem value="Two">Two</SelectItem>
+                                  <SelectItem value="Three">Three</SelectItem>
+                                  <SelectItem value="Four">Four</SelectItem>
+                                  <SelectItem value="Five">Five</SelectItem>
+                                  <SelectItem value="Six">Six</SelectItem>
+                                  <SelectItem value="Seven">Seven</SelectItem>
+                                  <SelectItem value="Eight">Eight</SelectItem>
+                                  <SelectItem value="Nine">Nine</SelectItem>
+                                  <SelectItem value="Ten">Ten</SelectItem>
+                                  <SelectItem value="Eleven">Eleven</SelectItem>
+                                  <SelectItem value="Twelve">Twelve</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-3 pt-6">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => {
+                            setIsEditModalOpen(false);
+                            setEditingSchedule(null);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600">
+                          <Edit className="h-4 w-4 mr-2" />
+                          Update Schedule
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -538,7 +803,7 @@ export default function TimeTable() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="schedules" className="space-y-6">
-          <TabsList className="glass-morphism border-border/30 p-1 text-white">
+          <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted glass-morphism border-border/30 p-1 text-white">
             <TabsTrigger value="schedules" className="data-[state=active]:bg-teal-100 data-[state=active]:text-teal-700 dark:data-[state=active]:bg-teal-900/30">
               Schedules
             </TabsTrigger>
@@ -675,10 +940,20 @@ export default function TimeTable() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Button variant="outline" size="sm" className="hover:bg-teal-50 hover:border-teal-200 dark:hover:bg-teal-900/20 dark:hover:border-teal-700 transition-colors">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="hover:bg-teal-50 hover:border-teal-200 dark:hover:bg-teal-900/20 dark:hover:border-teal-700 transition-colors"
+                            onClick={() => handleEdit(schedule)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm" className="hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-700 transition-colors">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:border-red-700 transition-colors"
+                            onClick={() => handleDelete(schedule)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
