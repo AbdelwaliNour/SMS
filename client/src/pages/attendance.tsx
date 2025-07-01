@@ -450,12 +450,8 @@ export default function AttendancePage() {
         </div>
 
         {/* Attendance Management Tabs */}
-        <Tabs defaultValue="record-attendance" className="space-y-6">
+        <Tabs defaultValue="records" className="space-y-6">
           <TabsList className="glass-morphism border-border/30 bg-background/50">
-            <TabsTrigger value="record-attendance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4 mr-2" />
-              Record Attendance
-            </TabsTrigger>
             <TabsTrigger value="records" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <ClipboardList className="h-4 w-4 mr-2" />
               Attendance Records
@@ -469,10 +465,6 @@ export default function AttendancePage() {
               Reports
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="record-attendance" className="space-y-6">
-            <AttendanceRecordingTable />
-          </TabsContent>
 
           <TabsContent value="records" className="space-y-6">
             <AttendanceTable onAddAttendance={handleAddAttendance} />
