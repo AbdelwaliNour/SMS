@@ -464,7 +464,7 @@ const StudentPerformance = () => {
                       <Trophy className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[25px]">Achievement Report</h3>
+                      <h3 className="font-semibold text-[23px]">Achievement Report</h3>
                       <p className="text-sm text-muted-foreground">Student achievements</p>
                     </div>
                   </div>
