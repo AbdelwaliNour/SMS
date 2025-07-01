@@ -9,7 +9,8 @@ import {
   insertAttendanceSchema,
   insertPaymentSchema,
   insertExamSchema,
-  insertResultSchema
+  insertResultSchema,
+  insertScheduleSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -931,6 +932,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     if (!success) {
       return res.status(404).json({ message: 'Result not found' });
+    }
+    
+    res.status(204).end();
+  });
+
+  // Schedules routes
+  app.get('/api/schedules', async (req: Request, res: Response) => {
+    const schedules = await storage.getSchedules();
+    res.json(schedules);
+  });
+  
+  app.get('/api/schedules/:id', async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid schedule ID' });
+    }
+    
+    const schedule = await storage.getSchedule(id);
+    
+    if (!schedule) {
+      return res.status(404).json({ message: 'Schedule not found' });
+    }
+    
+    res.json(schedule);
+  });
+  
+  app.post('/api/schedules', async (req: Request, res: Response) => {
+    try {
+      const scheduleData = insertScheduleSchema.parse(req.body);
+      const schedule = await storage.createSchedule(scheduleData);
+      res.status(201).json(schedule);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid schedule data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to create schedule' });
+    }
+  });
+  
+  app.patch('/api/schedules/:id', async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid schedule ID' });
+    }
+    
+    try {
+      const scheduleData = insertScheduleSchema.partial().parse(req.body);
+      const schedule = await storage.updateSchedule(id, scheduleData);
+      
+      if (!schedule) {
+        return res.status(404).json({ message: 'Schedule not found' });
+      }
+      
+      res.json(schedule);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid schedule data', errors: error.errors });
+      }
+      res.status(500).json({ message: 'Failed to update schedule' });
+    }
+  });
+  
+  app.delete('/api/schedules/:id', async (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid schedule ID' });
+    }
+    
+    const success = await storage.deleteSchedule(id);
+    
+    if (!success) {
+      return res.status(404).json({ message: 'Schedule not found' });
     }
     
     res.status(204).end();

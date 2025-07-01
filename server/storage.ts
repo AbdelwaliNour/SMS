@@ -6,7 +6,8 @@ import {
   attendance, Attendance, InsertAttendance,
   payments, Payment, InsertPayment,
   exams, Exam, InsertExam,
-  results, Result, InsertResult
+  results, Result, InsertResult,
+  schedules, Schedule, InsertSchedule
 } from "@shared/schema";
 
 export interface IStorage {
@@ -68,6 +69,13 @@ export interface IStorage {
   updateResult(id: number, result: Partial<InsertResult>): Promise<Result | undefined>;
   deleteResult(id: number): Promise<boolean>;
   
+  // Schedules
+  getSchedules(): Promise<Schedule[]>;
+  getSchedule(id: number): Promise<Schedule | undefined>;
+  createSchedule(schedule: InsertSchedule): Promise<Schedule>;
+  updateSchedule(id: number, schedule: Partial<InsertSchedule>): Promise<Schedule | undefined>;
+  deleteSchedule(id: number): Promise<boolean>;
+  
   // Stats
   getStats(): Promise<any>;
 }
@@ -81,6 +89,7 @@ export class MemStorage implements IStorage {
   private payments: Map<number, Payment>;
   private exams: Map<number, Exam>;
   private results: Map<number, Result>;
+  private schedules: Map<number, Schedule>;
   
   private userId: number;
   private studentId: number;
@@ -90,6 +99,7 @@ export class MemStorage implements IStorage {
   private paymentId: number;
   private examId: number;
   private resultId: number;
+  private scheduleId: number;
 
   constructor() {
     this.users = new Map();
@@ -100,6 +110,7 @@ export class MemStorage implements IStorage {
     this.payments = new Map();
     this.exams = new Map();
     this.results = new Map();
+    this.schedules = new Map();
     
     this.userId = 1;
     this.studentId = 1;
@@ -109,6 +120,7 @@ export class MemStorage implements IStorage {
     this.paymentId = 1;
     this.examId = 1;
     this.resultId = 1;
+    this.scheduleId = 1;
     
     // Seed initial data
     this.seedInitialData();
@@ -429,6 +441,35 @@ export class MemStorage implements IStorage {
         lowestScore: lowestScore
       }
     };
+  }
+
+  // Schedule methods
+  async getSchedules(): Promise<Schedule[]> {
+    return Array.from(this.schedules.values());
+  }
+
+  async getSchedule(id: number): Promise<Schedule | undefined> {
+    return this.schedules.get(id);
+  }
+
+  async createSchedule(insertSchedule: InsertSchedule): Promise<Schedule> {
+    const id = this.scheduleId++;
+    const schedule: Schedule = { ...insertSchedule, id, createdAt: new Date() };
+    this.schedules.set(id, schedule);
+    return schedule;
+  }
+
+  async updateSchedule(id: number, scheduleUpdate: Partial<InsertSchedule>): Promise<Schedule | undefined> {
+    const schedule = this.schedules.get(id);
+    if (!schedule) return undefined;
+    
+    const updatedSchedule = { ...schedule, ...scheduleUpdate };
+    this.schedules.set(id, updatedSchedule);
+    return updatedSchedule;
+  }
+
+  async deleteSchedule(id: number): Promise<boolean> {
+    return this.schedules.delete(id);
   }
   
   // Seed initial data for testing
