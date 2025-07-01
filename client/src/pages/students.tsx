@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { useIsMobile } from '@/hooks/use-mobile';
 import StudentsTable from '@/components/students/StudentsTable';
 import ResponsiveStudentsList from '@/components/students/ResponsiveStudentsList';
-import { FloatingActionButton } from '@/components/ui/floating-action-button';
+
 import { Users, Plus } from 'lucide-react';
 
 export default function Students() {
@@ -48,11 +48,7 @@ export default function Students() {
           <StudentsTable onAddStudent={goToAddStudent} />
         )}
 
-        {/* Modern Floating Action Button */}
-        <FloatingActionButton
-          onClick={goToAddStudent}
-          icon={<Plus className="h-6 w-6" />}
-        />
+        
       </div>
     </Layout>
   );

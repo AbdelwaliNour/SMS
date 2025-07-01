@@ -37,7 +37,7 @@ function Router() {
       <Route path="/edit-employee/:id" component={EditEmployee} />
       <Route path="/classrooms" component={Classrooms} />
       <Route path="/add-classroom" component={AddClassroom} />
-      <Route path="/edit-classroom" component={EditClassroom} />
+      <Route path="/edit-classroom/:id" component={EditClassroom} />
       <Route path="/finance" component={Finance} />
       <Route path="/exams" component={Exams} />
       <Route path="/attendance" component={Attendance} />
