@@ -451,27 +451,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                       )}
                     />
 
-                    {/* Receipt Number */}
-                    <FormField
-                      control={form.control}
-                      name="receiptNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center">
-                            <Receipt className="h-4 w-4 mr-2" />
-                            Receipt Number
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter receipt number"
-                              className="h-12"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
                   </div>
 
                   <Separator />
