@@ -149,20 +149,16 @@ export default function AttendancePage() {
   return (
     <Layout>
       <div className="space-y-8">
-        {/* Header Section */}
+        {/* Modern Page Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 rounded-xl">
-                <ClipboardList className="h-8 w-8 text-blue-600" />
+              <div className="p-3 bg-blue-500/10 rounded-xl">
+                <ClipboardList className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-white dark:to-gray-300">
-                  Attendance Management
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                  Track student attendance with comprehensive analytics and insights
-                </p>
+                <h1 className="text-3xl font-bold text-gradient">Attendance Management</h1>
+                <p className="text-muted-foreground">Track student attendance with comprehensive analytics and insights</p>
               </div>
             </div>
           </div>
