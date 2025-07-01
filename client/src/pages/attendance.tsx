@@ -595,7 +595,7 @@ export default function AttendancePage() {
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-6">
                         {/* Student Selection Section */}
-                        <div className="p-6">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                           <div className="flex items-center space-x-3 mb-4">
                             <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Student Information</h3>
@@ -644,7 +644,7 @@ export default function AttendancePage() {
 
                         {/* Date and Status Section */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="p-6">
+                          <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl p-6">
                             <div className="flex items-center space-x-3 mb-4">
                               <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Selection</h3>
@@ -668,7 +668,7 @@ export default function AttendancePage() {
                             />
                           </div>
 
-                          <div className="p-6">
+                          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6">
                             <div className="flex items-center space-x-3 mb-4">
                               <ClipboardList className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Attendance Status</h3>
@@ -729,7 +729,7 @@ export default function AttendancePage() {
                         </div>
 
                         {/* Notes Section */}
-                        <div className="p-6">
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6">
                           <div className="flex items-center space-x-3 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
@@ -760,7 +760,7 @@ export default function AttendancePage() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-white/10">
+                        <div className="flex justify-between items-center pt-6">
                           <div className="text-sm text-gray-500 dark:text-gray-400">
                             All fields marked with * are required
                           </div>
