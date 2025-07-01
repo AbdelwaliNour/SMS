@@ -40,7 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import AttendanceTable from '@/components/attendance/AttendanceTable';
-import BulkAttendanceForm from '@/components/attendance/BulkAttendanceForm';
+import RecordAttendanceDialog from '@/components/attendance/RecordAttendanceDialog';
 
 const attendanceFormSchema = z.object({
   studentId: z.number({
@@ -165,6 +165,7 @@ export default function AttendancePage() {
           </div>
           
           <div className="flex items-center space-x-3">
+            <RecordAttendanceDialog />
             <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
               <Download className="h-4 w-4 mr-2" />
               Export Report
@@ -355,12 +356,8 @@ export default function AttendancePage() {
         </div>
 
         {/* Attendance Management Tabs */}
-        <Tabs defaultValue="bulk-record" className="space-y-6">
+        <Tabs defaultValue="records" className="space-y-6">
           <TabsList className="glass-morphism border-border/30 bg-background/50">
-            <TabsTrigger value="bulk-record" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4 mr-2" />
-              Record Attendance
-            </TabsTrigger>
             <TabsTrigger value="records" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <ClipboardList className="h-4 w-4 mr-2" />
               Attendance Records
@@ -374,10 +371,6 @@ export default function AttendancePage() {
               Reports
             </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="bulk-record" className="space-y-6">
-            <BulkAttendanceForm onComplete={() => {}} />
-          </TabsContent>
 
           <TabsContent value="records" className="space-y-6">
             <AttendanceTable onAddAttendance={handleAddAttendance} />
