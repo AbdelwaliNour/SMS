@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
 import PaymentsTable from '@/components/finance/PaymentsTable';
+import { AddPaymentDialog } from '@/components/finance/AddPaymentDialog';
 import { formatCurrency } from '@/lib/utils';
 import { Payment } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -68,6 +69,7 @@ export default function Finance() {
           </div>
           
           <div className="flex items-center space-x-3">
+            <AddPaymentDialog />
             <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
               <Download className="h-4 w-4 mr-2" />
               Export Report

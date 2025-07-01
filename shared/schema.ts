@@ -9,7 +9,9 @@ export const shiftEnum = pgEnum('shift', ['morning', 'afternoon', 'evening']);
 export const roleEnum = pgEnum('role', ['teacher', 'driver', 'cleaner', 'guard', 'admin', 'staff']);
 export const sectionEnum = pgEnum('section', ['primary', 'secondary', 'highschool']);
 export const statusEnum = pgEnum('status', ['present', 'absent', 'late']);
-export const paymentStatusEnum = pgEnum('payment_status', ['paid', 'unpaid', 'partial']);
+export const paymentStatusEnum = pgEnum('payment_status', ['paid', 'unpaid', 'partial', 'overdue', 'refunded']);
+export const paymentTypeEnum = pgEnum('payment_type', ['tuition', 'fees', 'book', 'uniform', 'transport', 'meal', 'exam', 'library', 'activity', 'other']);
+export const paymentMethodEnum = pgEnum('payment_method', ['cash', 'card', 'bank_transfer', 'check', 'mobile_payment', 'online']);
 
 // User table
 export const users = pgTable("users", {
@@ -92,8 +94,17 @@ export const payments = pgTable("payments", {
   studentId: integer("student_id").references(() => students.id).notNull(),
   amount: integer("amount").notNull(),
   date: timestamp("date").notNull().defaultNow(),
+  dueDate: timestamp("due_date"),
   description: text("description"),
-  status: paymentStatusEnum("status").notNull(),
+  status: paymentStatusEnum("status").notNull().default('unpaid'),
+  type: paymentTypeEnum("type").notNull().default('tuition'),
+  method: paymentMethodEnum("method"),
+  receiptNumber: text("receipt_number"),
+  notes: text("notes"),
+  term: text("term"), // e.g., "Fall 2025", "Spring 2025"
+  academicYear: text("academic_year"), // e.g., "2024-2025"
+  installmentNumber: integer("installment_number"), // for partial payments
+  totalInstallments: integer("total_installments"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
