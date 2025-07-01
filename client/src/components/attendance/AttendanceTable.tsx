@@ -326,7 +326,7 @@ export default function AttendanceTable({
 
                           <div
                             className="flex items-center space-x-3 text-muted-foreground opacity-80"
-                            style={{ fontSize: "12px" }}
+                            style={{ fontSize: "11px" }}
                           >
                             <span className="font-medium">
                               {student?.studentId || `#${record.studentId}`}
