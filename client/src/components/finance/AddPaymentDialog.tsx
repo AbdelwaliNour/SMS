@@ -207,87 +207,90 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Payment Overview Card */}
               <Card className="glass-morphism border-emerald-200/50 dark:border-emerald-800/50 bg-gradient-to-br from-emerald-50/30 to-green-50/30 dark:from-emerald-950/20 dark:to-green-950/20">
-                <CardHeader className="bg-gradient-to-r from-emerald-100/50 to-green-100/50 dark:from-emerald-900/30 dark:to-green-900/30 -m-6 mb-0 p-6 rounded-t-lg">
-                  <CardTitle className="text-lg flex items-center text-emerald-700 dark:text-emerald-300">
-                    <div className="p-1.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg mr-2">
-                      <Receipt className="h-5 w-5 text-white" />
-                    </div>
-                    Payment Overview
-                  </CardTitle>
-                </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Student Selection */}
-                    <FormField
-                      control={form.control}
-                      name="studentId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center text-blue-700 dark:text-blue-300">
-                            <div className="p-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded mr-2">
-                              <User className="h-4 w-4 text-white" />
-                            </div>
-                            Student
-                          </FormLabel>
-                          <Select
-                            value={field.value?.toString()}
-                            onValueChange={(value) => field.onChange(parseInt(value))}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="h-12">
-                                <SelectValue placeholder="Select a student" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {students.map((student) => (
-                                <SelectItem key={student.id} value={student.id.toString()}>
-                                  <div className="flex items-center space-x-3">
-                                    <div>
-                                      <div className="font-medium">
-                                        {student.firstName} {student.lastName}
-                                      </div>
-                                      <div className="text-sm text-muted-foreground">
-                                        {student.studentId} • Class {student.class}
+                  {/* Payment Overview */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-medium flex items-center text-emerald-700 dark:text-emerald-300">
+                      <div className="p-1.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg mr-2">
+                        <Receipt className="h-5 w-5 text-white" />
+                      </div>
+                      Payment Overview
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Student Selection */}
+                      <FormField
+                        control={form.control}
+                        name="studentId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-medium flex items-center text-blue-700 dark:text-blue-300">
+                              <div className="p-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded mr-2">
+                                <User className="h-4 w-4 text-white" />
+                              </div>
+                              Student
+                            </FormLabel>
+                            <Select
+                              value={field.value?.toString()}
+                              onValueChange={(value) => field.onChange(parseInt(value))}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="h-12">
+                                  <SelectValue placeholder="Select a student" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {students.map((student) => (
+                                  <SelectItem key={student.id} value={student.id.toString()}>
+                                    <div className="flex items-center space-x-3">
+                                      <div>
+                                        <div className="font-medium">
+                                          {student.firstName} {student.lastName}
+                                        </div>
+                                        <div className="text-sm text-muted-foreground">
+                                          {student.studentId} • Class {student.class}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    {/* Amount */}
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base font-medium flex items-center text-green-700 dark:text-green-300">
-                            <div className="p-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded mr-2">
-                              <DollarSign className="h-4 w-4 text-white" />
-                            </div>
-                            Amount ($)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              placeholder="0.00"
-                              className="h-12 text-lg"
-                              {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      {/* Amount */}
+                      <FormField
+                        control={form.control}
+                        name="amount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-medium flex items-center text-green-700 dark:text-green-300">
+                              <div className="p-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded mr-2">
+                                <DollarSign className="h-4 w-4 text-white" />
+                              </div>
+                              Amount ($)
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                className="h-12 text-lg"
+                                {...field}
+                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
+
+                  <Separator />
 
                   {/* Payment Type Selection */}
                   <FormField
