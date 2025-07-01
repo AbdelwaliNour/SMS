@@ -447,7 +447,7 @@ const StudentPerformance = () => {
                       <Calendar className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">Monthly Report</h3>
+                      <h3 className="font-semibold text-[25px]">Monthly Report</h3>
                       <p className="text-sm text-muted-foreground">Performance overview</p>
                     </div>
                   </div>
