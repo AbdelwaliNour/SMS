@@ -144,38 +144,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="backdrop-blur-sm rounded-xl p-6 border border-white/10 bg-[#030a19]">
-            <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={isSubmitting}
-                className="px-6 py-2 bg-gray-100 border-2 border-gray-400 hover:bg-red-100 hover:border-red-400 hover:text-red-700 text-gray-800 font-medium rounded-lg transition-all duration-200 shadow-sm"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg border-2 border-blue-600 hover:border-blue-700 transition-all duration-200 shadow-lg"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Update Classroom
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+          
         </form>
       </Form>
     </div>
