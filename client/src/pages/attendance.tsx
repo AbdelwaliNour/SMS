@@ -518,101 +518,199 @@ export default function AttendancePage() {
           </TabsContent>
         </Tabs>
 
-        {/* Add Attendance Dialog */}
+        {/* Bulk Attendance Recording Dialog */}
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent className="glass-morphism border-border/30 max-w-md">
-            <DialogHeader>
-              <DialogTitle>Record Attendance</DialogTitle>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden glass-morphism border-border/30">
+            <DialogHeader className="pb-4 border-b border-border/30">
+              <DialogTitle className="text-xl font-semibold text-primary flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Record Attendance
+              </DialogTitle>
               <DialogDescription>
-                Add a new attendance record for a student
+                Mark attendance for students. Use the class filter to narrow down the list.
               </DialogDescription>
             </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="studentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Student</FormLabel>
-                      <Select onValueChange={(value) => field.onChange(parseInt(value))}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a student" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {students?.map((student) => (
-                            <SelectItem key={student.id} value={student.id.toString()}>
-                              {student.firstName} {student.lastName} ({student.studentId})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select attendance status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="present">Present</SelectItem>
-                          <SelectItem value="absent">Absent</SelectItem>
-                          <SelectItem value="late">Late</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="note"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Note (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Add a note..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsAddModalOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit">Record Attendance</Button>
+            
+            {/* Class Filter and Info */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-b border-border/30">
+              <Select defaultValue="">
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by class" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Classes</SelectItem>
+                  {students && Array.from(new Set(students.map(s => s.class).filter(Boolean))).map((className) => (
+                    <SelectItem key={className} value={className}>
+                      Class {className}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <div className="flex items-center space-x-3">
+                <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {new Date().toLocaleDateString()}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Students Table */}
+            <div className="flex-1 overflow-hidden">
+              {students?.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                    No Students Found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    No students available to record attendance
+                  </p>
                 </div>
-              </form>
-            </Form>
+              ) : (
+                <div className="h-full flex flex-col">
+                  {/* Table */}
+                  <div className="bg-card rounded-lg border border-border/30 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="bg-muted/30 px-4 py-3 border-b border-border/30">
+                      <div className="grid grid-cols-12 gap-4 items-center font-medium text-sm text-muted-foreground">
+                        <div className="col-span-1 text-center">Photo</div>
+                        <div className="col-span-3">Student</div>
+                        <div className="col-span-1 text-center">Age</div>
+                        <div className="col-span-1 text-center">Class</div>
+                        <div className="col-span-1 text-center">Section</div>
+                        <div className="col-span-3 text-center">Actions</div>
+                        <div className="col-span-2">Notes</div>
+                      </div>
+                    </div>
+                    
+                    {/* Table Body */}
+                    <div className="max-h-80 overflow-y-auto">
+                      {students?.map((student) => {
+                        const age = student.dateOfBirth 
+                          ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() 
+                          : null;
+
+                        return (
+                          <div key={student.id} className="px-4 py-3 border-b border-border/10 hover:bg-muted/20 transition-colors">
+                            <div className="grid grid-cols-12 gap-4 items-center">
+                              {/* Photo */}
+                              <div className="col-span-1 flex justify-center">
+                                <ProfileAvatar
+                                  src={student.profilePhoto || undefined}
+                                  name={`${student.firstName} ${student.lastName}`}
+                                  size="sm"
+                                />
+                              </div>
+                              
+                              {/* Student Info */}
+                              <div className="col-span-3">
+                                <div className="font-semibold text-foreground">
+                                  {student.firstName} {student.lastName}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  {student.studentId}
+                                </div>
+                              </div>
+                              
+                              {/* Age */}
+                              <div className="col-span-1 text-center">
+                                {age ? (
+                                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                    {age}y
+                                  </Badge>
+                                ) : (
+                                  <span className="text-muted-foreground text-xs">N/A</span>
+                                )}
+                              </div>
+                              
+                              {/* Class */}
+                              <div className="col-span-1 text-center">
+                                {student.class ? (
+                                  <Badge variant="outline" className="text-xs">
+                                    {student.class}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-muted-foreground text-xs">N/A</span>
+                                )}
+                              </div>
+                              
+                              {/* Section */}
+                              <div className="col-span-1 text-center">
+                                {student.section ? (
+                                  <Badge variant="outline" className="text-xs">
+                                    {student.section}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-muted-foreground text-xs">N/A</span>
+                                )}
+                              </div>
+                              
+                              {/* Action Buttons */}
+                              <div className="col-span-3 flex justify-center gap-1">
+                                <Button
+                                  variant="outline" 
+                                  size="sm"
+                                  className="h-7 w-7 p-0 border-green-300 text-green-700 hover:bg-green-50 dark:border-green-600 dark:text-green-400 dark:hover:bg-green-900/20"
+                                  title="Present"
+                                >
+                                  <CheckCircle className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  variant="outline" 
+                                  size="sm"
+                                  className="h-7 w-7 p-0 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/20"
+                                  title="Late"
+                                >
+                                  <Clock className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  variant="outline" 
+                                  size="sm"
+                                  className="h-7 w-7 p-0 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20"
+                                  title="Absent"
+                                >
+                                  <XCircle className="h-3 w-3" />
+                                </Button>
+                              </div>
+                              
+                              {/* Notes */}
+                              <div className="col-span-2">
+                                <Input
+                                  placeholder="Note..."
+                                  className="text-sm h-8"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Footer with Submit Button */}
+            <div className="flex justify-between items-center pt-4 border-t border-border/30">
+              <div className="text-sm text-muted-foreground">
+                {students?.length || 0} students • 0 marked
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline"
+                  onClick={() => setIsAddModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Attendance (0)
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
