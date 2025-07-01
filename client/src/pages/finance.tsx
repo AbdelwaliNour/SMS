@@ -174,7 +174,7 @@ export default function Finance() {
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-green-600 text-[25px]">Paid Students</h3>
+                    <h3 className="font-semibold text-green-600 text-[23px]">Paid Students</h3>
                     <p className="text-sm text-muted-foreground">Fees fully collected</p>
                   </div>
                 </div>
