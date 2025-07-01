@@ -201,7 +201,7 @@ export default function Finance() {
                     <Clock className="h-5 w-5 text-amber-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-amber-600">Partial Payments</h3>
+                    <h3 className="font-semibold text-amber-600 text-[25px]">Partial Payments</h3>
                     <p className="text-sm text-muted-foreground">Partially paid fees</p>
                   </div>
                 </div>
