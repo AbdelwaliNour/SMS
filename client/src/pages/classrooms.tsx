@@ -136,12 +136,12 @@ export default function Classrooms() {
           <div className="flex gap-3 items-center">
             <div className="flex items-center space-x-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
-              <Select value={filters.section} onValueChange={(value) => setFilters(prev => ({ ...prev, section: value }))}>
+              <Select value={filters.section || "all"} onValueChange={(value) => setFilters(prev => ({ ...prev, section: value === "all" ? "" : value }))}>
                 <SelectTrigger className="glass-morphism border-border/30 w-[180px] h-11">
                   <SelectValue placeholder="All Sections" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Sections</SelectItem>
+                  <SelectItem value="all">All Sections</SelectItem>
                   <SelectItem value="primary">Primary School</SelectItem>
                   <SelectItem value="secondary">Secondary School</SelectItem>
                   <SelectItem value="highschool">High School</SelectItem>

@@ -212,7 +212,7 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ onAddPayment }) => {
           </div>
           
           {/* Status Filter */}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={statusFilter || "all"} onValueChange={(value) => setStatusFilter(value === "all" ? "" : value)}>
             <SelectTrigger className="w-48 glass-morphism border-border/30">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -227,7 +227,7 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ onAddPayment }) => {
           </Select>
 
           {/* Type Filter */}
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <Select value={typeFilter || "all"} onValueChange={(value) => setTypeFilter(value === "all" ? "" : value)}>
             <SelectTrigger className="w-48 glass-morphism border-border/30">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
