@@ -111,6 +111,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
                 label="Capacity"
                 type="number"
                 placeholder="30"
+                min={1}
                 isRequired={true}
                 description="Number of students this classroom can accommodate"
               />

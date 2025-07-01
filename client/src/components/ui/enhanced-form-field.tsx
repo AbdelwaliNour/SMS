@@ -29,6 +29,8 @@ export interface EnhancedFormFieldProps<T extends Record<string, any>> extends B
   placeholder?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'select';
   maxLength?: number;
+  min?: number;
+  max?: number;
   options?: Array<{ value: string; label: string; }>;  // For select type
   onChange?: (value: string) => void;  // For custom change handler
 }
@@ -71,6 +73,8 @@ export function EnhancedFormField<T extends Record<string, any>>({
   isRequired = false, // Backward compatibility
   showSuccessState = true,
   maxLength,
+  min,
+  max,
   options = [],
   onChange,
 }: EnhancedFormFieldProps<T> & { isRequired?: boolean }) {
@@ -131,6 +135,8 @@ export function EnhancedFormField<T extends Record<string, any>>({
                   placeholder={placeholder}
                   disabled={disabled}
                   maxLength={maxLength}
+                  min={type === 'number' ? (min ?? 1) : undefined}
+                  max={type === 'number' ? max : undefined}
                   className={cn(
                     'pr-10',
                     hasError 

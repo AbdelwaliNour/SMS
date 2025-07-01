@@ -116,6 +116,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                   label="Capacity"
                   type="number"
                   placeholder="30"
+                  min={1}
                   isRequired={true}
                   description="Number of students this classroom can accommodate"
                 />
