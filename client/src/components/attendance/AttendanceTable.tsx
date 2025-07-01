@@ -264,13 +264,13 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                             )}
                           </div>
                           
-                          <div className="flex items-center space-x-3 text-xs text-muted-foreground opacity-80">
-                            <span className="font-medium text-xs">{student?.studentId || `#${record.studentId}`}</span>
+                          <div className="flex items-center space-x-3 text-muted-foreground opacity-80" style={{ fontSize: '13px' }}>
+                            <span className="font-medium">{student?.studentId || `#${record.studentId}`}</span>
                             {student?.section && (
-                              <span className="text-xs">Section: {student.section}</span>
+                              <span>Section: {student.section}</span>
                             )}
                             {student?.class && (
-                              <span className="text-xs">Class: {student.class}</span>
+                              <span>Class: {student.class}</span>
                             )}
                           </div>
                         </div>
