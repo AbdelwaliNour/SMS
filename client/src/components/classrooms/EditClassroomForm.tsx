@@ -13,7 +13,7 @@ import { EnhancedFormField } from '@/components/ui/enhanced-form-field';
 const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
   section: z.enum(['primary', 'secondary', 'highschool']),
-  capacity: z.number().min(1, "Capacity must be at least 1"),
+  capacity: z.number().min(1, "Capacity must be at least 1").max(25, "Capacity cannot exceed 25 students"),
   teacherId: z.string().transform(val => val === "0" || val === "" ? null : parseInt(val)),
 });
 
@@ -35,7 +35,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
     defaultValues: {
       name: classroom.name || '',
       section: classroom.section,
-      capacity: classroom.capacity || 30,
+      capacity: classroom.capacity || 20,
       teacherId: classroom.teacherId || 0,
     },
   });
@@ -115,9 +115,9 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                   name="capacity"
                   label="Capacity"
                   type="number"
-                  placeholder="30"
+                  placeholder="20"
                   isRequired={true}
-                  description="Maximum number of students"
+                  description="Maximum number of students (up to 25)"
                 />
 
                 <EnhancedFormField
