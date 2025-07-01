@@ -1,4 +1,3 @@
-
 import logoImage from "@assets/logo1_1751360257822.png";
 
 interface LogoProps {
@@ -8,14 +7,14 @@ interface LogoProps {
 
 export const Logo = ({ size = 64, className = "" }: LogoProps) => {
   return (
-    <img 
+    <img
       src={logoImage}
-      alt="Education Management System" 
+      alt="Education Management System"
       className={`${className}`}
-      style={{ 
+      style={{
         height: `${size}px`,
         width: `${size * 1.5}px`,
-        objectFit: 'contain'
+        objectFit: "contain",
       }}
     />
   );
