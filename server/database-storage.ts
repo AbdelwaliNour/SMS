@@ -4,7 +4,8 @@ import {
   Employee, InsertEmployee, Classroom, InsertClassroom, 
   Attendance, InsertAttendance, Payment, InsertPayment, 
   Exam, InsertExam, Result, InsertResult,
-  users, students, employees, classrooms, attendance, payments, exams, results
+  Schedule, InsertSchedule,
+  users, students, employees, classrooms, attendance, payments, exams, results, schedules
 } from '@shared/schema';
 import { db } from './db';
 import { eq, and, desc } from 'drizzle-orm';
@@ -383,5 +384,34 @@ export class DatabaseStorage implements IStorage {
         payments: { paid: 0, unpaid: 0, partial: 0, totalPaidAmount: 0, totalUnpaidAmount: 0 }
       };
     }
+  }
+
+  // Schedules
+  async getSchedules(): Promise<Schedule[]> {
+    return await db.select().from(schedules).orderBy(desc(schedules.id));
+  }
+
+  async getSchedule(id: number): Promise<Schedule | undefined> {
+    const [schedule] = await db.select().from(schedules).where(eq(schedules.id, id));
+    return schedule || undefined;
+  }
+
+  async createSchedule(schedule: InsertSchedule): Promise<Schedule> {
+    const [newSchedule] = await db.insert(schedules).values(schedule).returning();
+    return newSchedule;
+  }
+
+  async updateSchedule(id: number, scheduleUpdate: Partial<InsertSchedule>): Promise<Schedule | undefined> {
+    const [updatedSchedule] = await db
+      .update(schedules)
+      .set(scheduleUpdate)
+      .where(eq(schedules.id, id))
+      .returning();
+    return updatedSchedule || undefined;
+  }
+
+  async deleteSchedule(id: number): Promise<boolean> {
+    const [deletedSchedule] = await db.delete(schedules).where(eq(schedules.id, id)).returning({ id: schedules.id });
+    return !!deletedSchedule;
   }
 }

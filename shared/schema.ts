@@ -131,6 +131,20 @@ export const results = pgTable("results", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Timetable table
+export const schedules = pgTable("schedules", {
+  id: serial("id").primaryKey(),
+  day: text("day").notNull(),
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
+  subject: text("subject").notNull(),
+  teacherId: integer("teacher_id").references(() => employees.id).notNull(),
+  classroomId: integer("classroom_id").references(() => classrooms.id).notNull(),
+  section: sectionEnum("section").notNull(),
+  class: text("class").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true });
 export const insertStudentSchema = createInsertSchema(students).omit({ id: true, createdAt: true });
@@ -140,6 +154,7 @@ export const insertAttendanceSchema = createInsertSchema(attendance).omit({ id: 
 export const insertPaymentSchema = createInsertSchema(payments).omit({ id: true, createdAt: true });
 export const insertExamSchema = createInsertSchema(exams).omit({ id: true, createdAt: true });
 export const insertResultSchema = createInsertSchema(results).omit({ id: true, createdAt: true });
+export const insertScheduleSchema = createInsertSchema(schedules).omit({ id: true, createdAt: true });
 
 // Type definitions
 export type User = typeof users.$inferSelect;
@@ -165,6 +180,9 @@ export type InsertExam = z.infer<typeof insertExamSchema>;
 
 export type Result = typeof results.$inferSelect;
 export type InsertResult = z.infer<typeof insertResultSchema>;
+
+export type Schedule = typeof schedules.$inferSelect;
+export type InsertSchedule = z.infer<typeof insertScheduleSchema>;
 
 // Define relations
 export const studentsRelations = relations(students, ({ many }) => ({
@@ -210,5 +228,16 @@ export const resultsRelations = relations(results, ({ one }) => ({
   exam: one(exams, {
     fields: [results.examId],
     references: [exams.id]
+  })
+}));
+
+export const schedulesRelations = relations(schedules, ({ one }) => ({
+  teacher: one(employees, {
+    fields: [schedules.teacherId],
+    references: [employees.id]
+  }),
+  classroom: one(classrooms, {
+    fields: [schedules.classroomId],
+    references: [classrooms.id]
   })
 }));
