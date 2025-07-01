@@ -105,14 +105,14 @@ export function ResponsiveDataList<T>({
   // Render empty state
   if (data.length === 0) {
     return (
-      <div className={cn('rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 p-8 text-center', className)}>
-        <p className="text-gray-500 dark:text-gray-400">{emptyMessage}</p>
+      <div className={cn('glass-morphism border-border/30 rounded-lg p-8 text-center', className)}>
+        <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className={cn('rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700', className)}>
+    <div className={cn('space-y-4', className)}>
       {data.map(item => {
         const itemKey = keyExtractor(item);
         const isExpanded = expandedItems.has(itemKey);
@@ -123,8 +123,8 @@ export function ResponsiveDataList<T>({
             <div 
               key={itemKey} 
               className={cn(
-                'border-b border-gray-200 dark:border-gray-700 last:border-0',
-                onItemClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50' : '',
+                'glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl rounded-lg',
+                onItemClick ? 'cursor-pointer' : '',
                 itemClassName
               )}
             >
@@ -137,8 +137,8 @@ export function ResponsiveDataList<T>({
           <div 
             key={itemKey} 
             className={cn(
-              'border-b border-gray-200 dark:border-gray-700 last:border-0',
-              onItemClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50' : '',
+              'glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl rounded-lg',
+              onItemClick ? 'cursor-pointer' : '',
               itemClassName
             )}
             onClick={onItemClick ? () => onItemClick(item) : undefined}
