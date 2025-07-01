@@ -145,8 +145,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
           </div>
 
           {/* Form Actions */}
-          <div className="glass-morphism p-6 border border-white/10 rounded-xl">
-            <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-4 mt-6">
               <Button
                 type="button"
                 variant="outline"
@@ -174,7 +173,6 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
                   </>
                 )}
               </Button>
-            </div>
           </div>
         </form>
       </Form>
