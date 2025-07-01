@@ -200,6 +200,13 @@ Changelog:
   * Added visual payment type badges and improved status indicators
   * Implemented installment payment tracking and academic year/term organization
   * Added payment method tracking and receipt number management
+- July 1, 2025. Payment dialog UI improvements and optimization:
+  * Fixed dialog width responsiveness to prevent horizontal scrolling (max-w-4xl)
+  * Improved payment type grid responsiveness with proper breakpoints
+  * Removed default trigger button for better component control
+  * Cleaned up action button styling and removed background gradients
+  * Standardized Cancel button to use default shadcn/ui styling
+  * Enhanced debugging capabilities for payment form submission
 ```
 
 ## User Preferences
