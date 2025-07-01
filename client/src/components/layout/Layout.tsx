@@ -4,6 +4,8 @@ import Header from './Header';
 import { MobileNavigation } from './MobileNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AppTheme } from '@/App';
+import WelcomeWizard from '@/components/onboarding/WelcomeWizard';
+import { useOnboarding } from '@/hooks/use-onboarding';
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,6 +13,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
+  const { showWelcomeWizard, completeOnboarding, hideWizard, showWizard } = useOnboarding();
   const [theme, setTheme] = useState<AppTheme>(() => {
     // Check localStorage or system preference
     const savedTheme = localStorage.getItem('theme') as AppTheme | null;
@@ -49,13 +52,20 @@ const Layout = ({ children }: LayoutProps) => {
       <MobileNavigation />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header toggleTheme={toggleTheme} theme={theme} />
+        <Header toggleTheme={toggleTheme} theme={theme} onShowTour={showWizard} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           <div className="animate-fade-in">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Welcome Wizard */}
+      <WelcomeWizard
+        isOpen={showWelcomeWizard}
+        onClose={hideWizard}
+        onComplete={completeOnboarding}
+      />
     </div>
   );
 };
