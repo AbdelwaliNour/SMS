@@ -610,72 +610,72 @@ const PerformanceTable = ({
 
           return (
             <Card key={student.id} className="glass-morphism border-border/30 hover:border-amber-300/50 transition-all duration-300 hover:shadow-xl hover:shadow-amber-100/20 hover:-translate-y-1 relative overflow-hidden group">
-              <CardContent className="p-6 relative">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-400/5 to-orange-500/5 rounded-full -translate-y-8 translate-x-8 group-hover:scale-110 transition-transform duration-300"></div>
+              <CardContent className="p-4 relative">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-400/5 to-orange-500/5 rounded-full -translate-y-6 translate-x-6 group-hover:scale-110 transition-transform duration-300"></div>
                 
-                <div className="flex items-start justify-between mb-6 relative z-10">
-                  <div className="flex items-center space-x-4">
+                <div className="flex items-start justify-between mb-4 relative z-10">
+                  <div className="flex items-center space-x-3">
                     <div className="relative">
-                      <Avatar className="h-16 w-16 border-3 border-white/30 shadow-lg">
+                      <Avatar className="h-12 w-12 border-2 border-white/30 shadow-lg">
                         <AvatarImage src={student.profilePhoto || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white font-bold text-lg">
+                        <AvatarFallback className="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white font-bold text-sm">
                           {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                        <Star className="h-2.5 w-2.5 text-white" />
+                      <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                        <Star className="h-2 w-2 text-white" />
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-1">
+                      <h3 className="font-semibold text-base text-gray-900 dark:text-gray-100 mb-1">
                         {student.firstName} {student.lastName}
                       </h3>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="text-xs px-2 py-1">
+                        <Badge variant="outline" className="text-xs px-2 py-0.5">
                           {student.studentId}
                         </Badge>
-                        <Badge variant="outline" className="text-xs px-2 py-1 bg-blue-50 text-blue-600 border-blue-200">
+                        <Badge variant="outline" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 border-blue-200">
                           {calculateAge(student.dateOfBirth)} years
                         </Badge>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge className={`${performanceBadge.class} shadow-sm mb-2 px-3 py-1.5 text-sm font-semibold`}>
+                    <Badge className={`${performanceBadge.class} shadow-sm mb-1 px-2 py-1 text-xs font-medium`}>
                       {performanceBadge.label}
                     </Badge>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                       {avgScore}%
                     </div>
                     <p className="text-xs text-muted-foreground">Average Score</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-blue-600">{studentResults.length}</div>
+                <div className="grid grid-cols-2 gap-3 mb-4 relative z-10">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-2 text-center">
+                    <div className="text-sm font-bold text-blue-600">{studentResults.length}</div>
                     <div className="text-xs text-muted-foreground">Total Exams</div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-3 text-center">
-                    <div className="text-lg font-bold text-purple-600 capitalize">{student.section}</div>
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-2 text-center">
+                    <div className="text-sm font-bold text-purple-600 capitalize">{student.section}</div>
                     <div className="text-xs text-muted-foreground">Section</div>
                   </div>
                 </div>
 
-                <div className="space-y-3 mb-6 relative z-10">
+                <div className="space-y-2 mb-4 relative z-10">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground flex items-center space-x-2">
-                      <BarChart3 className="h-4 w-4" />
+                    <span className="text-xs text-muted-foreground flex items-center space-x-1">
+                      <BarChart3 className="h-3 w-3" />
                       <span>Performance Trend</span>
                     </span>
                     <div className="flex items-center space-x-1">
-                      <TrendingUp className="h-4 w-4 text-emerald-500" />
-                      <span className="text-sm font-medium text-emerald-600">+5.2%</span>
+                      <TrendingUp className="h-3 w-3 text-emerald-500" />
+                      <span className="text-xs font-medium text-emerald-600">+5.2%</span>
                     </div>
                   </div>
                   
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-1000 ease-out"
                       style={{ width: `${avgScore}%` }}
@@ -684,12 +684,12 @@ const PerformanceTable = ({
                 </div>
 
                 <div className="flex space-x-2 relative z-10">
-                  <Button variant="outline" size="sm" className="flex-1 hover:bg-amber-50 hover:border-amber-200 transition-colors">
-                    <Eye className="h-4 w-4 mr-2" />
+                  <Button variant="outline" size="sm" className="flex-1 hover:bg-amber-50 hover:border-amber-200 transition-colors text-xs">
+                    <Eye className="h-3 w-3 mr-1" />
                     View Details
                   </Button>
                   <Button size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-sm">
-                    <User className="h-4 w-4" />
+                    <User className="h-3 w-3" />
                   </Button>
                 </div>
               </CardContent>
