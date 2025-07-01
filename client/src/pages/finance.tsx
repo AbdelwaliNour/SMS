@@ -178,7 +178,7 @@ export default function Finance() {
                     <p className="text-sm text-muted-foreground">Fees fully collected</p>
                   </div>
                 </div>
-                <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-lg px-3 py-1">
+                <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-sm px-3 py-1">
                   {paidStudents}
                 </Badge>
               </div>
@@ -205,7 +205,7 @@ export default function Finance() {
                     <p className="text-sm text-muted-foreground">Partially paid fees</p>
                   </div>
                 </div>
-                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-lg px-3 py-1">
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-sm px-3 py-1">
                   {partialStudents}
                 </Badge>
               </div>
@@ -232,7 +232,7 @@ export default function Finance() {
                     <p className="text-sm text-muted-foreground">Outstanding fees</p>
                   </div>
                 </div>
-                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-lg px-3 py-1">
+                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-sm px-3 py-1">
                   {unpaidStudents}
                 </Badge>
               </div>
