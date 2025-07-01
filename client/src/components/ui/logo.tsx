@@ -6,7 +6,7 @@ interface LogoProps {
   className?: string;
 }
 
-export const Logo = ({ size = 48, className = "" }: LogoProps) => {
+export const Logo = ({ size = 64, className = "" }: LogoProps) => {
   return (
     <img 
       src={logoImage}
