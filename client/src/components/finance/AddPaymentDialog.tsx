@@ -539,60 +539,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                     </div>
                   </div>
 
-                  <Separator />
 
-                  {/* Installment Information */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-medium flex items-center text-teal-700 dark:text-teal-300">
-                      <div className="p-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg mr-2">
-                        <Calculator className="h-5 w-5 text-white" />
-                      </div>
-                      Installment Plan (Optional)
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Installment Number */}
-                      <FormField
-                        control={form.control}
-                        name="installmentNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Installment Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="1"
-                                placeholder="e.g., 1"
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* Total Installments */}
-                      <FormField
-                        control={form.control}
-                        name="totalInstallments"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Total Installments</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="1"
-                                placeholder="e.g., 4"
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
 
                   {/* Notes */}
                   <FormField
@@ -639,11 +586,6 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
                         <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                           ${form.watch("amount")?.toFixed(2) || "0.00"}
                         </div>
-                        {form.watch("installmentNumber") && form.watch("totalInstallments") && (
-                          <div className="text-sm text-muted-foreground">
-                            Installment {form.watch("installmentNumber")} of {form.watch("totalInstallments")}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </CardContent>
