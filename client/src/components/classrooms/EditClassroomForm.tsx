@@ -145,7 +145,7 @@ const EditClassroomForm = ({ classroom, teachers, onSuccess, onCancel }: EditCla
           </div>
 
           {/* Form Actions */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+          <div className="backdrop-blur-sm rounded-xl p-6 border border-white/10 bg-[#030a19]">
             <div className="flex justify-end space-x-4">
               <Button
                 type="button"
