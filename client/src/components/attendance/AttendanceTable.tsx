@@ -245,7 +245,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                         
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-1">
-                            <h3 className="font-semibold text-foreground">
+                            <h3 className="text-sm font-semibold text-foreground">
                               {student ? `${student.firstName} ${student.lastName}` : 'Unknown Student'}
                             </h3>
                             {age && (
@@ -264,7 +264,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                             )}
                           </div>
                           
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                             <span className="font-medium">{student?.studentId || `#${record.studentId}`}</span>
                             {student?.section && (
                               <span>Section: {student.section}</span>
@@ -290,7 +290,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                           >
                             {dateInfo.label}
                           </Badge>
-                          <div className="text-sm font-medium text-foreground">
+                          <div className="text-xs font-medium text-foreground">
                             {dateInfo.time}
                           </div>
                         </div>
@@ -303,7 +303,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                         {/* Notes */}
                         <div className="min-w-0 max-w-xs">
                           {record.note ? (
-                            <div className="text-sm text-muted-foreground bg-muted/50 px-3 py-2 rounded-lg border">
+                            <div className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-lg border">
                               <p className="leading-relaxed truncate" title={record.note}>
                                 {record.note}
                               </p>
