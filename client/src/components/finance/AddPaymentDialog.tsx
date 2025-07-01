@@ -359,7 +359,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
               </Card>
 
               {/* Payment Details Card */}
-              <Card className="glass-morphism border-blue-200/50 dark:border-blue-800/50 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/20">
+              <Card className="glass-morphism">
                 <CardContent className="space-y-6">
                   {/* Payment Details */}
                   <div className="space-y-4">
