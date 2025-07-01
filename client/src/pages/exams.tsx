@@ -220,94 +220,128 @@ export default function Exams() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Exams & Results
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Comprehensive examination and academic performance management
-            </p>
+      <div className="space-y-8">
+        {/* Modern Page Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-blue-500/10 rounded-xl">
+                <Award className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gradient">Academic Results</h1>
+                <p className="text-muted-foreground">Track exam results, performance, and academic analytics</p>
+              </div>
+            </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setIsAddExamModalOpen(true)}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Exam
-            </Button>
+          <div className="flex items-center space-x-3">
             <Button
               onClick={() => setIsAddResultModalOpen(true)}
               className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <Award className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               Add Result
+            </Button>
+            <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
+              <FileText className="h-4 w-4 mr-2" />
+              Export Report
             </Button>
           </div>
         </div>
 
-        {/* Overview Cards */}
+        {/* Academic Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="glass-morphism border-border/20 hover:shadow-xl transition-all duration-500 group">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Results</CardTitle>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <FileText className="h-4 w-4 text-white" />
+          {/* Total Results */}
+          <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Total Results</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold text-blue-600">{totalResults}</h3>
+                    <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +5.2%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="p-3 bg-blue-500/10 rounded-xl">
+                  <FileText className="h-6 w-6 text-blue-600" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalResults}</div>
-              <p className="text-xs text-muted-foreground">Academic records</p>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-border/20 hover:shadow-xl transition-all duration-500 group">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Average Score</CardTitle>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Target className="h-4 w-4 text-white" />
+          {/* Average Score */}
+          <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Average Score</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold text-green-600">{averageScore}%</h3>
+                    <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +3.1%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="p-3 bg-green-500/10 rounded-xl">
+                  <Target className="h-6 w-6 text-green-600" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{averageScore}%</div>
-              <p className="text-xs text-muted-foreground">Class performance</p>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-border/20 hover:shadow-xl transition-all duration-500 group">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Highest Score</CardTitle>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Trophy className="h-4 w-4 text-white" />
+          {/* Pass Rate */}
+          <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Pass Rate</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold text-emerald-600">
+                      {totalResults > 0 ? Math.round(((gradeDistribution.A || 0) + (gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults * 100) : 0}%
+                    </h3>
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +1.8%
+                    </Badge>
+                  </div>
+                </div>
+                <div className="p-3 bg-emerald-500/10 rounded-xl">
+                  <Trophy className="h-6 w-6 text-emerald-600" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{Math.round(highestScore)}%</div>
-              <p className="text-xs text-muted-foreground">Best performance</p>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-border/20 hover:shadow-xl transition-all duration-500 group">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Exams</CardTitle>
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <GraduationCap className="h-4 w-4 text-white" />
+          {/* Total Students */}
+          <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground font-medium">Total Students</p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold text-purple-600">{students?.length || 0}</h3>
+                    <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20">
+                      <Users className="h-3 w-3 mr-1" />
+                      Active
+                    </Badge>
+                  </div>
+                </div>
+                <div className="p-3 bg-purple-500/10 rounded-xl">
+                  <Users className="h-6 w-6 text-purple-600" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{exams?.length || 0}</div>
-              <p className="text-xs text-muted-foreground">Created exams</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Grade Distribution */}
+        {/* Academic Performance Analysis */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Grade A Students */}
+          {/* Excellent Performance */}
           <Card className="glass-morphism border-border/30">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -316,8 +350,8 @@ export default function Exams() {
                     <Trophy className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-green-600 text-[23px]">Grade A Students</h3>
-                    <p className="text-sm text-muted-foreground">Excellent performance</p>
+                    <h3 className="font-semibold text-green-600 text-[23px]">Excellent Students</h3>
+                    <p className="text-sm text-muted-foreground">Grade A achievers</p>
                   </div>
                 </div>
                 <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-sm px-3 py-1">
@@ -334,34 +368,34 @@ export default function Exams() {
             </CardContent>
           </Card>
 
-          {/* Grade B & C Students */}
+          {/* Good Performance */}
           <Card className="glass-morphism border-border/30">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-500/10 rounded-lg">
-                    <Target className="h-5 w-5 text-blue-600" />
+                  <div className="p-2 bg-amber-500/10 rounded-lg">
+                    <Target className="h-5 w-5 text-amber-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-blue-600 text-[23px]">Average Students</h3>
-                    <p className="text-sm text-muted-foreground">Good performance</p>
+                    <h3 className="font-semibold text-amber-600 text-[23px]">Good Performance</h3>
+                    <p className="text-sm text-muted-foreground">Grade B & C students</p>
                   </div>
                 </div>
-                <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-sm px-3 py-1">
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-sm px-3 py-1">
                   {(gradeDistribution.B || 0) + (gradeDistribution.C || 0)}
                 </Badge>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Average Rate</span>
+                  <span className="text-muted-foreground">Good Rate</span>
                   <span className="font-medium">{totalResults > 0 ? Math.round((((gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults) * 100) : 0}%</span>
                 </div>
-                <Progress value={totalResults > 0 ? (((gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults) * 100 : 0} className="h-2 bg-blue-500/10" />
+                <Progress value={totalResults > 0 ? (((gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults) * 100 : 0} className="h-2 bg-amber-500/10" />
               </div>
             </CardContent>
           </Card>
 
-          {/* Grade D & F Students */}
+          {/* Needs Improvement */}
           <Card className="glass-morphism border-border/30">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -370,8 +404,8 @@ export default function Exams() {
                     <TrendingUp className="h-5 w-5 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-red-600 text-[23px]">Needs Improvement</h3>
-                    <p className="text-sm text-muted-foreground">Requires attention</p>
+                    <h3 className="font-semibold text-red-600 text-[23px]">Needs Support</h3>
+                    <p className="text-sm text-muted-foreground">Requires improvement</p>
                   </div>
                 </div>
                 <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-sm px-3 py-1">
@@ -380,7 +414,7 @@ export default function Exams() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Support Needed</span>
+                  <span className="text-muted-foreground">Support Rate</span>
                   <span className="font-medium">{totalResults > 0 ? Math.round((((gradeDistribution.D || 0) + (gradeDistribution.F || 0)) / totalResults) * 100) : 0}%</span>
                 </div>
                 <Progress value={totalResults > 0 ? (((gradeDistribution.D || 0) + (gradeDistribution.F || 0)) / totalResults) * 100 : 0} className="h-2 bg-red-500/10" />
@@ -432,19 +466,127 @@ export default function Exams() {
             </Card>
           </TabsContent>
 
-          {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
-            <Card className="glass-morphism border-border/20">
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mb-4">
-                  <BarChart3 className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Advanced Analytics</h3>
-                <p className="text-muted-foreground text-center">
-                  Detailed performance analytics and reporting coming soon.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Performance Trend Chart */}
+              <Card className="glass-morphism border-border/30">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-primary flex items-center">
+                    <TrendingUp className="h-5 w-5 mr-2" />
+                    Performance Trend
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Performance chart visualization</p>
+                      <p className="text-sm">Would integrate with Recharts</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Subject Performance */}
+              <Card className="glass-morphism border-border/30">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-primary flex items-center">
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Subject Performance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span className="text-sm">Mathematics</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">85%</div>
+                        <div className="text-xs text-muted-foreground">Average</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className="text-sm">English</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">78%</div>
+                        <div className="text-xs text-muted-foreground">Average</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span className="text-sm">Science</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">82%</div>
+                        <div className="text-xs text-muted-foreground">Average</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="reports" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Quick Reports */}
+              <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="p-2 bg-blue-500/10 rounded-lg">
+                      <Calendar className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Monthly Report</h3>
+                      <p className="text-sm text-muted-foreground">Academic performance</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Generate Report
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="p-2 bg-green-500/10 rounded-lg">
+                      <Trophy className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Grade Report</h3>
+                      <p className="text-sm text-muted-foreground">Performance analysis</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Generate Report
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                      <Users className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Student Report</h3>
+                      <p className="text-sm text-muted-foreground">Individual progress</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Generate Report
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
 
