@@ -3,6 +3,7 @@ import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
 import PaymentsTable from '@/components/finance/PaymentsTable';
 import { formatCurrency } from '@/lib/utils';
+import { Payment } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ export default function Finance() {
   });
 
   // Calculate financial metrics
-  const totalRevenue = payments?.reduce((sum: number, payment: any) => sum + payment.amount, 0) || 85000;
+  const totalRevenue = Array.isArray(payments) ? payments.reduce((sum: number, payment: any) => sum + payment.amount, 0) : 85000;
   const collectionRate = 87.5;
   const outstandingAmount = 12500;
   const paidStudents = 145;
@@ -70,10 +71,6 @@ export default function Finance() {
             <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
               <Download className="h-4 w-4 mr-2" />
               Export Report
-            </Button>
-            <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Record Payment
             </Button>
           </div>
         </div>
