@@ -1,4 +1,6 @@
 
+import logoImage from "@assets/logo1_1751360257822.png";
+
 interface LogoProps {
   size?: number;
   className?: string;
@@ -7,7 +9,7 @@ interface LogoProps {
 export const Logo = ({ size = 48, className = "" }: LogoProps) => {
   return (
     <img 
-      src="/logo.png"
+      src={logoImage}
       alt="Education Management System" 
       className={`w-auto ${className}`}
       style={{ 
