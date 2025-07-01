@@ -9,7 +9,7 @@ import { Form } from "@/components/ui/form";
 import { ValidationMessages, ValidationPatterns } from "@/lib/form-validation";
 import { EnhancedFormField } from "@/components/ui/enhanced-form-field";
 import { useLocation } from "wouter";
-import { UserPlus, User, Phone, Mail, Users2, Heart, FileImage, Award, Save, Loader2 } from "lucide-react";
+import { UserPlus, User, Phone, Mail, Users2, Heart, FileImage, Award, Save, Loader2, X } from "lucide-react";
 import { generateStudentId } from "@/lib/utils";
 
 const studentFormSchema = z.object({
@@ -521,8 +521,9 @@ export default function AddStudentForm() {
             type="button"
             variant="outline"
             onClick={() => navigate("/students")}
-            className="glass-morphism border-border/30 hover:border-red-500/30 hover:text-red-600"
+            className="px-6 py-2 bg-gray-100 border-2 border-gray-400 hover:bg-red-100 hover:border-red-400 hover:text-red-700 text-gray-800 font-medium rounded-lg transition-all duration-200 shadow-sm"
           >
+            <X className="h-4 w-4 mr-2" />
             Cancel
           </Button>
           <Button
