@@ -147,8 +147,8 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ onAddPayment }) => {
       payment.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       payment.amount.toString().includes(searchQuery);
     
-    const matchesStatus = statusFilter === '' || payment.status === statusFilter;
-    const matchesType = typeFilter === '' || payment.type === typeFilter;
+    const matchesStatus = statusFilter === '' || statusFilter === 'all' || payment.status === statusFilter;
+    const matchesType = typeFilter === '' || typeFilter === 'all' || payment.type === typeFilter;
     
     return matchesSearch && matchesStatus && matchesType;
   }) || [];
@@ -217,7 +217,7 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ onAddPayment }) => {
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="paid">Paid</SelectItem>
               <SelectItem value="unpaid">Unpaid</SelectItem>
               <SelectItem value="partial">Partial</SelectItem>
@@ -232,7 +232,7 @@ const PaymentsTable: React.FC<PaymentsTableProps> = ({ onAddPayment }) => {
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="tuition">Tuition</SelectItem>
               <SelectItem value="fees">Fees</SelectItem>
               <SelectItem value="book">Books</SelectItem>
