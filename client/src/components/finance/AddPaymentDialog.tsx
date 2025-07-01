@@ -6,6 +6,7 @@ import { z } from "zod";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -188,15 +189,18 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden glass-morphism border-border/30">
-        <DialogHeader className="pb-6 border-b border-border/30">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col glass-morphism border-border/30">
+        <DialogHeader className="pb-6 border-b border-border/30 flex-shrink-0">
           <DialogTitle className="text-2xl font-semibold text-primary flex items-center">
             <DollarSign className="h-6 w-6 mr-3" />
             Add New Payment
           </DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            Create a new payment record with comprehensive details and tracking information.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto py-6">
+        <div className="flex-1 overflow-y-auto py-6 min-h-0">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Payment Overview Card */}
