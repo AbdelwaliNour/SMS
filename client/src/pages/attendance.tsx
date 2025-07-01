@@ -140,36 +140,85 @@ export default function AttendancePage() {
 
   const columns: ColumnDef<Attendance>[] = [
     {
+      id: 'select',
+      header: ({ table }) => (
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={(value) => table.toggleAllPageRowsSelected(!!value.target.checked)}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Select All</span>
+        </div>
+      ),
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={row.getIsSelected()}
+          onChange={(value) => row.toggleSelected(!!value.target.checked)}
+          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
       accessorKey: 'student',
-      header: 'Student Information',
+      header: ({ column }) => (
+        <div className="flex items-center space-x-2">
+          <Users className="w-4 h-4 text-gray-500" />
+          <span className="font-semibold">Student Details</span>
+        </div>
+      ),
       cell: ({ row }) => {
         const student = getStudentInfo(row.original.studentId);
         const fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
         const profilePhoto = student?.profilePhoto;
+        const age = student?.dateOfBirth ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() : null;
         
         return (
-          <div className="flex items-center space-x-4 py-2">
+          <div className="flex items-center space-x-4 py-3">
             <div className="relative">
               <img 
-                src={profilePhoto || generateUserAvatar(fullName, 56)} 
+                src={profilePhoto || generateUserAvatar(fullName, 60)} 
                 alt={fullName} 
-                className="w-14 h-14 rounded-full object-cover ring-2 ring-blue-500/20 shadow-lg"
+                className="w-15 h-15 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-lg hover:ring-blue-500/40 transition-all duration-200"
               />
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full border-2 border-white flex items-center justify-center">
+              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
                 <span className="text-white text-xs font-bold">
                   {student?.section?.charAt(0).toUpperCase() || 'U'}
                 </span>
               </div>
+              {student?.gender && (
+                <div className={`absolute -bottom-1 -left-1 w-5 h-5 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-xs ${
+                  student.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                }`}>
+                  <span className="text-white font-bold">{student.gender.charAt(0).toUpperCase()}</span>
+                </div>
+              )}
             </div>
-            <div className="flex flex-col">
-              <div className="font-semibold text-lg text-gray-900 dark:text-white">
-                {fullName}
+            <div className="flex flex-col space-y-1 min-w-0 flex-1">
+              <div className="flex items-center space-x-2">
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate">{fullName}</h3>
+                {age && (
+                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    {age}y
+                  </Badge>
+                )}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-2">
-                <span>ID: {student?.studentId || `#${row.original.studentId}`}</span>
+              <div className="flex items-center space-x-3 text-sm">
+                <span className="text-gray-600 dark:text-gray-400 font-medium">
+                  ID: {student?.studentId || `#${row.original.studentId}`}
+                </span>
                 {student?.section && (
-                  <Badge variant="outline" className="text-xs">
-                    {student.section.charAt(0).toUpperCase() + student.section.slice(1)}
+                  <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
+                    {student.section.charAt(0).toUpperCase() + student.section.slice(1)} Section
+                  </Badge>
+                )}
+                {student?.class && (
+                  <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
+                    Class {student.class}
                   </Badge>
                 )}
               </div>
@@ -180,24 +229,40 @@ export default function AttendancePage() {
     },
     {
       accessorKey: 'date',
-      header: 'Date & Time',
+      header: ({ column }) => (
+        <div className="flex items-center space-x-2">
+          <Calendar className="w-4 h-4 text-gray-500" />
+          <span className="font-semibold">Date & Time</span>
+        </div>
+      ),
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         const today = new Date();
         const isToday = date.toDateString() === today.toDateString();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isYesterday = date.toDateString() === yesterday.toDateString();
         
         return (
-          <div className="flex flex-col space-y-1">
-            <div className={`font-medium ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white'}`}>
-              {date.toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-              })}
-              {isToday && <span className="ml-2 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">Today</span>}
+          <div className="flex flex-col space-y-2 py-2">
+            <div className="flex items-center space-x-2">
+              <div className={`px-3 py-1.5 rounded-lg font-semibold text-sm ${
+                isToday 
+                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                  : isYesterday 
+                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+              }`}>
+                {isToday ? 'Today' : isYesterday ? 'Yesterday' : date.toLocaleDateString('en-US', { 
+                  weekday: 'short', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </div>
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {date.toLocaleDateString('en-US', { year: 'numeric' })}
+            <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-1">
+              <Clock className="w-3 h-3" />
+              <span>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
           </div>
         );
@@ -205,46 +270,54 @@ export default function AttendancePage() {
     },
     {
       accessorKey: 'status',
-      header: 'Attendance Status',
+      header: ({ column }) => (
+        <div className="flex items-center space-x-2">
+          <ClipboardList className="w-4 h-4 text-gray-500" />
+          <span className="font-semibold">Attendance Status</span>
+        </div>
+      ),
       cell: ({ row }) => {
         const status = row.original.status;
         let statusConfig;
         
         if (status === 'present') {
           statusConfig = {
-            bg: 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20',
-            border: 'border-emerald-200 dark:border-emerald-700',
-            text: 'text-emerald-700 dark:text-emerald-300',
-            dot: 'bg-emerald-500',
-            icon: <CheckCircle className="w-4 h-4" />,
-            label: 'Present'
+            container: 'bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 dark:from-emerald-900/20 dark:via-green-900/20 dark:to-emerald-900/20',
+            border: 'border-emerald-300 dark:border-emerald-600',
+            text: 'text-emerald-800 dark:text-emerald-200',
+            dot: 'bg-emerald-500 shadow-emerald-500/50',
+            icon: <CheckCircle className="w-5 h-5" />,
+            label: 'Present',
+            glow: 'shadow-lg shadow-emerald-500/20'
           };
         } else if (status === 'late') {
           statusConfig = {
-            bg: 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20',
-            border: 'border-amber-200 dark:border-amber-700',
-            text: 'text-amber-700 dark:text-amber-300',
-            dot: 'bg-amber-500',
-            icon: <Clock className="w-4 h-4" />,
-            label: 'Late'
+            container: 'bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-900/20 dark:via-yellow-900/20 dark:to-amber-900/20',
+            border: 'border-amber-300 dark:border-amber-600',
+            text: 'text-amber-800 dark:text-amber-200',
+            dot: 'bg-amber-500 shadow-amber-500/50',
+            icon: <Clock className="w-5 h-5" />,
+            label: 'Late Arrival',
+            glow: 'shadow-lg shadow-amber-500/20'
           };
         } else {
           statusConfig = {
-            bg: 'bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20',
-            border: 'border-red-200 dark:border-red-700',
-            text: 'text-red-700 dark:text-red-300',
-            dot: 'bg-red-500',
-            icon: <XCircle className="w-4 h-4" />,
-            label: 'Absent'
+            container: 'bg-gradient-to-r from-red-50 via-rose-50 to-red-50 dark:from-red-900/20 dark:via-rose-900/20 dark:to-red-900/20',
+            border: 'border-red-300 dark:border-red-600',
+            text: 'text-red-800 dark:text-red-200',
+            dot: 'bg-red-500 shadow-red-500/50',
+            icon: <XCircle className="w-5 h-5" />,
+            label: 'Absent',
+            glow: 'shadow-lg shadow-red-500/20'
           };
         }
         
         return (
-          <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg border ${statusConfig.bg} ${statusConfig.border} w-fit shadow-sm`}>
-            <div className={`w-3 h-3 rounded-full ${statusConfig.dot} animate-pulse`}></div>
+          <div className={`flex items-center space-x-4 px-5 py-4 rounded-xl border-2 ${statusConfig.container} ${statusConfig.border} ${statusConfig.glow} w-fit min-w-[160px]`}>
+            <div className={`w-4 h-4 rounded-full ${statusConfig.dot} shadow-lg animate-pulse`}></div>
             <div className={`${statusConfig.text} flex items-center space-x-2`}>
               {statusConfig.icon}
-              <span className="font-medium">{statusConfig.label}</span>
+              <span className="font-bold text-sm">{statusConfig.label}</span>
             </div>
           </div>
         );
@@ -252,20 +325,34 @@ export default function AttendancePage() {
     },
     {
       accessorKey: 'note',
-      header: 'Notes & Comments',
+      header: ({ column }) => (
+        <div className="flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+          </svg>
+          <span className="font-semibold">Notes & Comments</span>
+        </div>
+      ),
       cell: ({ row }) => {
         const note = row.original.note;
         return (
-          <div className="max-w-xs">
+          <div className="max-w-sm py-2">
             {note ? (
-              <div className="text-sm text-gray-700 dark:text-gray-300 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                <p className="leading-relaxed">{note}</p>
+              <div className="group relative">
+                <div className="text-sm text-gray-700 dark:text-gray-300 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="flex items-start space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                    <p className="leading-relaxed text-sm font-medium">{note}</p>
+                  </div>
+                </div>
               </div>
             ) : (
-              <span className="text-gray-400 dark:text-gray-500 italic text-sm flex items-center space-x-2">
-                <span className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></span>
-                <span>No additional notes</span>
-              </span>
+              <div className="flex items-center space-x-3 text-gray-400 dark:text-gray-500 italic text-sm py-3">
+                <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                <span>No notes recorded</span>
+              </div>
             )}
           </div>
         );
@@ -273,51 +360,58 @@ export default function AttendancePage() {
     },
     {
       id: 'actions',
-      header: 'Quick Actions',
+      header: ({ column }) => (
+        <div className="flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span className="font-semibold">Quick Actions</span>
+        </div>
+      ),
       cell: ({ row }) => {
         const currentStatus = row.original.status;
         
         return (
-          <div className="flex items-center space-x-2">
-            <div className="flex space-x-1 bg-white dark:bg-gray-800 rounded-xl p-1.5 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center space-x-2 py-2">
+            <div className="flex space-x-1.5 bg-white dark:bg-gray-800 rounded-2xl p-2 border-2 border-gray-200 dark:border-gray-600 shadow-lg">
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-9 h-9 p-0 rounded-lg transition-all duration-200 ${
+                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'present' 
-                    ? 'bg-emerald-500 text-white shadow-lg scale-105 ring-2 ring-emerald-200' 
-                    : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:scale-105'
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105 ring-2 ring-emerald-300' 
+                    : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:shadow-md'
                 }`}
                 onClick={() => handleUpdateAttendance(row.original.id, 'present')}
                 title="Mark Present"
               >
-                <CheckCircle className="w-4 h-4" />
+                <CheckCircle className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-9 h-9 p-0 rounded-lg transition-all duration-200 ${
+                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'late' 
-                    ? 'bg-amber-500 text-white shadow-lg scale-105 ring-2 ring-amber-200' 
-                    : 'hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:scale-105'
+                    ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 scale-105 ring-2 ring-amber-300' 
+                    : 'hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:shadow-md'
                 }`}
                 onClick={() => handleUpdateAttendance(row.original.id, 'late')}
                 title="Mark Late"
               >
-                <Clock className="w-4 h-4" />
+                <Clock className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
-                className={`w-9 h-9 p-0 rounded-lg transition-all duration-200 ${
+                className={`w-10 h-10 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                   currentStatus === 'absent' 
-                    ? 'bg-red-500 text-white shadow-lg scale-105 ring-2 ring-red-200' 
-                    : 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:scale-105'
+                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 scale-105 ring-2 ring-red-300' 
+                    : 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:shadow-md'
                 }`}
                 onClick={() => handleUpdateAttendance(row.original.id, 'absent')}
                 title="Mark Absent"
               >
-                <XCircle className="w-4 h-4" />
+                <XCircle className="w-5 h-5" />
               </Button>
             </div>
           </div>
