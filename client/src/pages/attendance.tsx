@@ -194,12 +194,10 @@ export default function AttendancePage() {
         setStudentStatuses({});
         setStudentNotes({});
         setSelectedDate(new Date().toISOString().split('T')[0]);
-      } else {
-        toast({
-          title: 'Error',
-          description: `Failed to save attendance records. ${errors.length > 0 ? `First error: ${(errors[0].error as any)?.message || 'Unknown error'}` : ''}`,
-          variant: 'destructive',
-        });
+      }
+
+      if (errors.length > 0) {
+        console.error('Some records failed to save:', errors);
       }
     } catch (error: any) {
       console.error('Bulk attendance submission error:', error);
@@ -273,12 +271,7 @@ export default function AttendancePage() {
   const columns: ColumnDef<Attendance>[] = [
     {
       accessorKey: 'student',
-      header: ({ column }) => (
-        <div className="flex items-center space-x-2">
-          <Users className="w-4 h-4 text-gray-500" />
-          <span className="font-semibold">Student Details</span>
-        </div>
-      ),
+      header: 'Student Details',
       cell: ({ row }) => {
         const student = getStudentInfo(row.original.studentId);
         const fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
@@ -321,7 +314,7 @@ export default function AttendancePage() {
                 </span>
                 {student?.section && (
                   <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
-                    {student.section.charAt(0).toUpperCase() + student.section.slice(1)} Section
+                    {student.section}
                   </Badge>
                 )}
                 {student?.class && (
@@ -337,36 +330,39 @@ export default function AttendancePage() {
     },
     {
       accessorKey: 'date',
-      header: ({ column }) => (
-        <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-gray-500" />
-          <span className="font-semibold">Date & Time</span>
-        </div>
-      ),
+      header: 'Date & Time',
       cell: ({ row }) => {
         const date = new Date(row.original.date);
         const today = new Date();
         const isToday = date.toDateString() === today.toDateString();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
         const isYesterday = date.toDateString() === yesterday.toDateString();
         
+        let dateLabel = '';
+        if (isToday) {
+          dateLabel = 'Today';
+        } else if (isYesterday) {
+          dateLabel = 'Yesterday';
+        } else {
+          dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
         return (
-          <div className="flex flex-col space-y-2 py-2">
+          <div className="flex flex-col space-y-1 py-2">
             <div className="flex items-center space-x-2">
-              <div className={`px-3 py-1.5 rounded-lg font-semibold text-sm ${
-                isToday 
-                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                  : isYesterday 
-                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-              }`}>
-                {isToday ? 'Today' : isYesterday ? 'Yesterday' : date.toLocaleDateString('en-US', { 
-                  weekday: 'short', 
-                  month: 'short', 
-                  day: 'numeric' 
-                })}
-              </div>
+              <Badge 
+                variant={isToday ? 'default' : 'secondary'} 
+                className={`text-xs font-semibold ${
+                  isToday 
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' 
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                }`}
+              >
+                {dateLabel}
+              </Badge>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                {date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+              </span>
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center space-x-1">
               <Clock className="w-3 h-3" />
@@ -377,89 +373,20 @@ export default function AttendancePage() {
       },
     },
     {
-      accessorKey: 'status',
-      header: ({ column }) => (
-        <div className="flex items-center space-x-2">
-          <ClipboardList className="w-4 h-4 text-gray-500" />
-          <span className="font-semibold">Attendance Status</span>
-        </div>
-      ),
-      cell: ({ row }) => {
-        const status = row.original.status;
-        let statusConfig;
-        
-        if (status === 'present') {
-          statusConfig = {
-            container: 'bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 dark:from-emerald-900/20 dark:via-green-900/20 dark:to-emerald-900/20',
-            border: 'border-emerald-300 dark:border-emerald-600',
-            text: 'text-emerald-800 dark:text-emerald-200',
-            dot: 'bg-emerald-500 shadow-emerald-500/50',
-            icon: <CheckCircle className="w-5 h-5" />,
-            label: 'Present',
-            glow: 'shadow-lg shadow-emerald-500/20'
-          };
-        } else if (status === 'late') {
-          statusConfig = {
-            container: 'bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-900/20 dark:via-yellow-900/20 dark:to-amber-900/20',
-            border: 'border-amber-300 dark:border-amber-600',
-            text: 'text-amber-800 dark:text-amber-200',
-            dot: 'bg-amber-500 shadow-amber-500/50',
-            icon: <Clock className="w-5 h-5" />,
-            label: 'Late Arrival',
-            glow: 'shadow-lg shadow-amber-500/20'
-          };
-        } else {
-          statusConfig = {
-            container: 'bg-gradient-to-r from-red-50 via-rose-50 to-red-50 dark:from-red-900/20 dark:via-rose-900/20 dark:to-red-900/20',
-            border: 'border-red-300 dark:border-red-600',
-            text: 'text-red-800 dark:text-red-200',
-            dot: 'bg-red-500 shadow-red-500/50',
-            icon: <XCircle className="w-5 h-5" />,
-            label: 'Absent',
-            glow: 'shadow-lg shadow-red-500/20'
-          };
-        }
-        
-        return (
-          <div className={`flex items-center space-x-4 px-5 py-4 rounded-xl border-2 ${statusConfig.container} ${statusConfig.border} ${statusConfig.glow} w-fit min-w-[160px]`}>
-            <div className={`w-4 h-4 rounded-full ${statusConfig.dot} shadow-lg animate-pulse`}></div>
-            <div className={`${statusConfig.text} flex items-center space-x-2`}>
-              {statusConfig.icon}
-              <span className="font-bold text-sm">{statusConfig.label}</span>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: 'note',
-      header: ({ column }) => (
-        <div className="flex items-center space-x-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-          </svg>
-          <span className="font-semibold">Notes & Comments</span>
-        </div>
-      ),
+      header: 'Notes & Comments',
       cell: ({ row }) => {
         const note = row.original.note;
         return (
           <div className="max-w-sm py-2">
             {note ? (
-              <div className="group relative">
-                <div className="text-sm text-gray-700 dark:text-gray-300 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-start space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                    </svg>
-                    <p className="leading-relaxed text-sm font-medium">{note}</p>
-                  </div>
-                </div>
+              <div className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600">
+                <p className="leading-relaxed">{note}</p>
               </div>
             ) : (
-              <div className="flex items-center space-x-3 text-gray-400 dark:text-gray-500 italic text-sm py-3">
+              <div className="flex items-center space-x-2 text-gray-400 dark:text-gray-500 italic text-sm">
                 <div className="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                <span>No notes recorded</span>
+                <span>No notes</span>
               </div>
             )}
           </div>
@@ -467,108 +394,58 @@ export default function AttendancePage() {
       },
     },
     {
-      id: 'actions',
-      header: ({ column }) => (
-        <div className="flex items-center space-x-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <span className="font-semibold">Quick Actions & Status</span>
-        </div>
-      ),
+      accessorKey: 'status',
+      header: 'Attendance Status',
       cell: ({ row }) => {
-        const currentStatus = row.original.status;
+        const status = row.original.status;
+        let statusConfig;
         
-        const getStatusDisplay = (status: string) => {
-          switch (status) {
-            case 'present':
-              return {
-                label: 'Present',
-                color: 'text-emerald-700 dark:text-emerald-300',
-                bg: 'bg-emerald-100 dark:bg-emerald-900/30',
-                icon: <CheckCircle className="w-4 h-4" />
-              };
-            case 'late':
-              return {
-                label: 'Late',
-                color: 'text-amber-700 dark:text-amber-300',
-                bg: 'bg-amber-100 dark:bg-amber-900/30',
-                icon: <Clock className="w-4 h-4" />
-              };
-            case 'absent':
-              return {
-                label: 'Absent',
-                color: 'text-red-700 dark:text-red-300',
-                bg: 'bg-red-100 dark:bg-red-900/30',
-                icon: <XCircle className="w-4 h-4" />
-              };
-            default:
-              return {
-                label: 'Unknown',
-                color: 'text-gray-700 dark:text-gray-300',
-                bg: 'bg-gray-100 dark:bg-gray-900/30',
-                icon: <XCircle className="w-4 h-4" />
-              };
-          }
-        };
-
-        const statusDisplay = getStatusDisplay(currentStatus);
+        if (status === 'present') {
+          statusConfig = {
+            container: 'bg-emerald-50 dark:bg-emerald-900/20',
+            border: 'border-emerald-300 dark:border-emerald-600',
+            text: 'text-emerald-800 dark:text-emerald-200',
+            dot: 'bg-emerald-500',
+            icon: <CheckCircle className="w-4 h-4" />,
+            label: 'Present'
+          };
+        } else if (status === 'late') {
+          statusConfig = {
+            container: 'bg-amber-50 dark:bg-amber-900/20',
+            border: 'border-amber-300 dark:border-amber-600',
+            text: 'text-amber-800 dark:text-amber-200',
+            dot: 'bg-amber-500',
+            icon: <Clock className="w-4 h-4" />,
+            label: 'Late'
+          };
+        } else {
+          statusConfig = {
+            container: 'bg-red-50 dark:bg-red-900/20',
+            border: 'border-red-300 dark:border-red-600',
+            text: 'text-red-800 dark:text-red-200',
+            dot: 'bg-red-500',
+            icon: <XCircle className="w-4 h-4" />,
+            label: 'Absent'
+          };
+        }
         
         return (
-          <div className="flex items-center space-x-4 py-2">
-            {/* Current Status Display */}
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border ${statusDisplay.bg} ${statusDisplay.color} border-current/20`}>
-              {statusDisplay.icon}
-              <span className="font-semibold text-sm">{statusDisplay.label}</span>
-            </div>
-            
-            {/* Quick Action Buttons */}
-            <div className="flex space-x-1.5 bg-white dark:bg-gray-800 rounded-2xl p-2 border-2 border-gray-200 dark:border-gray-600 shadow-lg">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
-                  currentStatus === 'present' 
-                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105 ring-2 ring-emerald-300' 
-                    : 'hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:shadow-md'
-                }`}
-                onClick={() => handleUpdateAttendance(row.original.id, 'present')}
-                title="Mark Present"
-              >
-                <CheckCircle className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
-                  currentStatus === 'late' 
-                    ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30 scale-105 ring-2 ring-amber-300' 
-                    : 'hover:bg-amber-50 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:shadow-md'
-                }`}
-                onClick={() => handleUpdateAttendance(row.original.id, 'late')}
-                title="Mark Late"
-              >
-                <Clock className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`w-8 h-8 p-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
-                  currentStatus === 'absent' 
-                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 scale-105 ring-2 ring-red-300' 
-                    : 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:shadow-md'
-                }`}
-                onClick={() => handleUpdateAttendance(row.original.id, 'absent')}
-                title="Mark Absent"
-              >
-                <XCircle className="w-4 h-4" />
-              </Button>
+          <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg border ${statusConfig.container} ${statusConfig.border} w-fit`}>
+            <div className={`w-3 h-3 rounded-full ${statusConfig.dot}`}></div>
+            <div className={`${statusConfig.text} flex items-center space-x-2`}>
+              {statusConfig.icon}
+              <span className="font-semibold text-sm">{statusConfig.label}</span>
             </div>
           </div>
         );
       },
     },
   ];
+
+  // Filter students for the attendance form based on selected class
+  const filteredStudentsForForm = students?.filter(student => {
+    return selectedClass === '' || student.class === selectedClass;
+  }) || [];
 
   return (
     <Layout>
@@ -583,43 +460,37 @@ export default function AttendancePage() {
               Monitor student attendance and track patterns across your institution
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-sm"
-            >
+          
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" className="glass-morphism border-blue-200 hover:bg-blue-50 dark:border-blue-600 dark:hover:bg-blue-900/30">
               <Download className="h-4 w-4 mr-2" />
-              Export Report
+              Export Data
             </Button>
-            <Button
-              variant="outline"
-              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-sm"
-            >
+            <Button variant="outline" className="glass-morphism border-purple-200 hover:bg-purple-50 dark:border-purple-600 dark:hover:bg-purple-900/30">
               <BarChart3 className="h-4 w-4 mr-2" />
               Analytics
             </Button>
           </div>
         </div>
-        
-        {/* Statistics Overview */}
+
+        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-500/10 dark:to-cyan-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Total Students</CardTitle>
-              <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Total Records</CardTitle>
+              <ClipboardList className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">{(stats as any)?.students?.total || 0}</div>
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.total}</div>
               <div className="text-xs text-gray-600 dark:text-blue-200 mt-1">
-                <TrendingUp className="h-3 w-3 inline mr-1" />
-                Active enrollment
+                All attendance records
               </div>
             </CardContent>
           </Card>
 
           <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Present Today</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Present</CardTitle>
               <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </CardHeader>
             <CardContent>
@@ -638,7 +509,7 @@ export default function AttendancePage() {
             <CardContent>
               <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.late}</div>
               <div className="text-xs text-gray-600 dark:text-amber-200 mt-1">
-                Punctuality tracking
+                Need attention
               </div>
             </CardContent>
           </Card>
@@ -666,22 +537,24 @@ export default function AttendancePage() {
                   <ClipboardList className="h-7 w-7 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Attendance Records</CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-blue-100 mt-1">
-                    Comprehensive attendance tracking and management system
+                  <CardTitle className="text-gray-900 dark:text-white text-2xl font-bold">
+                    Attendance Records
+                  </CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-blue-200 text-base mt-1">
+                    View and manage student attendance data with advanced filtering
                   </CardDescription>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-4">
                 {/* Search Bar */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-white/50 h-4 w-4" />
+                <div className="relative min-w-[300px]">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Search students..."
+                    placeholder="Search students or ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white/90 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 w-64"
+                    className="pl-10 glass-morphism border-gray-200 dark:border-white/20 bg-white/70 dark:bg-white/10 focus:bg-white dark:focus:bg-white/20"
                   />
                 </div>
 
@@ -784,91 +657,75 @@ export default function AttendancePage() {
                             <thead className="bg-gray-50 dark:bg-gray-700">
                               <tr>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Student</th>
-                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">ID</th>
-                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Class</th>
-                                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Attendance Status</th>
+                                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Present</th>
+                                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Late</th>
+                                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Absent</th>
                                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Notes</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                              {students?.filter(student => selectedClass === '' || student.class === selectedClass).map((student, index) => (
-                                <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                  {/* Student Info */}
+                              {filteredStudentsForForm.map((student) => (
+                                <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                                   <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-4">
                                       <img 
-                                        src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 40)}
-                                        alt={`${student.firstName} ${student.lastName}`}
-                                        className="w-10 h-10 rounded-full ring-2 ring-blue-200"
+                                        src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 48)} 
+                                        alt={`${student.firstName} ${student.lastName}`} 
+                                        className="w-12 h-12 rounded-lg object-cover ring-2 ring-blue-500/20"
                                       />
                                       <div>
                                         <div className="font-semibold text-gray-900 dark:text-white">
                                           {student.firstName} {student.lastName}
                                         </div>
                                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                                          {student.gender} • Age {student.dateOfBirth ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() : 'N/A'}
+                                          {student.studentId} • Class {student.class}
                                         </div>
                                       </div>
                                     </div>
                                   </td>
-                                  
-                                  {/* Student ID */}
-                                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
-                                    {student.studentId}
+                                  <td className="px-6 py-4 text-center">
+                                    <button
+                                      onClick={() => updateStudentStatus(student.id, 'present')}
+                                      className={`w-10 h-10 rounded-full transition-all duration-200 ${
+                                        studentStatuses[student.id] === 'present'
+                                          ? 'bg-emerald-500 text-white scale-110 ring-4 ring-emerald-200'
+                                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-emerald-100 dark:hover:bg-emerald-800'
+                                      }`}
+                                    >
+                                      <CheckCircle className="w-5 h-5 mx-auto" />
+                                    </button>
                                   </td>
-                                  
-                                  {/* Class Info */}
-                                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                    {student.section} - Class {student.class}
+                                  <td className="px-6 py-4 text-center">
+                                    <button
+                                      onClick={() => updateStudentStatus(student.id, 'late')}
+                                      className={`w-10 h-10 rounded-full transition-all duration-200 ${
+                                        studentStatuses[student.id] === 'late'
+                                          ? 'bg-amber-500 text-white scale-110 ring-4 ring-amber-200'
+                                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-amber-100 dark:hover:bg-amber-800'
+                                      }`}
+                                    >
+                                      <Clock className="w-5 h-5 mx-auto" />
+                                    </button>
                                   </td>
-                                  
-                                  {/* Attendance Status Actions */}
-                                  <td className="px-6 py-4">
-                                    <div className="flex justify-center space-x-2">
-                                      <button
-                                        onClick={() => updateStudentStatus(student.id, 'present')}
-                                        className={`p-2 rounded-lg transition-all duration-200 ${
-                                          studentStatuses[student.id] === 'present'
-                                            ? 'bg-emerald-500 text-white shadow-lg'
-                                            : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
-                                        }`}
-                                        title="Mark Present"
-                                      >
-                                        <CheckCircle className="h-5 w-5" />
-                                      </button>
-                                      <button
-                                        onClick={() => updateStudentStatus(student.id, 'late')}
-                                        className={`p-2 rounded-lg transition-all duration-200 ${
-                                          studentStatuses[student.id] === 'late'
-                                            ? 'bg-amber-500 text-white shadow-lg'
-                                            : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
-                                        }`}
-                                        title="Mark Late"
-                                      >
-                                        <Clock className="h-5 w-5" />
-                                      </button>
-                                      <button
-                                        onClick={() => updateStudentStatus(student.id, 'absent')}
-                                        className={`p-2 rounded-lg transition-all duration-200 ${
-                                          studentStatuses[student.id] === 'absent'
-                                            ? 'bg-red-500 text-white shadow-lg'
-                                            : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
-                                        }`}
-                                        title="Mark Absent"
-                                      >
-                                        <XCircle className="h-5 w-5" />
-                                      </button>
-                                    </div>
+                                  <td className="px-6 py-4 text-center">
+                                    <button
+                                      onClick={() => updateStudentStatus(student.id, 'absent')}
+                                      className={`w-10 h-10 rounded-full transition-all duration-200 ${
+                                        studentStatuses[student.id] === 'absent'
+                                          ? 'bg-red-500 text-white scale-110 ring-4 ring-red-200'
+                                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-red-100 dark:hover:bg-red-800'
+                                      }`}
+                                    >
+                                      <XCircle className="w-5 h-5 mx-auto" />
+                                    </button>
                                   </td>
-                                  
-                                  {/* Notes */}
                                   <td className="px-6 py-4">
                                     <input
                                       type="text"
-                                      placeholder="Add notes..."
                                       value={studentNotes[student.id] || ''}
                                       onChange={(e) => updateStudentNotes(student.id, e.target.value)}
-                                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                      placeholder="Add notes..."
+                                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-emerald-500 text-sm"
                                     />
                                   </td>
                                 </tr>
@@ -878,29 +735,22 @@ export default function AttendancePage() {
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex justify-between items-center pt-6">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Click the status buttons to mark attendance for each student
-                        </div>
-                        <div className="flex space-x-4">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setIsAddModalOpen(false)}
-                            className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-6 py-3 text-base"
-                          >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Cancel
-                          </Button>
-                          <Button 
-                            onClick={handleBulkAttendanceSubmit}
-                            className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200"
-                          >
-                            <Save className="h-5 w-5 mr-2" />
-                            Save All Attendance
-                          </Button>
-                        </div>
+                      {/* Submit Button */}
+                      <div className="flex justify-end space-x-4 pt-4">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setIsAddModalOpen(false)}
+                          className="px-6"
+                        >
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={handleBulkAttendanceSubmit}
+                          className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-8"
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          Save All Attendance
+                        </Button>
                       </div>
                     </div>
                   </DialogContent>
@@ -908,19 +758,11 @@ export default function AttendancePage() {
               </div>
             </div>
           </CardHeader>
-          
-          <CardContent className="p-0 bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm">
+          <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-12 text-center text-gray-900 dark:text-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-6"></div>
-                <h3 className="text-lg font-semibold mb-2">Loading Attendance Records</h3>
-                <p className="text-gray-600 dark:text-blue-200">Please wait while we fetch the latest data...</p>
-              </div>
-            ) : error ? (
               <div className="p-12 text-center">
-                <XCircle className="h-12 w-12 text-red-500 dark:text-red-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error Loading Data</h3>
-                <p className="text-red-500 dark:text-red-300">Unable to load attendance records. Please try refreshing the page.</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="text-gray-600 dark:text-gray-400 mt-4">Loading attendance records...</p>
               </div>
             ) : attendance?.length === 0 ? (
               <div className="p-12 text-center">
