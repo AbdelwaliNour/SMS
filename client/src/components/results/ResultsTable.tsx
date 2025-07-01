@@ -1,58 +1,35 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable } from '@/components/ui/data-table';
 import { Result, Student, Exam } from '@shared/schema';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest, queryClient } from '@/lib/queryClient';
-import { ColumnDef } from '@tanstack/react-table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import FilterSelect from '@/components/ui/filter-select';
-import { calculateGrade } from '@/lib/utils';
+import { 
+  Search, 
+  Award,
+  Calendar,
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  User,
+  BookOpen
+} from 'lucide-react';
+import { calculateAge } from '@/lib/utils';
 
 interface ResultsTableProps {
   onAddResult: () => void;
 }
 
-const resultFormSchema = z.object({
-  examId: z.number({
-    required_error: "Exam ID is required",
-  }),
-  studentId: z.number({
-    required_error: "Student ID is required",
-  }),
-  subject: z.string({
-    required_error: "Subject is required",
-  }),
-  score: z.number({
-    required_error: "Score is required",
-  }).min(0, "Score must be at least 0"),
-  total: z.number({
-    required_error: "Total is required",
-  }).min(1, "Total must be at least 1"),
-  grade: z.string(),
-});
-
-type ResultFormValues = z.infer<typeof resultFormSchema>;
-
 const ResultsTable: React.FC<ResultsTableProps> = ({ onAddResult }) => {
-  const { toast } = useToast();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    subject: '',
-    class: '',
-    section: '',
-    type: '',
-    year: '',
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [subjectFilter, setSubjectFilter] = useState("all");
 
-  const { data: results, isLoading, error, refetch } = useQuery<Result[]>({
+  const { data: results, isLoading } = useQuery<Result[]>({
     queryKey: ['/api/results'],
   });
 
@@ -64,26 +41,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ onAddResult }) => {
     queryKey: ['/api/exams'],
   });
 
-  const form = useForm<ResultFormValues>({
-    resolver: zodResolver(resultFormSchema),
-    defaultValues: {
-      examId: undefined,
-      studentId: undefined,
-      subject: '',
-      score: 0,
-      total: 100,
-      grade: 'F',
-    },
-  });
-
-  const watchScore = form.watch('score');
-  const watchTotal = form.watch('total');
-
-  // Update grade when score or total changes
-  const grade = calculateGrade(watchScore || 0, watchTotal || 100);
-  if (grade !== form.getValues('grade')) {
-    form.setValue('grade', grade);
-  }
+  const subjects = ["Arabic", "English", "Islamic", "Somali", "Math", "Science", "ICT", "Social"];
 
   const getStudentName = (studentId: number) => {
     const student = students?.find(s => s.id === studentId);
@@ -95,331 +53,222 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ onAddResult }) => {
     return exam ? exam.name : `Exam #${examId}`;
   };
 
-  const subjects = [
-    "Arabic", "English", "Islamic", "Somali", "Math", "Science", "ICT", "Socail"
-  ];
-
-  const onSubmit = async (data: ResultFormValues) => {
-    try {
-      await apiRequest('POST', '/api/results', data);
-      toast({
-        title: 'Success',
-        description: 'Result added successfully',
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/results'] });
-      setIsAddModalOpen(false);
-      form.reset();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to add result',
-        variant: 'destructive',
-      });
+  const getGradeColor = (grade: string) => {
+    switch (grade) {
+      case 'A': return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white';
+      case 'B': return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white';
+      case 'C': return 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white';
+      case 'D': return 'bg-gradient-to-r from-orange-500 to-red-500 text-white';
+      case 'F': return 'bg-gradient-to-r from-red-500 to-rose-500 text-white';
+      default: return 'bg-gray-500 text-white';
     }
   };
 
-  const columns: ColumnDef<Result>[] = [
-    {
-      accessorKey: 'rollNo',
-      header: 'Roll No',
-      cell: ({ row }) => String(row.index + 1).padStart(2, '0'),
-    },
-    {
-      accessorKey: 'studentId',
-      header: 'Student ID',
-      cell: ({ row }) => {
-        const student = students?.find(s => s.id === row.original.studentId);
-        return student?.studentId || `#${row.original.studentId}`;
-      },
-    },
-    {
-      accessorKey: 'studentName',
-      header: 'Student Name',
-      cell: ({ row }) => getStudentName(row.original.studentId),
-    },
-    {
-      accessorKey: 'subject',
-      header: ({ column }) => {
-        return (
-          <div className="flex justify-between items-center">
-            <span>{column.id === 'subject' ? 'Subject' : column.id}</span>
-          </div>
-        );
-      },
-      cell: ({ row }) => row.original.subject,
-    },
-    {
-      accessorKey: 'score',
-      header: 'Score',
-      cell: ({ row }) => (
-        <div className="border border-blue p-1 text-center rounded bg-white">
-          {row.original.score}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'total',
-      header: 'Total',
-      cell: ({ row }) => row.original.total,
-    },
-    {
-      accessorKey: 'grade',
-      header: 'Grade',
-      cell: ({ row }) => {
-        const grade = row.original.grade;
-        let bgColor;
-        
-        if (grade === 'A') bgColor = 'bg-green';
-        else if (grade === 'B') bgColor = 'bg-blue';
-        else if (grade === 'C') bgColor = 'bg-yellow';
-        else bgColor = 'bg-red';
-        
-        return (
-          <span className={`${bgColor} text-white px-2 py-1 rounded-full text-xs`}>
-            {grade}
-          </span>
-        );
-      },
-    },
-  ];
+  // Filter results based on search and filters
+  const filteredResults = results?.filter(result => {
+    const student = students?.find(s => s.id === result.studentId);
+    const studentName = student ? `${student.firstName} ${student.lastName}` : '';
+    const matchesSearch = searchTerm === '' || 
+      studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      result.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student?.studentId.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesSubject = subjectFilter === 'all' || result.subject.toLowerCase() === subjectFilter.toLowerCase();
+    const matchesStatus = statusFilter === 'all' || result.grade === statusFilter;
+    
+    return matchesSearch && matchesSubject && matchesStatus;
+  }) || [];
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-      <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
-        <div className="flex items-center">
-          <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">View Results</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Filter BY</span>
+    <div className="space-y-6">
+      {/* Search and Filter Section */}
+      <Card className="glass-morphism border-border/30 p-4">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by student name, ID, or subject..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 glass-morphism border-border/30 bg-background/50"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+              <SelectTrigger className="w-40 glass-morphism border-border/30">
+                <SelectValue placeholder="Subject" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Subjects</SelectItem>
+                {subjects.map((subject) => (
+                  <SelectItem key={subject} value={subject.toLowerCase()}>
+                    {subject}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-32 glass-morphism border-border/30">
+                <SelectValue placeholder="Grade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Grades</SelectItem>
+                <SelectItem value="A">Grade A</SelectItem>
+                <SelectItem value="B">Grade B</SelectItem>
+                <SelectItem value="C">Grade C</SelectItem>
+                <SelectItem value="D">Grade D</SelectItem>
+                <SelectItem value="F">Grade F</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+              {filteredResults.length} results
+            </Badge>
+          </div>
         </div>
-        <div className="flex space-x-2">
-          <FilterSelect
-            label="Section"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'primary', label: 'Primary' },
-              { value: 'secondary', label: 'Secondary' },
-              { value: 'highschool', label: 'High School' },
-            ]}
-            value={filters.section}
-            onChange={(value) => setFilters({ ...filters, section: value })}
-            placeholder="Section"
-          />
-          <FilterSelect
-            label="Subject"
-            options={[
-              { value: '', label: 'All' },
-              ...subjects.map(subject => ({ value: subject.toLowerCase(), label: subject }))
-            ]}
-            value={filters.subject}
-            onChange={(value) => setFilters({ ...filters, subject: value })}
-            placeholder="Subject"
-          />
-          <FilterSelect
-            label="Class"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'One', label: 'One' },
-              { value: 'Two', label: 'Two' },
-              { value: 'Three', label: 'Three' },
-              { value: 'Four', label: 'Four' },
-              { value: 'Five', label: 'Five' },
-              { value: 'Six', label: 'Six' },
-            ]}
-            value={filters.class}
-            onChange={(value) => setFilters({ ...filters, class: value })}
-            placeholder="Class"
-          />
-          <FilterSelect
-            label="Type"
-            options={[
-              { value: '', label: 'All' },
-              { value: 'midterm', label: 'Midterm' },
-              { value: 'final', label: 'Final' },
-            ]}
-            value={filters.type}
-            onChange={(value) => setFilters({ ...filters, type: value })}
-            placeholder="Type"
-          />
-          <FilterSelect
-            label="Year"
-            options={[
-              { value: '', label: 'All' },
-              { value: '2023', label: '2023' },
-              { value: '2022', label: '2022' },
-              { value: '2021', label: '2021' },
-            ]}
-            value={filters.year}
-            onChange={(value) => setFilters({ ...filters, year: value })}
-            placeholder="Year"
-          />
-        </div>
+      </Card>
 
-        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              className="bg-green hover:bg-green/90 text-white"
-              onClick={() => setIsAddModalOpen(true)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Add Result
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Result</DialogTitle>
-              <DialogDescription>
-                Add a new exam result for a student.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="examId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Exam</FormLabel>
-                      <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select an exam" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {exams?.map((exam) => (
-                            <SelectItem key={exam.id} value={exam.id.toString()}>
-                              {exam.name} ({exam.section})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="studentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Student</FormLabel>
-                      <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a student" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {students?.map((student) => (
-                            <SelectItem key={student.id} value={student.id.toString()}>
-                              {student.firstName} {student.lastName} ({student.studentId})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Subject</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a subject" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {subjects.map((subject) => (
-                            <SelectItem key={subject} value={subject}>
-                              {subject}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="score"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Score</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            placeholder="Score" 
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="total"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            placeholder="Total" 
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="grade"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Grade (Auto-calculated)</FormLabel>
-                      <FormControl>
-                        <Input readOnly {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" className="bg-blue hover:bg-blue/90 text-white">
-                    Add Result
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
-      
+      {/* Results Cards */}
       {isLoading ? (
-        <div className="p-8 text-center">Loading results...</div>
-      ) : error ? (
-        <div className="p-8 text-center text-red">Error loading results. Please try again.</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="glass-morphism border-border/30 animate-pulse">
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3 bg-muted rounded w-1/2"></div>
+                  <div className="h-8 bg-muted rounded w-full"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : filteredResults.length === 0 ? (
+        <Card className="glass-morphism border-border/30">
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4">
+              <Award className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
+            <p className="text-muted-foreground text-center mb-6">
+              {searchTerm || statusFilter !== 'all' || subjectFilter !== 'all' 
+                ? "No results match your current filters."
+                : "No exam results have been recorded yet."
+              }
+            </p>
+            <Button
+              onClick={onAddResult}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add First Result
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
-        <DataTable
-          columns={columns}
-          data={results || []}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredResults.map((result) => {
+            const student = students?.find(s => s.id === result.studentId);
+            const exam = exams?.find(e => e.id === result.examId);
+            const percentage = Math.round((result.score / result.total) * 100);
+            const age = student?.dateOfBirth ? calculateAge(student.dateOfBirth) : null;
+            
+            return (
+              <Card key={result.id} className="glass-morphism border-border/30 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group">
+                <CardContent className="p-6 space-y-4">
+                  {/* Student Header */}
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-14 w-14 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
+                      <AvatarImage src={student?.profilePhoto} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold text-lg">
+                        {student ? `${student.firstName[0]}${student.lastName[0]}` : 'ST'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <p className="font-semibold text-lg truncate group-hover:text-primary transition-colors duration-300">
+                          {getStudentName(result.studentId)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-sm text-muted-foreground">
+                          {student?.studentId || `#${result.studentId}`}
+                        </p>
+                        {age && (
+                          <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
+                            Age {age}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <Badge className={`${getGradeColor(result.grade)} text-lg px-3 py-1 font-bold shadow-lg`}>
+                      {result.grade}
+                    </Badge>
+                  </div>
+
+                  {/* Subject and Exam Info */}
+                  <div className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Subject</span>
+                      </div>
+                      <Badge variant="outline" className="bg-white/80 dark:bg-slate-700/80">
+                        {result.subject}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Exam</span>
+                      <span className="text-sm text-muted-foreground truncate max-w-[150px]">
+                        {getExamName(result.examId)}
+                      </span>
+                    </div>
+
+                    {/* Score Display */}
+                    <div className="text-center pt-2">
+                      <div className="text-3xl font-bold text-primary mb-1">
+                        {result.score}<span className="text-xl text-muted-foreground">/{result.total}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {percentage}% Score
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer with Date and Actions */}
+                  <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3 mr-1" />
+                      {new Date(result.createdAt).toLocaleDateString()}
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-600">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-amber-500/10 hover:text-amber-600">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -34,6 +34,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Result, Student, Exam } from '@shared/schema';
 import { calculateGrade } from '@/lib/utils';
+import ResultsTable from '@/components/results/ResultsTable';
 
 const examFormSchema = z.object({
   name: z.string().min(1, "Exam name is required"),
@@ -305,246 +306,108 @@ export default function Exams() {
         </div>
 
         {/* Grade Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2 glass-morphism border-border/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                  <BarChart3 className="h-4 w-4 text-white" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Grade A Students */}
+          <Card className="glass-morphism border-border/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <Trophy className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-600 text-[23px]">Grade A Students</h3>
+                    <p className="text-sm text-muted-foreground">Excellent performance</p>
+                  </div>
                 </div>
-                Grade Distribution
-              </CardTitle>
-              <CardDescription>Student performance breakdown by grades</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {['A', 'B', 'C', 'D', 'F'].map((grade) => {
-                  const count = gradeDistribution[grade] || 0;
-                  const percentage = totalResults > 0 ? (count / totalResults) * 100 : 0;
-                  return (
-                    <div key={grade} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Badge className={`${getGradeColor(grade)} min-w-[40px] justify-center`}>
-                          {grade}
-                        </Badge>
-                        <span className="text-sm font-medium">{count} students</span>
-                      </div>
-                      <div className="flex items-center gap-3 flex-1 max-w-xs">
-                        <Progress value={percentage} className="flex-1" />
-                        <span className="text-sm text-muted-foreground min-w-[45px]">
-                          {Math.round(percentage)}%
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+                <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-sm px-3 py-1">
+                  {gradeDistribution.A || 0}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Excellence Rate</span>
+                  <span className="font-medium">{totalResults > 0 ? Math.round(((gradeDistribution.A || 0) / totalResults) * 100) : 0}%</span>
+                </div>
+                <Progress value={totalResults > 0 ? ((gradeDistribution.A || 0) / totalResults) * 100 : 0} className="h-2 bg-green-500/10" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-border/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  <TrendingUp className="h-4 w-4 text-white" />
+          {/* Grade B & C Students */}
+          <Card className="glass-morphism border-border/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <Target className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-blue-600 text-[23px]">Average Students</h3>
+                    <p className="text-sm text-muted-foreground">Good performance</p>
+                  </div>
                 </div>
-                Quick Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Active Students</span>
-                <span className="font-semibold">{students?.length || 0}</span>
+                <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-sm px-3 py-1">
+                  {(gradeDistribution.B || 0) + (gradeDistribution.C || 0)}
+                </Badge>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Subjects</span>
-                <span className="font-semibold">{subjects.length}</span>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Average Rate</span>
+                  <span className="font-medium">{totalResults > 0 ? Math.round((((gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults) * 100) : 0}%</span>
+                </div>
+                <Progress value={totalResults > 0 ? (((gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults) * 100 : 0} className="h-2 bg-blue-500/10" />
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Pass Rate</span>
-                <span className="font-semibold text-green-600">
-                  {totalResults > 0 ? Math.round(((gradeDistribution.A || 0) + (gradeDistribution.B || 0) + (gradeDistribution.C || 0)) / totalResults * 100) : 0}%
-                </span>
+            </CardContent>
+          </Card>
+
+          {/* Grade D & F Students */}
+          <Card className="glass-morphism border-border/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-red-500/10 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-red-600 text-[23px]">Needs Improvement</h3>
+                    <p className="text-sm text-muted-foreground">Requires attention</p>
+                  </div>
+                </div>
+                <Badge className="bg-red-500/10 text-red-600 border-red-500/20 text-sm px-3 py-1">
+                  {(gradeDistribution.D || 0) + (gradeDistribution.F || 0)}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Support Needed</span>
+                  <span className="font-medium">{totalResults > 0 ? Math.round((((gradeDistribution.D || 0) + (gradeDistribution.F || 0)) / totalResults) * 100) : 0}%</span>
+                </div>
+                <Progress value={totalResults > 0 ? (((gradeDistribution.D || 0) + (gradeDistribution.F || 0)) / totalResults) * 100 : 0} className="h-2 bg-red-500/10" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content Tabs */}
+        {/* Academic Results Tabs */}
         <Tabs defaultValue="results" className="space-y-6">
-          <TabsList className="glass-morphism border-border/20">
-            <TabsTrigger value="results" className="flex items-center gap-2">
-              <Award className="h-4 w-4" />
+          <TabsList className="glass-morphism border-border/30 bg-background/50">
+            <TabsTrigger value="results" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Award className="h-4 w-4 mr-2" />
               Results
             </TabsTrigger>
-            <TabsTrigger value="exams" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Exams
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <BarChart3 className="h-4 w-4 mr-2" />
               Analytics
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Reports
             </TabsTrigger>
           </TabsList>
 
-          {/* Results Tab */}
           <TabsContent value="results" className="space-y-6">
-            {/* Search and Filter */}
-            <Card className="glass-morphism border-border/20 p-4">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by student name, ID, or subject..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 glass-morphism border-border/30"
-                  />
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <Select value={subjectFilter} onValueChange={setSubjectFilter}>
-                    <SelectTrigger className="w-40 glass-morphism">
-                      <SelectValue placeholder="Subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Subjects</SelectItem>
-                      {subjects.map((subject) => (
-                        <SelectItem key={subject.id} value={subject.id.toLowerCase()}>
-                          {subject.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-32 glass-morphism">
-                      <SelectValue placeholder="Grade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Grades</SelectItem>
-                      <SelectItem value="A">Grade A</SelectItem>
-                      <SelectItem value="B">Grade B</SelectItem>
-                      <SelectItem value="C">Grade C</SelectItem>
-                      <SelectItem value="D">Grade D</SelectItem>
-                      <SelectItem value="F">Grade F</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">
-                    {filteredResults.length} results
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-
-            {/* Results Cards */}
-            {resultsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="glass-morphism border-border/20 animate-pulse">
-                    <CardContent className="p-6">
-                      <div className="space-y-3">
-                        <div className="h-4 bg-muted rounded w-3/4"></div>
-                        <div className="h-3 bg-muted rounded w-1/2"></div>
-                        <div className="h-8 bg-muted rounded w-full"></div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : filteredResults.length === 0 ? (
-              <Card className="glass-morphism border-border/20">
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-4">
-                    <Award className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
-                  <p className="text-muted-foreground text-center mb-6">
-                    {searchTerm || statusFilter !== 'all' || subjectFilter !== 'all' 
-                      ? "No results match your current filters."
-                      : "No exam results have been recorded yet."
-                    }
-                  </p>
-                  <Button
-                    onClick={() => setIsAddResultModalOpen(true)}
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add First Result
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredResults.map((result) => {
-                  const student = students?.find(s => s.id === result.studentId);
-                  const exam = exams?.find(e => e.id === result.examId);
-                  const percentage = Math.round((result.score / result.total) * 100);
-                  
-                  return (
-                    <Card key={result.id} className="glass-morphism border-border/20 hover:shadow-xl transition-all duration-300 group">
-                      <CardContent className="p-6 space-y-4">
-                        {/* Student Info */}
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-12 w-12 ring-2 ring-primary/20">
-                            <AvatarImage src={student?.profilePhoto} />
-                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold">
-                              {student ? `${student.firstName[0]}${student.lastName[0]}` : 'ST'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold truncate">
-                              {getStudentName(result.studentId)}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {student?.studentId || `#${result.studentId}`}
-                            </p>
-                          </div>
-                          <Badge className={getGradeColor(result.grade)}>
-                            {result.grade}
-                          </Badge>
-                        </div>
-
-                        {/* Exam Details */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Subject</span>
-                            <Badge variant="outline">{result.subject}</Badge>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Exam</span>
-                            <span className="text-sm text-muted-foreground truncate max-w-[150px]">
-                              {getExamName(result.examId)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Score Display */}
-                        <div className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-lg p-4 text-center">
-                          <div className="text-2xl font-bold text-primary mb-1">
-                            {result.score}/{result.total}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {percentage}% Score
-                          </div>
-                          <Progress 
-                            value={percentage} 
-                            className="mt-2 h-2"
-                          />
-                        </div>
-
-                        {/* Date */}
-                        <div className="flex items-center justify-center text-xs text-muted-foreground">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {new Date(result.createdAt).toLocaleDateString()}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
+            <ResultsTable onAddResult={() => setIsAddResultModalOpen(true)} />
           </TabsContent>
 
           {/* Exams Tab */}
