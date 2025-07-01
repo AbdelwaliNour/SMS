@@ -574,7 +574,23 @@ const ReportsTable = ({
 
       {/* Reports Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockReports.map((report) => {
+        {mockReports.filter(report => {
+          // Search filter
+          const matchesSearch = searchQuery === '' || 
+            report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            report.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            report.category.toLowerCase().includes(searchQuery.toLowerCase());
+          
+          // Type filter
+          const matchesType = selectedReportType === 'all' || 
+            report.type.toLowerCase() === selectedReportType.toLowerCase();
+          
+          // Status filter
+          const matchesStatus = selectedStatus === 'all' || 
+            report.status.toLowerCase().replace(' ', '-') === selectedStatus.toLowerCase();
+          
+          return matchesSearch && matchesType && matchesStatus;
+        }).map((report) => {
           const getStatusBadge = (status: string) => {
             if (status === 'Completed') return 'bg-emerald-100 text-emerald-700 border-emerald-200';
             if (status === 'In Progress') return 'bg-blue-100 text-blue-700 border-blue-200';

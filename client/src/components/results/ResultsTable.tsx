@@ -181,7 +181,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ onAddResult }) => {
                   {/* Student Header */}
                   <div className="flex items-center gap-3">
                     <Avatar className="h-14 w-14 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
-                      <AvatarImage src={student?.profilePhoto} />
+                      <AvatarImage src={student?.profilePhoto ? student.profilePhoto : undefined} />
                       <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold text-lg">
                         {student ? `${student.firstName[0]}${student.lastName[0]}` : 'ST'}
                       </AvatarFallback>
@@ -249,7 +249,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ onAddResult }) => {
                   <div className="flex items-center justify-between pt-2 border-t border-border/30">
                     <div className="flex items-center text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3 mr-1" />
-                      {new Date(result.createdAt).toLocaleDateString()}
+                      {result.createdAt ? new Date(result.createdAt as Date).toLocaleDateString() : 'No date'}
                     </div>
                     
                     <div className="flex items-center gap-1">
