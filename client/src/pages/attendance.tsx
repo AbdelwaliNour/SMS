@@ -332,24 +332,24 @@ export default function AttendancePage() {
         {/* Header Section */}
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-600 to-purple-600 dark:from-white dark:via-blue-100 dark:to-purple-200 bg-clip-text text-transparent">
               Attendance Management
             </h1>
-            <p className="text-blue-100 text-lg">
+            <p className="text-gray-600 dark:text-blue-100 text-lg">
               Monitor student attendance and track patterns across your institution
             </p>
           </div>
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm"
+              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-sm"
             >
               <Download className="h-4 w-4 mr-2" />
               Export Report
             </Button>
             <Button
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm"
+              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 backdrop-blur-sm"
             >
               <BarChart3 className="h-4 w-4 mr-2" />
               Analytics
@@ -359,54 +359,54 @@ export default function AttendancePage() {
         
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="glass-morphism border-white/10 bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
+          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-500/10 dark:to-cyan-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/90">Total Students</CardTitle>
-              <Users className="h-5 w-5 text-blue-400" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Total Students</CardTitle>
+              <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{(stats as any)?.students?.total || 0}</div>
-              <div className="text-xs text-blue-200 mt-1">
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">{(stats as any)?.students?.total || 0}</div>
+              <div className="text-xs text-gray-600 dark:text-blue-200 mt-1">
                 <TrendingUp className="h-3 w-3 inline mr-1" />
                 Active enrollment
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-white/10 bg-gradient-to-br from-emerald-500/10 to-green-500/10">
+          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/90">Present Today</CardTitle>
-              <CheckCircle className="h-5 w-5 text-emerald-400" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Present Today</CardTitle>
+              <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{attendanceStats.present}</div>
-              <div className="text-xs text-emerald-200 mt-1">
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.present}</div>
+              <div className="text-xs text-gray-600 dark:text-emerald-200 mt-1">
                 {attendanceRate}% attendance rate
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-white/10 bg-gradient-to-br from-amber-500/10 to-yellow-500/10">
+          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-500/10 dark:to-yellow-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/90">Late Arrivals</CardTitle>
-              <Clock className="h-5 w-5 text-amber-400" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Late Arrivals</CardTitle>
+              <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{attendanceStats.late}</div>
-              <div className="text-xs text-amber-200 mt-1">
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.late}</div>
+              <div className="text-xs text-gray-600 dark:text-amber-200 mt-1">
                 Punctuality tracking
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-morphism border-white/10 bg-gradient-to-br from-red-500/10 to-rose-500/10">
+          <Card className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-white/90">Absent</CardTitle>
-              <XCircle className="h-5 w-5 text-red-400" />
+              <CardTitle className="text-sm font-medium text-gray-700 dark:text-white/90">Absent</CardTitle>
+              <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-white">{attendanceStats.absent}</div>
-              <div className="text-xs text-red-200 mt-1">
+              <div className="text-3xl font-bold text-gray-900 dark:text-white">{attendanceStats.absent}</div>
+              <div className="text-xs text-gray-600 dark:text-red-200 mt-1">
                 Requires follow-up
               </div>
             </CardContent>
@@ -414,16 +414,16 @@ export default function AttendancePage() {
         </div>
         
         {/* Main Attendance Table */}
-        <Card className="glass-morphism border-white/10 overflow-hidden shadow-2xl">
-          <CardHeader className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 border-b border-white/10">
+        <Card className="glass-morphism border-gray-200 dark:border-white/10 overflow-hidden shadow-2xl">
+          <CardHeader className="bg-gradient-to-r from-blue-100/80 via-purple-100/80 to-cyan-100/80 dark:from-blue-600/20 dark:via-purple-600/20 dark:to-cyan-600/20 border-b border-gray-200 dark:border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-blue-500/20 rounded-xl">
-                  <ClipboardList className="h-7 w-7 text-blue-400" />
+                <div className="p-3 bg-blue-200/50 dark:bg-blue-500/20 rounded-xl">
+                  <ClipboardList className="h-7 w-7 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-white">Attendance Records</CardTitle>
-                  <CardDescription className="text-blue-100 mt-1">
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Attendance Records</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-blue-100 mt-1">
                     Comprehensive attendance tracking and management system
                   </CardDescription>
                 </div>
@@ -432,18 +432,18 @@ export default function AttendancePage() {
               <div className="flex items-center space-x-3">
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-white/50 h-4 w-4" />
                   <Input
                     placeholder="Search students..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50 w-64"
+                    className="pl-10 bg-white/90 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 w-64"
                   />
                 </div>
 
                 {/* Filters */}
                 <div className="flex items-center space-x-2">
-                  <Filter className="h-4 w-4 text-white/70" />
+                  <Filter className="h-4 w-4 text-gray-600 dark:text-white/70" />
                   <FilterSelect
                     label="Status"
                     options={[
@@ -481,13 +481,13 @@ export default function AttendancePage() {
                       Record Attendance
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="glass-morphism border-white/10 bg-gradient-to-br from-gray-900/90 to-slate-900/90 max-w-md">
+                  <DialogContent className="glass-morphism border-gray-200 dark:border-white/10 bg-gradient-to-br from-white/95 to-gray-50/95 dark:from-gray-900/90 dark:to-slate-900/90 max-w-md">
                     <DialogHeader>
-                      <DialogTitle className="text-white text-xl flex items-center space-x-2">
-                        <Calendar className="h-5 w-5 text-blue-400" />
+                      <DialogTitle className="text-gray-900 dark:text-white text-xl flex items-center space-x-2">
+                        <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         <span>Record New Attendance</span>
                       </DialogTitle>
-                      <DialogDescription className="text-blue-100">
+                      <DialogDescription className="text-gray-600 dark:text-blue-100">
                         Add a new attendance record for a student on the selected date.
                       </DialogDescription>
                     </DialogHeader>
@@ -498,10 +498,10 @@ export default function AttendancePage() {
                           name="studentId"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white font-medium">Select Student</FormLabel>
+                              <FormLabel className="text-gray-900 dark:text-white font-medium">Select Student</FormLabel>
                               <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-blue-400">
+                                  <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400">
                                     <SelectValue placeholder="Choose a student" />
                                   </SelectTrigger>
                                 </FormControl>
@@ -530,12 +530,12 @@ export default function AttendancePage() {
                           name="date"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white font-medium">Attendance Date</FormLabel>
+                              <FormLabel className="text-gray-900 dark:text-white font-medium">Attendance Date</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="date" 
                                   {...field} 
-                                  className="bg-white/10 border-white/20 text-white focus:border-blue-400"
+                                  className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400"
                                 />
                               </FormControl>
                               <FormMessage />
@@ -547,10 +547,10 @@ export default function AttendancePage() {
                           name="status"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white font-medium">Attendance Status</FormLabel>
+                              <FormLabel className="text-gray-900 dark:text-white font-medium">Attendance Status</FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-blue-400">
+                                  <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-400">
                                     <SelectValue placeholder="Select status" />
                                   </SelectTrigger>
                                 </FormControl>
@@ -584,24 +584,24 @@ export default function AttendancePage() {
                           name="note"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-white font-medium">Additional Notes</FormLabel>
+                              <FormLabel className="text-gray-900 dark:text-white font-medium">Additional Notes</FormLabel>
                               <FormControl>
                                 <Input 
                                   placeholder="Optional notes or comments..." 
                                   {...field} 
-                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400"
+                                  className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 focus:border-blue-400"
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <div className="flex justify-end space-x-3 pt-6 border-t border-white/10">
+                        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-white/10">
                           <Button 
                             type="button" 
                             variant="outline" 
                             onClick={() => setIsAddModalOpen(false)}
-                            className="border-white/20 text-white hover:bg-white/10"
+                            className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10"
                           >
                             Cancel
                           </Button>
@@ -621,24 +621,24 @@ export default function AttendancePage() {
             </div>
           </CardHeader>
           
-          <CardContent className="p-0 bg-white/5 backdrop-blur-sm">
+          <CardContent className="p-0 bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm">
             {isLoading ? (
-              <div className="p-12 text-center text-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-6"></div>
+              <div className="p-12 text-center text-gray-900 dark:text-white">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-6"></div>
                 <h3 className="text-lg font-semibold mb-2">Loading Attendance Records</h3>
-                <p className="text-blue-200">Please wait while we fetch the latest data...</p>
+                <p className="text-gray-600 dark:text-blue-200">Please wait while we fetch the latest data...</p>
               </div>
             ) : error ? (
               <div className="p-12 text-center">
-                <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-red-400 mb-2">Error Loading Data</h3>
-                <p className="text-red-300">Unable to load attendance records. Please try refreshing the page.</p>
+                <XCircle className="h-12 w-12 text-red-500 dark:text-red-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">Error Loading Data</h3>
+                <p className="text-red-500 dark:text-red-300">Unable to load attendance records. Please try refreshing the page.</p>
               </div>
             ) : attendance?.length === 0 ? (
               <div className="p-12 text-center">
-                <ClipboardList className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No Attendance Records</h3>
-                <p className="text-blue-200 mb-4">Start by recording attendance for your students.</p>
+                <ClipboardList className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Attendance Records</h3>
+                <p className="text-gray-600 dark:text-blue-200 mb-4">Start by recording attendance for your students.</p>
                 <Button 
                   onClick={() => setIsAddModalOpen(true)}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
