@@ -206,7 +206,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               {/* Payment Overview Card */}
-              <Card className="glass-morphism border-emerald-200/50 dark:border-emerald-800/50 bg-gradient-to-br from-emerald-50/30 to-green-50/30 dark:from-emerald-950/20 dark:to-green-950/20">
+              <Card className="glass-morphism">
                 <CardContent className="space-y-6">
                   {/* Payment Overview */}
                   <div className="space-y-4">
