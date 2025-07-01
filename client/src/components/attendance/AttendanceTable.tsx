@@ -245,7 +245,7 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                         
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-1">
-                            <h3 className="text-sm font-semibold text-foreground">
+                            <h3 className="text-base font-semibold text-foreground">
                               {student ? `${student.firstName} ${student.lastName}` : 'Unknown Student'}
                             </h3>
                             {age && (
@@ -264,13 +264,13 @@ export default function AttendanceTable({ onAddAttendance }: AttendanceTableProp
                             )}
                           </div>
                           
-                          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                            <span className="font-medium">{student?.studentId || `#${record.studentId}`}</span>
+                          <div className="flex items-center space-x-3 text-xs text-muted-foreground opacity-80">
+                            <span className="font-medium text-xs">{student?.studentId || `#${record.studentId}`}</span>
                             {student?.section && (
-                              <span>Section: {student.section}</span>
+                              <span className="text-xs">Section: {student.section}</span>
                             )}
                             {student?.class && (
-                              <span>Class: {student.class}</span>
+                              <span className="text-xs">Class: {student.class}</span>
                             )}
                           </div>
                         </div>
