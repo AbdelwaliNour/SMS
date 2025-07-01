@@ -156,26 +156,26 @@ export default function RecordAttendanceDialog({ trigger }: RecordAttendanceDial
     };
 
     const icons = {
-      present: <CheckCircle className="h-4 w-4 mr-1" />,
-      late: <Clock className="h-4 w-4 mr-1" />,
-      absent: <XCircle className="h-4 w-4 mr-1" />
+      present: <CheckCircle className="h-3 w-3" />,
+      late: <Clock className="h-3 w-3" />,
+      absent: <XCircle className="h-3 w-3" />
     };
 
     const labels = {
-      present: 'Present',
-      late: 'Late',
-      absent: 'Absent'
+      present: 'P',
+      late: 'L',
+      absent: 'A'
     };
 
     return (
       <Button
         variant="outline" 
         size="sm"
-        className={`min-w-[90px] ${isSelected ? buttonStyles[status].selected : buttonStyles[status].base}`}
+        className={`h-7 w-7 p-0 ${isSelected ? buttonStyles[status].selected : buttonStyles[status].base}`}
         onClick={() => updateStudentStatus(student.id, status)}
+        title={status === 'present' ? 'Present' : status === 'late' ? 'Late' : 'Absent'}
       >
         {icons[status]}
-        {labels[status]}
       </Button>
     );
   };
@@ -194,48 +194,49 @@ export default function RecordAttendanceDialog({ trigger }: RecordAttendanceDial
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto glass-morphism border-border/30">
-        <DialogHeader className="pb-4">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden glass-morphism border-border/30">
+        <DialogHeader className="pb-4 border-b border-border/30">
           <DialogTitle className="text-xl font-semibold text-primary flex items-center">
             <Users className="h-5 w-5 mr-2" />
-            Record Bulk Attendance
+            Record Attendance
           </DialogTitle>
           <DialogDescription>
-            Mark attendance for multiple students at once. Select a class to filter students, then mark their attendance status.
+            Mark attendance for students. Use the class filter to narrow down the list.
           </DialogDescription>
-          
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            {/* Class Filter */}
-            <Select value={selectedClass} onValueChange={setSelectedClass}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filter by class" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Classes</SelectItem>
-                {availableClasses.map((className) => (
-                  <SelectItem key={className} value={className}>
-                    Class {className}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-                <Calendar className="h-3 w-3 mr-1" />
-                {new Date().toLocaleDateString()}
-              </Badge>
-              
-              {selectedCount > 0 && (
-                <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20">
-                  {selectedCount} marked
-                </Badge>
-              )}
-            </div>
-          </div>
         </DialogHeader>
         
-        <div className="space-y-4">
+        {/* Class Filter and Info */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-b border-border/30">
+          <Select value={selectedClass} onValueChange={setSelectedClass}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Classes</SelectItem>
+              {availableClasses.map((className) => (
+                <SelectItem key={className} value={className}>
+                  Class {className}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <div className="flex items-center space-x-3">
+            <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+              <Calendar className="h-3 w-3 mr-1" />
+              {new Date().toLocaleDateString()}
+            </Badge>
+            
+            {selectedCount > 0 && (
+              <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                {selectedCount} marked
+              </Badge>
+            )}
+          </div>
+        </div>
+        
+        {/* Students Table */}
+        <div className="flex-1 overflow-hidden">
           {filteredStudents.length === 0 ? (
             <div className="text-center py-12">
               <Users className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
@@ -247,115 +248,123 @@ export default function RecordAttendanceDialog({ trigger }: RecordAttendanceDial
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* Table Header */}
-              <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-muted/30 rounded-lg font-medium text-sm">
-                <div className="col-span-1 text-center">Photo</div>
-                <div className="col-span-2">Student</div>
-                <div className="col-span-1 text-center">Age</div>
-                <div className="col-span-1 text-center">Class</div>
-                <div className="col-span-1 text-center">Section</div>
-                <div className="col-span-3 text-center">Attendance Status</div>
-                <div className="col-span-3">Notes</div>
-              </div>
-              
-              {/* Student Rows */}
-              <div className="max-h-96 overflow-y-auto space-y-3">
-                {filteredStudents.map((student) => {
-                  const age = student.dateOfBirth 
-                    ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() 
-                    : null;
+            <div className="h-full flex flex-col">
+              {/* Table */}
+              <div className="bg-card rounded-lg border border-border/30 overflow-hidden">
+                {/* Table Header */}
+                <div className="bg-muted/30 px-4 py-3 border-b border-border/30">
+                  <div className="grid grid-cols-12 gap-4 items-center font-medium text-sm text-muted-foreground">
+                    <div className="col-span-1 text-center">Photo</div>
+                    <div className="col-span-3">Student</div>
+                    <div className="col-span-1 text-center">Age</div>
+                    <div className="col-span-1 text-center">Class</div>
+                    <div className="col-span-1 text-center">Section</div>
+                    <div className="col-span-3 text-center">Actions</div>
+                    <div className="col-span-2">Notes</div>
+                  </div>
+                </div>
+                
+                {/* Table Body */}
+                <div className="max-h-80 overflow-y-auto">
+                  {filteredStudents.map((student) => {
+                    const age = student.dateOfBirth 
+                      ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() 
+                      : null;
 
-                  return (
-                    <div key={student.id} className="glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 rounded-lg p-4">
-                      <div className="grid grid-cols-12 gap-4 items-center">
-                        {/* Photo */}
-                        <div className="col-span-1 flex justify-center">
-                          <ProfileAvatar
-                            src={student.profilePhoto || undefined}
-                            name={`${student.firstName} ${student.lastName}`}
-                            size="sm"
-                          />
-                        </div>
-                        
-                        {/* Student Info */}
-                        <div className="col-span-2">
-                          <div className="font-semibold text-foreground">
-                            {student.firstName} {student.lastName}
+                    return (
+                      <div key={student.id} className="px-4 py-3 border-b border-border/10 hover:bg-muted/20 transition-colors">
+                        <div className="grid grid-cols-12 gap-4 items-center">
+                          {/* Photo */}
+                          <div className="col-span-1 flex justify-center">
+                            <ProfileAvatar
+                              src={student.profilePhoto || undefined}
+                              name={`${student.firstName} ${student.lastName}`}
+                              size="sm"
+                            />
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {student.studentId}
+                          
+                          {/* Student Info */}
+                          <div className="col-span-3">
+                            <div className="font-semibold text-foreground">
+                              {student.firstName} {student.lastName}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {student.studentId}
+                            </div>
                           </div>
-                        </div>
-                        
-                        {/* Age */}
-                        <div className="col-span-1 text-center">
-                          {age ? (
-                            <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                              {age}y
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-xs">N/A</span>
-                          )}
-                        </div>
-                        
-                        {/* Class */}
-                        <div className="col-span-1 text-center">
-                          {student.class ? (
-                            <Badge variant="outline" className="text-xs">
-                              {student.class}
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-xs">N/A</span>
-                          )}
-                        </div>
-                        
-                        {/* Section */}
-                        <div className="col-span-1 text-center">
-                          {student.section ? (
-                            <Badge variant="outline" className="text-xs">
-                              {student.section}
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-xs">N/A</span>
-                          )}
-                        </div>
-                        
-                        {/* Status Buttons */}
-                        <div className="col-span-3 flex justify-center gap-2">
-                          {getStatusButton(student, 'present')}
-                          {getStatusButton(student, 'late')}
-                          {getStatusButton(student, 'absent')}
-                        </div>
-                        
-                        {/* Notes */}
-                        <div className="col-span-3">
-                          <Input
-                            placeholder="Add note (optional)"
-                            value={studentNotes[student.id] || ''}
-                            onChange={(e) => updateStudentNotes(student.id, e.target.value)}
-                            className="text-sm"
-                          />
+                          
+                          {/* Age */}
+                          <div className="col-span-1 text-center">
+                            {age ? (
+                              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                {age}y
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">N/A</span>
+                            )}
+                          </div>
+                          
+                          {/* Class */}
+                          <div className="col-span-1 text-center">
+                            {student.class ? (
+                              <Badge variant="outline" className="text-xs">
+                                {student.class}
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">N/A</span>
+                            )}
+                          </div>
+                          
+                          {/* Section */}
+                          <div className="col-span-1 text-center">
+                            {student.section ? (
+                              <Badge variant="outline" className="text-xs">
+                                {student.section}
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">N/A</span>
+                            )}
+                          </div>
+                          
+                          {/* Action Buttons */}
+                          <div className="col-span-3 flex justify-center gap-1">
+                            {getStatusButton(student, 'present')}
+                            {getStatusButton(student, 'late')}
+                            {getStatusButton(student, 'absent')}
+                          </div>
+                          
+                          {/* Notes */}
+                          <div className="col-span-2">
+                            <Input
+                              placeholder="Note..."
+                              value={studentNotes[student.id] || ''}
+                              onChange={(e) => updateStudentNotes(student.id, e.target.value)}
+                              className="text-sm h-8"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* Submit Button */}
-              <div className="flex justify-end pt-4 border-t">
-                <Button 
-                  onClick={handleBulkSubmit}
-                  disabled={selectedCount === 0 || isSubmitting}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  {isSubmitting ? 'Saving...' : `Save Attendance (${selectedCount})`}
-                </Button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
+        </div>
+        
+        {/* Footer with Submit Button */}
+        <div className="flex justify-between items-center pt-4 border-t border-border/30">
+          <div className="text-sm text-muted-foreground">
+            {filteredStudents.length} students • {selectedCount} marked
+          </div>
+          <Button 
+            onClick={handleBulkSubmit}
+            disabled={selectedCount === 0 || isSubmitting}
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {isSubmitting ? 'Saving...' : `Save Attendance (${selectedCount})`}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
