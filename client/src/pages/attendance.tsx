@@ -41,6 +41,7 @@ import { Progress } from '@/components/ui/progress';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
 import AttendanceTable from '@/components/attendance/AttendanceTable';
 import RecordAttendanceDialog from '@/components/attendance/RecordAttendanceDialog';
+import AttendanceRecordingTable from '@/components/attendance/AttendanceRecordingTable';
 
 const attendanceFormSchema = z.object({
   studentId: z.number({
@@ -356,8 +357,12 @@ export default function AttendancePage() {
         </div>
 
         {/* Attendance Management Tabs */}
-        <Tabs defaultValue="records" className="space-y-6">
+        <Tabs defaultValue="record-attendance" className="space-y-6">
           <TabsList className="glass-morphism border-border/30 bg-background/50">
+            <TabsTrigger value="record-attendance" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Users className="h-4 w-4 mr-2" />
+              Record Attendance
+            </TabsTrigger>
             <TabsTrigger value="records" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <ClipboardList className="h-4 w-4 mr-2" />
               Attendance Records
@@ -371,6 +376,10 @@ export default function AttendancePage() {
               Reports
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="record-attendance" className="space-y-6">
+            <AttendanceRecordingTable />
+          </TabsContent>
 
           <TabsContent value="records" className="space-y-6">
             <AttendanceTable onAddAttendance={handleAddAttendance} />
