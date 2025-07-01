@@ -260,6 +260,12 @@ Changelog:
   * Added tabbed interface for Schedules, Analytics, and Reports sections
   * Enhanced form dialog with proper glass-morphism styling and comprehensive field validation
   * Fixed all button hover states with proper dark mode compatibility using semi-transparent overlays
+- July 1, 2025. Updated education sections across entire system:
+  * Changed section categories from Primary/Secondary/High School to Primary/Intermediate/Secondary
+  * Updated database schema with new section enum values and pushed changes to production
+  * Modified all forms, filters, and display components to use new section structure
+  * Updated timetable page with comprehensive section distribution cards for new categories
+  * Ensured consistent section naming across students, employees, classrooms, and timetable modules
 ```
 
 ## User Preferences

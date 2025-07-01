@@ -7,7 +7,7 @@ import { relations } from "drizzle-orm";
 export const genderEnum = pgEnum('gender', ['male', 'female']);
 export const shiftEnum = pgEnum('shift', ['morning', 'afternoon', 'evening']);
 export const roleEnum = pgEnum('role', ['teacher', 'driver', 'cleaner', 'guard', 'admin', 'staff']);
-export const sectionEnum = pgEnum('section', ['primary', 'secondary', 'highschool']);
+export const sectionEnum = pgEnum('section', ['primary', 'intermediate', 'secondary']);
 export const statusEnum = pgEnum('status', ['present', 'absent', 'late']);
 export const paymentStatusEnum = pgEnum('payment_status', ['paid', 'unpaid', 'partial', 'overdue', 'refunded']);
 export const paymentTypeEnum = pgEnum('payment_type', ['tuition', 'fees', 'book', 'uniform', 'transport', 'meal', 'exam', 'library', 'activity', 'other']);
