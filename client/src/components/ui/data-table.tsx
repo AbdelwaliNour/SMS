@@ -59,18 +59,20 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="rounded-md border shadow bg-white dark:bg-gray-900">
         <Table>
-          <TableHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white sticky top-0 z-10 shadow-lg">
+          <TableHeader className="bg-white dark:bg-gray-900 border-b-2 border-gray-100 dark:border-gray-800 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-gradient-to-r hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 transition-all duration-200">
+              <TableRow key={headerGroup.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-semibold text-white py-4 px-6 text-sm tracking-wide uppercase border-r border-white/20 last:border-r-0 backdrop-blur-sm">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                    <TableHead key={header.id} className="font-bold text-gray-900 dark:text-white py-6 px-6 text-base bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border-r border-gray-200 dark:border-gray-700 last:border-r-0 shadow-sm">
+                      <div className="flex items-center space-x-2">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </div>
                     </TableHead>
                   );
                 })}
