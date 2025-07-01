@@ -148,7 +148,7 @@ const AddClassroomForm = ({ onSuccess, onCancel }: AddClassroomFormProps) => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="glass-morphism bg-primary/90 hover:bg-primary border-primary/30"
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg border-2 border-blue-600 hover:border-blue-700 transition-all duration-200 shadow-lg"
           >
             {isSubmitting ? (
               <>
