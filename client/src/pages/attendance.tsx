@@ -29,7 +29,8 @@ import {
   BarChart3,
   Download,
   Search,
-  Filter
+  Filter,
+  Save
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +59,11 @@ export default function AttendancePage() {
     date: '',
     section: '',
   });
+  
+  // New state for table-based attendance form
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [studentStatuses, setStudentStatuses] = useState<Record<number, 'present' | 'absent' | 'late'>>({});
+  const [studentNotes, setStudentNotes] = useState<Record<number, string>>({});
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['/api/stats'],
@@ -124,6 +130,56 @@ export default function AttendancePage() {
 
   const getStudentInfo = (studentId: number) => {
     return students?.find(s => s.id === studentId);
+  };
+
+  // Functions for the new table-based attendance form
+  const updateStudentStatus = (studentId: number, status: 'present' | 'absent' | 'late') => {
+    setStudentStatuses(prev => ({
+      ...prev,
+      [studentId]: status
+    }));
+  };
+
+  const updateStudentNotes = (studentId: number, note: string) => {
+    setStudentNotes(prev => ({
+      ...prev,
+      [studentId]: note
+    }));
+  };
+
+  const handleBulkAttendanceSubmit = async () => {
+    try {
+      const attendanceRecords = Object.entries(studentStatuses).map(([studentId, status]) => ({
+        studentId: parseInt(studentId),
+        date: selectedDate,
+        status,
+        note: studentNotes[parseInt(studentId)] || '',
+      }));
+
+      // Submit all attendance records
+      for (const record of attendanceRecords) {
+        await apiRequest('POST', '/api/attendance', record);
+      }
+
+      toast({
+        title: 'Success',
+        description: `Attendance recorded for ${attendanceRecords.length} students`,
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['/api/attendance'] });
+      setIsAddModalOpen(false);
+      
+      // Reset the form state
+      setStudentStatuses({});
+      setStudentNotes({});
+      setSelectedDate(new Date().toISOString().split('T')[0]);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save attendance records',
+        variant: 'destructive',
+      });
+    }
   };
 
   // Calculate attendance statistics
@@ -592,199 +648,152 @@ export default function AttendancePage() {
                       </div>
                     </DialogHeader>
                     
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-6">
-                        {/* Student Selection Section */}
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
-                          <div className="flex items-center space-x-3 mb-4">
-                            <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Student Information</h3>
+                    <div className="space-y-6 mt-6">
+                      {/* Date Selection Header */}
+                      <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Record Attendance</h3>
                           </div>
-                          <FormField
-                            control={form.control}
-                            name="studentId"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Select Student</FormLabel>
-                                <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
-                                  <FormControl>
-                                    <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-blue-500 h-14 text-base">
-                                      <SelectValue placeholder="Choose a student from the list" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent className="max-h-60">
-                                    {students?.map((student) => (
-                                      <SelectItem key={student.id} value={student.id.toString()} className="py-3">
-                                        <div className="flex items-center space-x-4">
-                                          <img 
-                                            src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 40)}
-                                            alt={`${student.firstName} ${student.lastName}`}
-                                            className="w-10 h-10 rounded-full ring-2 ring-blue-200"
-                                          />
-                                          <div className="flex flex-col">
-                                            <span className="font-semibold">{student.firstName} {student.lastName}</span>
-                                            <div className="flex items-center space-x-2 text-sm text-gray-500">
-                                              <span>ID: {student.studentId}</span>
-                                              <span>•</span>
-                                              <span>{student.section}</span>
-                                              <span>•</span>
-                                              <span>Class {student.class}</span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          <div className="flex items-center space-x-4">
+                            <label className="text-gray-900 dark:text-white font-medium">Date:</label>
+                            <input
+                              type="date"
+                              value={selectedDate}
+                              onChange={(e) => setSelectedDate(e.target.value)}
+                              className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:border-emerald-500"
+                            />
+                          </div>
                         </div>
+                      </div>
 
-                        {/* Date and Status Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl p-6">
-                            <div className="flex items-center space-x-3 mb-4">
-                              <Calendar className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Date Selection</h3>
-                            </div>
-                            <FormField
-                              control={form.control}
-                              name="date"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Attendance Date</FormLabel>
-                                  <FormControl>
-                                    <Input 
-                                      type="date" 
-                                      {...field} 
-                                      className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-emerald-500 h-12 text-base"
+                      {/* Students Attendance Table */}
+                      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead className="bg-gray-50 dark:bg-gray-700">
+                              <tr>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Student</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">ID</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Class</th>
+                                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">Attendance Status</th>
+                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">Notes</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                              {students?.map((student, index) => (
+                                <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                  {/* Student Info */}
+                                  <td className="px-6 py-4">
+                                    <div className="flex items-center space-x-3">
+                                      <img 
+                                        src={student.profilePhoto || generateUserAvatar(`${student.firstName} ${student.lastName}`, 40)}
+                                        alt={`${student.firstName} ${student.lastName}`}
+                                        className="w-10 h-10 rounded-full ring-2 ring-blue-200"
+                                      />
+                                      <div>
+                                        <div className="font-semibold text-gray-900 dark:text-white">
+                                          {student.firstName} {student.lastName}
+                                        </div>
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                          {student.gender} • Age {student.dateOfBirth ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() : 'N/A'}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  
+                                  {/* Student ID */}
+                                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
+                                    {student.studentId}
+                                  </td>
+                                  
+                                  {/* Class Info */}
+                                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                                    {student.section} - Class {student.class}
+                                  </td>
+                                  
+                                  {/* Attendance Status Actions */}
+                                  <td className="px-6 py-4">
+                                    <div className="flex justify-center space-x-2">
+                                      <button
+                                        onClick={() => updateStudentStatus(student.id, 'present')}
+                                        className={`p-2 rounded-lg transition-all duration-200 ${
+                                          studentStatuses[student.id] === 'present'
+                                            ? 'bg-emerald-500 text-white shadow-lg'
+                                            : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
+                                        }`}
+                                        title="Mark Present"
+                                      >
+                                        <CheckCircle className="h-5 w-5" />
+                                      </button>
+                                      <button
+                                        onClick={() => updateStudentStatus(student.id, 'late')}
+                                        className={`p-2 rounded-lg transition-all duration-200 ${
+                                          studentStatuses[student.id] === 'late'
+                                            ? 'bg-amber-500 text-white shadow-lg'
+                                            : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
+                                        }`}
+                                        title="Mark Late"
+                                      >
+                                        <Clock className="h-5 w-5" />
+                                      </button>
+                                      <button
+                                        onClick={() => updateStudentStatus(student.id, 'absent')}
+                                        className={`p-2 rounded-lg transition-all duration-200 ${
+                                          studentStatuses[student.id] === 'absent'
+                                            ? 'bg-red-500 text-white shadow-lg'
+                                            : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
+                                        }`}
+                                        title="Mark Absent"
+                                      >
+                                        <XCircle className="h-5 w-5" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                  
+                                  {/* Notes */}
+                                  <td className="px-6 py-4">
+                                    <input
+                                      type="text"
+                                      placeholder="Add notes..."
+                                      value={studentNotes[student.id] || ''}
+                                      onChange={(e) => updateStudentNotes(student.id, e.target.value)}
+                                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                                     />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
-
-                          <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6">
-                            <div className="flex items-center space-x-3 mb-4">
-                              <ClipboardList className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Attendance Status</h3>
-                            </div>
-                            <FormField
-                              control={form.control}
-                              name="status"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Student Status</FormLabel>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger className="bg-white dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:border-purple-500 h-12 text-base">
-                                        <SelectValue placeholder="Select attendance status" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="present" className="py-3">
-                                        <div className="flex items-center space-x-3">
-                                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                                            <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                                          </div>
-                                          <div>
-                                            <div className="font-semibold">Present</div>
-                                            <div className="text-sm text-gray-500">Student attended class</div>
-                                          </div>
-                                        </div>
-                                      </SelectItem>
-                                      <SelectItem value="late" className="py-3">
-                                        <div className="flex items-center space-x-3">
-                                          <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                                            <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                                          </div>
-                                          <div>
-                                            <div className="font-semibold">Late Arrival</div>
-                                            <div className="text-sm text-gray-500">Student arrived after start time</div>
-                                          </div>
-                                        </div>
-                                      </SelectItem>
-                                      <SelectItem value="absent" className="py-3">
-                                        <div className="flex items-center space-x-3">
-                                          <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                                            <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                                          </div>
-                                          <div>
-                                            <div className="font-semibold">Absent</div>
-                                            <div className="text-sm text-gray-500">Student did not attend</div>
-                                          </div>
-                                        </div>
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
+                      </div>
 
-                        {/* Notes Section */}
-                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6">
-                          <div className="flex items-center space-x-3 mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                            </svg>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Additional Information</h3>
-                          </div>
-                          <FormField
-                            control={form.control}
-                            name="note"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white font-medium text-base">Notes & Comments</FormLabel>
-                                <FormControl>
-                                  <textarea
-                                    placeholder="Add any relevant notes, reasons for absence, or additional comments..."
-                                    {...field}
-                                    rows={4}
-                                    className="w-full px-4 py-3 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 resize-none text-base"
-                                  />
-                                </FormControl>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                  Optional: Provide context or additional details about the attendance record
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                      {/* Action Buttons */}
+                      <div className="flex justify-between items-center pt-6">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          Click the status buttons to mark attendance for each student
                         </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex justify-between items-center pt-6">
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            All fields marked with * are required
-                          </div>
-                          <div className="flex space-x-4">
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              onClick={() => setIsAddModalOpen(false)}
-                              className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-6 py-3 text-base"
-                            >
-                              <XCircle className="h-4 w-4 mr-2" />
-                              Cancel
-                            </Button>
-                            <Button 
-                              type="submit" 
-                              className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200"
-                            >
-                              <Plus className="h-5 w-5 mr-2" />
-                              Create Attendance Record
-                            </Button>
-                          </div>
+                        <div className="flex space-x-4">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setIsAddModalOpen(false)}
+                            className="border-gray-300 dark:border-white/20 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 px-6 py-3 text-base"
+                          >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Cancel
+                          </Button>
+                          <Button 
+                            onClick={handleBulkAttendanceSubmit}
+                            className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200"
+                          >
+                            <Save className="h-5 w-5 mr-2" />
+                            Save All Attendance
+                          </Button>
                         </div>
-                      </form>
-                    </Form>
+                      </div>
+                    </div>
                   </DialogContent>
                 </Dialog>
               </div>
