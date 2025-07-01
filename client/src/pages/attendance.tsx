@@ -149,34 +149,67 @@ export default function AttendancePage() {
 
   const handleBulkAttendanceSubmit = async () => {
     try {
-      const attendanceRecords = Object.entries(studentStatuses).map(([studentId, status]) => ({
+      // Filter only students that have a status selected
+      const recordsToSubmit = Object.entries(studentStatuses);
+      
+      if (recordsToSubmit.length === 0) {
+        toast({
+          title: 'No Records Selected',
+          description: 'Please mark attendance status for at least one student',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      const attendanceRecords = recordsToSubmit.map(([studentId, status]) => ({
         studentId: parseInt(studentId),
-        date: selectedDate,
+        date: new Date(selectedDate).toISOString(),
         status,
         note: studentNotes[parseInt(studentId)] || '',
       }));
 
       // Submit all attendance records
+      let successCount = 0;
+      let errors = [];
+      
       for (const record of attendanceRecords) {
-        await apiRequest('POST', '/api/attendance', record);
+        try {
+          await apiRequest('POST', '/api/attendance', record);
+          successCount++;
+        } catch (recordError) {
+          console.error('Failed to save record for student:', record.studentId, recordError);
+          errors.push({
+            studentId: record.studentId,
+            error: recordError
+          });
+        }
       }
 
-      toast({
-        title: 'Success',
-        description: `Attendance recorded for ${attendanceRecords.length} students`,
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ['/api/attendance'] });
-      setIsAddModalOpen(false);
-      
-      // Reset the form state
-      setStudentStatuses({});
-      setStudentNotes({});
-      setSelectedDate(new Date().toISOString().split('T')[0]);
+      if (successCount > 0) {
+        toast({
+          title: 'Success',
+          description: `Attendance recorded for ${successCount} students${errors.length > 0 ? ` (${errors.length} failed)` : ''}`,
+        });
+        
+        queryClient.invalidateQueries({ queryKey: ['/api/attendance'] });
+        setIsAddModalOpen(false);
+        
+        // Reset the form state
+        setStudentStatuses({});
+        setStudentNotes({});
+        setSelectedDate(new Date().toISOString().split('T')[0]);
+      } else {
+        toast({
+          title: 'Error',
+          description: `Failed to save attendance records. ${errors.length > 0 ? `First error: ${errors[0].error.message || 'Unknown error'}` : ''}`,
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
+      console.error('Bulk attendance submission error:', error);
       toast({
         title: 'Error',
-        description: 'Failed to save attendance records',
+        description: `Failed to save attendance records: ${error.message || 'Unknown error'}`,
         variant: 'destructive',
       });
     }
