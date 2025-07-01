@@ -61,7 +61,6 @@ export default function AttendancePage() {
   });
   
   // New state for table-based attendance form
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [studentStatuses, setStudentStatuses] = useState<Record<number, 'present' | 'absent' | 'late'>>({});
   const [studentNotes, setStudentNotes] = useState<Record<number, string>>({});
   const [selectedClass, setSelectedClass] = useState('');
@@ -162,6 +161,7 @@ export default function AttendancePage() {
         studentId: parseInt(studentId),
         status,
         note: studentNotes[parseInt(studentId)] || '',
+        date: new Date().toISOString(), // Automatically use current date/time
       }));
 
       // Submit all attendance records
@@ -193,7 +193,6 @@ export default function AttendancePage() {
         // Reset the form state
         setStudentStatuses({});
         setStudentNotes({});
-        setSelectedDate(new Date().toISOString().split('T')[0]);
       }
 
       if (errors.length > 0) {
@@ -696,12 +695,14 @@ export default function AttendancePage() {
                             </div>
                             <div className="flex items-center space-x-2">
                               <label className="text-gray-900 dark:text-white font-medium">Date:</label>
-                              <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                                className="bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:border-emerald-500"
-                              />
+                              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-600 rounded-lg px-4 py-2 text-emerald-800 dark:text-emerald-200 font-semibold">
+                                {new Date().toLocaleDateString('en-US', { 
+                                  weekday: 'long', 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })}
+                              </div>
                             </div>
                           </div>
                         </div>
