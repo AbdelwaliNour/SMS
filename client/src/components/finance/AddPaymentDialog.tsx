@@ -104,7 +104,7 @@ const academicYears = [
   `${currentYear + 1}-${currentYear + 2}`,
 ];
 
-const terms = ["Fall", "Spring", "Summer"];
+const terms = ["First Term", "Second Term"];
 
 interface AddPaymentDialogProps {
   trigger?: React.ReactNode;
