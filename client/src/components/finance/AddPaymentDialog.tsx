@@ -576,7 +576,7 @@ export function AddPaymentDialog({ trigger, onPaymentAdded }: AddPaymentDialogPr
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-6 border-t border-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-800 dark:to-teal-800 bg-gradient-to-r from-emerald-50/30 to-teal-50/30 dark:from-emerald-950/20 dark:to-teal-950/20 -mx-6 px-6 pb-6">
+              <div className="flex justify-end space-x-4 pt-6">
                 <Button
                   type="button"
                   variant="outline"
