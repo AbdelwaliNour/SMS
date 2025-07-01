@@ -494,7 +494,7 @@ export default function TimeTable() {
           <Card className="glass-morphism border-border/30 hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-cyan-700 dark:text-cyan-300">Intermediate Classes</h3>
+                <h3 className="font-semibold text-cyan-700 dark:text-cyan-300 text-[25px]">Intermediate Classes</h3>
                 <div className="flex items-center">
                   <ArrowUpRight className="h-4 w-4 text-blue-500 mr-1" />
                   <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full dark:bg-blue-900/20">+5%</span>
