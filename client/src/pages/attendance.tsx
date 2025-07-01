@@ -270,60 +270,117 @@ export default function AttendancePage() {
 
   const columns: ColumnDef<Attendance>[] = [
     {
-      accessorKey: 'student',
-      header: 'Student Details',
+      accessorKey: 'photo',
+      header: 'Photo',
       cell: ({ row }) => {
         const student = getStudentInfo(row.original.studentId);
         const fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
         const profilePhoto = student?.profilePhoto;
-        const age = student?.dateOfBirth ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() : null;
         
         return (
-          <div className="flex items-center space-x-4 py-3">
+          <div className="flex justify-center py-2">
             <div className="relative">
               <img 
-                src={profilePhoto || generateUserAvatar(fullName, 60)} 
+                src={profilePhoto || generateUserAvatar(fullName, 48)} 
                 alt={fullName} 
-                className="w-15 h-15 rounded-2xl object-cover ring-2 ring-blue-500/20 shadow-lg hover:ring-blue-500/40 transition-all duration-200"
+                className="w-12 h-12 rounded-xl object-cover ring-2 ring-blue-500/20 shadow-md"
               />
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
-                <span className="text-white text-xs font-bold">
-                  {student?.section?.charAt(0).toUpperCase() || 'U'}
-                </span>
-              </div>
               {student?.gender && (
-                <div className={`absolute -bottom-1 -left-1 w-5 h-5 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-xs ${
+                <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-xs ${
                   student.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
                 }`}>
-                  <span className="text-white font-bold">{student.gender.charAt(0).toUpperCase()}</span>
+                  <span className="text-white font-bold text-xs">{student.gender.charAt(0).toUpperCase()}</span>
                 </div>
               )}
             </div>
-            <div className="flex flex-col space-y-1 min-w-0 flex-1">
-              <div className="flex items-center space-x-2">
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate">{fullName}</h3>
-                {age && (
-                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                    {age}y
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center space-x-3 text-sm">
-                <span className="text-gray-600 dark:text-gray-400 font-medium">
-                  ID: {student?.studentId || `#${row.original.studentId}`}
-                </span>
-                {student?.section && (
-                  <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
-                    {student.section}
-                  </Badge>
-                )}
-                {student?.class && (
-                  <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
-                    Class {student.class}
-                  </Badge>
-                )}
-              </div>
-            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'studentId',
+      header: 'Student ID',
+      cell: ({ row }) => {
+        const student = getStudentInfo(row.original.studentId);
+        return (
+          <div className="py-2">
+            <span className="text-sm font-medium text-gray-900 dark:text-white">
+              {student?.studentId || `#${row.original.studentId}`}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'name',
+      header: 'Student Name',
+      cell: ({ row }) => {
+        const student = getStudentInfo(row.original.studentId);
+        const fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
+        
+        return (
+          <div className="py-2">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">
+              {fullName}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'age',
+      header: 'Age',
+      cell: ({ row }) => {
+        const student = getStudentInfo(row.original.studentId);
+        const age = student?.dateOfBirth ? new Date().getFullYear() - new Date(student.dateOfBirth).getFullYear() : null;
+        
+        return (
+          <div className="py-2 flex justify-center">
+            {age ? (
+              <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                {age}y
+              </Badge>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500 text-xs">N/A</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'section',
+      header: 'Section',
+      cell: ({ row }) => {
+        const student = getStudentInfo(row.original.studentId);
+        
+        return (
+          <div className="py-2 flex justify-center">
+            {student?.section ? (
+              <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
+                {student.section}
+              </Badge>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500 text-xs">N/A</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'class',
+      header: 'Class',
+      cell: ({ row }) => {
+        const student = getStudentInfo(row.original.studentId);
+        
+        return (
+          <div className="py-2 flex justify-center">
+            {student?.class ? (
+              <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600">
+                {student.class}
+              </Badge>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500 text-xs">N/A</span>
+            )}
           </div>
         );
       },
