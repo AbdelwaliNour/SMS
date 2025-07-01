@@ -13,6 +13,7 @@ interface EditClassroomProps {
 
 export default function EditClassroom({ params }: EditClassroomProps) {
   const classroomId = params.id;
+  const [, navigate] = useLocation();
 
   const { data: classrooms } = useQuery<Classroom[]>({
     queryKey: ['/api/classrooms'],
@@ -26,11 +27,11 @@ export default function EditClassroom({ params }: EditClassroomProps) {
   const teachers = employees?.filter(employee => employee.role === 'teacher') || [];
 
   const handleSuccess = () => {
-    window.location.href = '/classrooms';
+    navigate('/classrooms');
   };
 
   const handleCancel = () => {
-    window.location.href = '/classrooms';
+    navigate('/classrooms');
   };
 
   if (!classroom) {

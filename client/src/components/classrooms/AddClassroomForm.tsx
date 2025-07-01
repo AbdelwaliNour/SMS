@@ -15,7 +15,7 @@ const classroomFormSchema = z.object({
   name: z.string().min(1, "Classroom name is required"),
   section: z.enum(['primary', 'secondary', 'highschool']),
   capacity: z.number().min(1, "Capacity must be at least 1"),
-  teacherId: z.string().transform(val => val === "" ? null : parseInt(val)),
+  teacherId: z.string().transform(val => val === "0" || val === "" ? null : parseInt(val)),
 });
 
 type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
