@@ -14,9 +14,10 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { ColumnDef } from '@tanstack/react-table';
 import FilterSelect from '@/components/ui/filter-select';
-import { formatDate, generateUserAvatar, getGenderDisplayName, getSectionDisplayName } from '@/lib/utils';
+import { formatDate, generateUserAvatar } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import StatCard from '@/components/dashboard/StatCard';
+import { CheckCircle, Clock, XCircle, Users, School, ClipboardList } from 'lucide-react';
 
 const attendanceFormSchema = z.object({
   studentId: z.number({
@@ -107,100 +108,164 @@ export default function AttendancePage() {
 
   const columns: ColumnDef<Attendance>[] = [
     {
-      accessorKey: 'studentImage',
-      header: 'Student Image',
+      accessorKey: 'student',
+      header: 'Student',
       cell: ({ row }) => {
         const student = getStudentInfo(row.original.studentId);
         const fullName = student ? `${student.firstName} ${student.lastName}` : 'Unknown';
+        const profilePhoto = student?.profilePhoto;
+        
         return (
-          <img 
-            src={generateUserAvatar(fullName, 40)} 
-            alt={fullName} 
-            className="w-10 h-10 rounded-full"
-          />
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <img 
+                src={profilePhoto || generateUserAvatar(fullName, 48)} 
+                alt={fullName} 
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-white/10 shadow-md"
+              />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>
+            </div>
+            <div className="flex flex-col">
+              <div className="font-semibold text-gray-900 dark:text-white">
+                {fullName}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                ID: {student?.studentId || `#${row.original.studentId}`}
+              </div>
+            </div>
+          </div>
         );
       },
     },
     {
-      accessorKey: 'studentId',
-      header: 'Student ID',
-      cell: ({ row }) => {
-        const student = getStudentInfo(row.original.studentId);
-        return student?.studentId || `#${row.original.studentId}`;
-      },
-    },
-    {
-      accessorKey: 'studentName',
-      header: 'Student Name',
-      cell: ({ row }) => {
-        const student = getStudentInfo(row.original.studentId);
-        return student ? `${student.firstName} ${student.lastName}` : 'Unknown Student';
-      },
-    },
-    {
       accessorKey: 'date',
-      header: 'Date',
-      cell: ({ row }) => formatDate(row.original.date),
+      header: 'Date & Time',
+      cell: ({ row }) => {
+        const date = new Date(row.original.date);
+        return (
+          <div className="flex flex-col">
+            <div className="font-medium text-gray-900 dark:text-white">
+              {date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+              })}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {date.toLocaleDateString('en-US', { year: 'numeric' })}
+            </div>
+          </div>
+        );
+      },
     },
     {
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }) => {
         const status = row.original.status;
-        let bgColor;
+        let statusConfig;
         
-        if (status === 'present') bgColor = 'bg-green';
-        else if (status === 'late') bgColor = 'bg-yellow';
-        else bgColor = 'bg-red';
+        if (status === 'present') {
+          statusConfig = {
+            bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+            text: 'text-emerald-700 dark:text-emerald-300',
+            dot: 'bg-emerald-500',
+            icon: <CheckCircle className="w-4 h-4" />
+          };
+        } else if (status === 'late') {
+          statusConfig = {
+            bg: 'bg-amber-50 dark:bg-amber-900/20',
+            text: 'text-amber-700 dark:text-amber-300',
+            dot: 'bg-amber-500',
+            icon: <Clock className="w-4 h-4" />
+          };
+        } else {
+          statusConfig = {
+            bg: 'bg-red-50 dark:bg-red-900/20',
+            text: 'text-red-700 dark:text-red-300',
+            dot: 'bg-red-500',
+            icon: <XCircle className="w-4 h-4" />
+          };
+        }
         
         return (
-          <span className={`${bgColor} text-white px-2 py-1 rounded-full text-xs`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </span>
+          <div className={`flex items-center space-x-2 px-3 py-2 rounded-full ${statusConfig.bg} w-fit`}>
+            <div className={`w-2 h-2 rounded-full ${statusConfig.dot}`}></div>
+            <span className={`text-sm font-medium ${statusConfig.text} flex items-center space-x-1`}>
+              {statusConfig.icon}
+              <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            </span>
+          </div>
         );
       },
     },
     {
       accessorKey: 'note',
-      header: 'Note',
-      cell: ({ row }) => row.original.note || 'N/A',
+      header: 'Notes',
+      cell: ({ row }) => {
+        const note = row.original.note;
+        return (
+          <div className="max-w-xs">
+            {note ? (
+              <div className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 px-3 py-2 rounded-lg">
+                {note}
+              </div>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500 italic text-sm">No notes</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Quick Actions',
       cell: ({ row }) => {
+        const currentStatus = row.original.status;
+        
         return (
-          <div className="flex space-x-1">
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-green hover:bg-green/90 text-white border-none w-6 h-6 p-0"
-              onClick={() => handleUpdateAttendance(row.original.id, 'present')}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-yellow hover:bg-yellow/90 text-white border-none w-6 h-6 p-0"
-              onClick={() => handleUpdateAttendance(row.original.id, 'late')}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-red hover:bg-red/90 text-white border-none w-6 h-6 p-0"
-              onClick={() => handleUpdateAttendance(row.original.id, 'absent')}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </Button>
+          <div className="flex items-center space-x-2">
+            <div className="flex space-x-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`w-8 h-8 p-0 rounded transition-all ${
+                  currentStatus === 'present' 
+                    ? 'bg-emerald-500 text-white shadow-md scale-110' 
+                    : 'hover:bg-emerald-100 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:scale-105'
+                }`}
+                onClick={() => handleUpdateAttendance(row.original.id, 'present')}
+                title="Mark Present"
+              >
+                <CheckCircle className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`w-8 h-8 p-0 rounded transition-all ${
+                  currentStatus === 'late' 
+                    ? 'bg-amber-500 text-white shadow-md scale-110' 
+                    : 'hover:bg-amber-100 dark:hover:bg-amber-900/30 text-amber-600 dark:text-amber-400 hover:scale-105'
+                }`}
+                onClick={() => handleUpdateAttendance(row.original.id, 'late')}
+                title="Mark Late"
+              >
+                <Clock className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`w-8 h-8 p-0 rounded transition-all ${
+                  currentStatus === 'absent' 
+                    ? 'bg-red-500 text-white shadow-md scale-110' 
+                    : 'hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:scale-105'
+                }`}
+                onClick={() => handleUpdateAttendance(row.original.id, 'absent')}
+                title="Mark Absent"
+              >
+                <XCircle className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         );
       },
@@ -209,255 +274,250 @@ export default function AttendancePage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-homenaje">Attendance Management</h1>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Attendance Management</h1>
+            <p className="text-blue-100">Track and manage student attendance efficiently</p>
+          </div>
+        </div>
         
         {/* Attendance Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
             title="FACILITY"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-            }
+            icon={<School className="h-8 w-8 text-blue-400" />}
             stat1={{
               label: "Capacity",
-              value: statsLoading ? "..." : stats?.classrooms?.capacity || 1000
+              value: statsLoading ? "..." : (stats as any)?.classrooms?.capacity || 1000
             }}
             stat2={{
               label: "Students",
-              value: statsLoading ? "..." : stats?.students?.total || 750
+              value: statsLoading ? "..." : (stats as any)?.students?.total || 750
             }}
           />
           
           <StatCard
             title="STUDENTS"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            }
+            icon={<Users className="h-8 w-8 text-blue-400" />}
             stat1={{
               label: "Male",
-              value: statsLoading ? "..." : stats?.students?.male || 350
+              value: statsLoading ? "..." : (stats as any)?.students?.male || 350
             }}
             stat2={{
               label: "Female",
-              value: statsLoading ? "..." : stats?.students?.female || 400
+              value: statsLoading ? "..." : (stats as any)?.students?.female || 400
             }}
           />
           
           <StatCard
             title="STATUS"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                />
-              </svg>
-            }
+            icon={<ClipboardList className="h-8 w-8 text-blue-400" />}
             stat1={{
               label: "Present",
-              value: statsLoading ? "..." : stats?.students?.present || 700
+              value: statsLoading ? "..." : (stats as any)?.students?.present || 700
             }}
             stat2={{
               label: "Absent",
-              value: statsLoading ? "..." : stats?.students?.absent || 50
+              value: statsLoading ? "..." : (stats as any)?.students?.absent || 50
             }}
           />
         </div>
         
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-          <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
-            <div className="flex items-center">
-              <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">Attendance Records</h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">Filter BY</span>
+        {/* Attendance Table */}
+        <div className="glass-morphism rounded-xl shadow-xl border border-white/10 overflow-hidden">
+          <div className="p-6 border-b border-white/10 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <ClipboardList className="h-6 w-6 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white mb-1">Attendance Records</h2>
+                  <p className="text-sm text-blue-100">Track and manage student attendance</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="flex space-x-2">
+                  <FilterSelect
+                    label="Status"
+                    options={[
+                      { value: '', label: 'All' },
+                      { value: 'present', label: 'Present' },
+                      { value: 'absent', label: 'Absent' },
+                      { value: 'late', label: 'Late' },
+                    ]}
+                    value={filters.status}
+                    onChange={(value) => setFilters({ ...filters, status: value })}
+                    placeholder="Status"
+                  />
+                  <FilterSelect
+                    label="Date"
+                    options={[
+                      { value: '', label: 'All' },
+                      { value: 'today', label: 'Today' },
+                      { value: 'week', label: 'This Week' },
+                      { value: 'month', label: 'This Month' },
+                    ]}
+                    value={filters.date}
+                    onChange={(value) => setFilters({ ...filters, date: value })}
+                    placeholder="Date"
+                  />
+                  <FilterSelect
+                    label="Section"
+                    options={[
+                      { value: '', label: 'All' },
+                      { value: 'primary', label: 'Primary' },
+                      { value: 'secondary', label: 'Secondary' },
+                      { value: 'highschool', label: 'High School' },
+                    ]}
+                    value={filters.section}
+                    onChange={(value) => setFilters({ ...filters, section: value })}
+                    placeholder="Section"
+                  />
+                </div>
+                
+                <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg border border-blue-500 px-6"
+                      onClick={() => setIsAddModalOpen(true)}
+                    >
+                      <ClipboardList className="h-4 w-4 mr-2" />
+                      Add Attendance
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="glass-morphism border-white/10">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">Add Attendance Record</DialogTitle>
+                      <DialogDescription className="text-blue-100">
+                        Record student attendance for the selected date.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="studentId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Student</FormLabel>
+                              <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
+                                <FormControl>
+                                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                    <SelectValue placeholder="Select a student" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {students?.map((student) => (
+                                    <SelectItem key={student.id} value={student.id.toString()}>
+                                      {student.firstName} {student.lastName} ({student.studentId})
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="date"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Date</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="date" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="status"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Status</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                    <SelectValue placeholder="Select status" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="present">Present</SelectItem>
+                                  <SelectItem value="absent">Absent</SelectItem>
+                                  <SelectItem value="late">Late</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="note"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Note (Optional)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Any notes about the attendance" 
+                                  {...field} 
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="flex justify-end space-x-2 pt-4">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setIsAddModalOpen(false)}
+                            className="border-white/20 text-white hover:bg-white/10"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            Add Record
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
-            <div className="flex space-x-2">
-              <FilterSelect
-                label="Status"
-                options={[
-                  { value: '', label: 'All' },
-                  { value: 'present', label: 'Present' },
-                  { value: 'absent', label: 'Absent' },
-                  { value: 'late', label: 'Late' },
-                ]}
-                value={filters.status}
-                onChange={(value) => setFilters({ ...filters, status: value })}
-                placeholder="Status"
-              />
-              <FilterSelect
-                label="Date"
-                options={[
-                  { value: '', label: 'All' },
-                  { value: 'today', label: 'Today' },
-                  { value: 'week', label: 'This Week' },
-                  { value: 'month', label: 'This Month' },
-                ]}
-                value={filters.date}
-                onChange={(value) => setFilters({ ...filters, date: value })}
-                placeholder="Date"
-              />
-              <FilterSelect
-                label="Section"
-                options={[
-                  { value: '', label: 'All' },
-                  { value: 'primary', label: 'Primary' },
-                  { value: 'secondary', label: 'Secondary' },
-                  { value: 'highschool', label: 'High School' },
-                ]}
-                value={filters.section}
-                onChange={(value) => setFilters({ ...filters, section: value })}
-                placeholder="Section"
-              />
-              <FilterSelect
-                label="Class"
-                options={[
-                  { value: '', label: 'All' },
-                  { value: 'One', label: 'One' },
-                  { value: 'Two', label: 'Two' },
-                  { value: 'Three', label: 'Three' },
-                  { value: 'Four', label: 'Four' },
-                  { value: 'Five', label: 'Five' },
-                  { value: 'Six', label: 'Six' },
-                ]}
-                value={filters.class}
-                onChange={(value) => setFilters({ ...filters, class: value })}
-                placeholder="Class"
-              />
-            </div>
-            
-            <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="bg-blue hover:bg-blue/90 text-white"
-                  onClick={() => setIsAddModalOpen(true)}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Add Attendance
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add Attendance Record</DialogTitle>
-                  <DialogDescription>
-                    Record student attendance for the selected date.
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="studentId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Student</FormLabel>
-                          <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a student" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {students?.map((student) => (
-                                <SelectItem key={student.id} value={student.id.toString()}>
-                                  {student.firstName} {student.lastName} ({student.studentId})
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Status</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="present">Present</SelectItem>
-                              <SelectItem value="absent">Absent</SelectItem>
-                              <SelectItem value="late">Late</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="note"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Note (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Any notes about the attendance" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="flex justify-end space-x-2 pt-4">
-                      <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button type="submit" className="bg-blue hover:bg-blue/90 text-white">
-                        Add Record
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
           </div>
           
-          {isLoading ? (
-            <div className="p-8 text-center">Loading attendance records...</div>
-          ) : error ? (
-            <div className="p-8 text-center text-red">Error loading attendance records. Please try again.</div>
-          ) : (
-            <DataTable
-              columns={columns}
-              data={attendance || []}
-            />
-          )}
+          <div className="bg-white/5 backdrop-blur-sm">
+            {isLoading ? (
+              <div className="p-8 text-center text-white">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-4"></div>
+                Loading attendance records...
+              </div>
+            ) : error ? (
+              <div className="p-8 text-center text-red-400">
+                Error loading attendance records. Please try again.
+              </div>
+            ) : (
+              <DataTable
+                columns={columns}
+                data={attendance || []}
+              />
+            )}
+          </div>
         </div>
       </div>
     </Layout>
