@@ -11,9 +11,11 @@ export const Logo = ({ size = 64, className = "" }: LogoProps) => {
     <img 
       src={logoImage}
       alt="Education Management System" 
-      className={`w-auto ${className}`}
+      className={`${className}`}
       style={{ 
-        height: `${size}px`
+        height: `${size}px`,
+        width: `${size * 1.5}px`,
+        objectFit: 'contain'
       }}
     />
   );
