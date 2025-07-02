@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -238,34 +239,35 @@ export default function TimeTable() {
 
   return (
     <Layout>
-      <div className="space-y-8 p-8 max-w-7xl mx-auto">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center space-x-4">
             <div className="relative">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg">
-                <Calendar className="h-8 w-8" />
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <Calendar className="h-6 w-6 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
                 Timetable Management
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Manage class schedules and academic timetables
+              <p className="text-muted-foreground flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-teal-500" />
+                <span>Manage class schedules and academic timetables efficiently</span>
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" />
-              Export
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="sm" className="hover:bg-teal-50 hover:border-teal-200 dark:hover:bg-teal-900/20 dark:hover:border-teal-700 transition-all duration-200">
+              <Download className="h-4 w-4 mr-2" />
+              Export Schedule
             </Button>
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
               <DialogTrigger asChild>
-                <Button className="gap-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                  <Plus className="h-4 w-4" />
+                <Button size="sm" className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 hover:from-teal-600 hover:via-cyan-600 hover:to-blue-600 shadow-lg transition-all duration-200">
+                  <Plus className="h-4 w-4 mr-2" />
                   Add Schedule
                 </Button>
               </DialogTrigger>
@@ -484,82 +486,112 @@ export default function TimeTable() {
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="relative overflow-hidden backdrop-blur-sm bg-gradient-to-br from-white/90 to-white/50 dark:from-gray-900/90 dark:to-gray-900/50 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600 dark:text-gray-400">Total Schedules</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
-                <Calendar className="h-4 w-4 text-blue-600" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {totalSchedules}
-              </div>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
-                <span className="text-xs text-green-600 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
-                  Active
-                </span>
+          <Card className="glass-morphism border-border/30 hover:border-teal-300/50 transition-all duration-300 hover:shadow-xl hover:shadow-teal-100/20 hover:-translate-y-1">
+            <CardContent className="p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-teal-400/10 to-teal-600/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <div className="flex items-center justify-between relative z-10">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Calendar className="h-4 w-4 text-teal-600" />
+                    <Badge variant="secondary" className="bg-teal-100/80 text-teal-700 border-teal-200/50 dark:bg-teal-900/30 dark:text-teal-300 dark:border-teal-700/50">
+                      Active
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Total Schedules</p>
+                  <div className="flex items-baseline space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold">{totalSchedules}</h3>
+                    <span className="text-xs text-green-600 flex items-center">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      +12%
+                    </span>
+                  </div>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl shadow-lg">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
               </div>
             </CardContent>
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
           </Card>
 
-          <Card className="relative overflow-hidden backdrop-blur-sm bg-gradient-to-br from-white/90 to-white/50 dark:from-gray-900/90 dark:to-gray-900/50 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600 dark:text-gray-400">Primary Section</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
-                <Users className="h-4 w-4 text-green-600" />
+          <Card className="glass-morphism border-border/30 hover:border-cyan-300/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-100/20 hover:-translate-y-1">
+            <CardContent className="p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-cyan-400/10 to-cyan-600/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <div className="flex items-center justify-between relative z-10">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Users className="h-4 w-4 text-cyan-600" />
+                    <Badge variant="secondary" className="bg-cyan-100/80 text-cyan-700 border-cyan-200/50 dark:bg-cyan-900/30 dark:text-cyan-300 dark:border-cyan-700/50">
+                      Primary
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Primary Section</p>
+                  <div className="flex items-baseline space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold">{sectionCounts.primary}</h3>
+                    <Progress value={(sectionCounts.primary / totalSchedules) * 100 || 0} className="w-16 h-2" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {totalSchedules > 0 ? Math.round((sectionCounts.primary / totalSchedules) * 100) : 0}% of total
+                  </p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {sectionCounts.primary}
-              </div>
-              <Progress value={(sectionCounts.primary / totalSchedules) * 100} className="mt-2 h-2" />
-              <p className="text-xs text-gray-500 mt-1">
-                {totalSchedules > 0 ? Math.round((sectionCounts.primary / totalSchedules) * 100) : 0}% of total
-              </p>
             </CardContent>
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
           </Card>
 
-          <Card className="relative overflow-hidden backdrop-blur-sm bg-gradient-to-br from-white/90 to-white/50 dark:from-gray-900/90 dark:to-gray-900/50 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600 dark:text-gray-400">Intermediate Section</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/20 group-hover:scale-110 transition-transform duration-300">
-                <BookOpen className="h-4 w-4 text-amber-600" />
+          <Card className="glass-morphism border-border/30 hover:border-blue-300/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-100/20 hover:-translate-y-1">
+            <CardContent className="p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-blue-600/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <div className="flex items-center justify-between relative z-10">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <BookOpen className="h-4 w-4 text-blue-600" />
+                    <Badge variant="secondary" className="bg-blue-100/80 text-blue-700 border-blue-200/50 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700/50">
+                      Intermediate
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Intermediate Section</p>
+                  <div className="flex items-baseline space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold">{sectionCounts.intermediate}</h3>
+                    <Progress value={(sectionCounts.intermediate / totalSchedules) * 100 || 0} className="w-16 h-2" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {totalSchedules > 0 ? Math.round((sectionCounts.intermediate / totalSchedules) * 100) : 0}% of total
+                  </p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {sectionCounts.intermediate}
-              </div>
-              <Progress value={(sectionCounts.intermediate / totalSchedules) * 100} className="mt-2 h-2" />
-              <p className="text-xs text-gray-500 mt-1">
-                {totalSchedules > 0 ? Math.round((sectionCounts.intermediate / totalSchedules) * 100) : 0}% of total
-              </p>
             </CardContent>
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500"></div>
           </Card>
 
-          <Card className="relative overflow-hidden backdrop-blur-sm bg-gradient-to-br from-white/90 to-white/50 dark:from-gray-900/90 dark:to-gray-900/50 border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-semibold text-gray-600 dark:text-gray-400">Secondary Section</CardTitle>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-violet-500/20 group-hover:scale-110 transition-transform duration-300">
-                <Clock className="h-4 w-4 text-purple-600" />
+          <Card className="glass-morphism border-border/30 hover:border-indigo-300/50 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/20 hover:-translate-y-1">
+            <CardContent className="p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-indigo-400/10 to-indigo-600/10 rounded-full -translate-y-8 translate-x-8"></div>
+              <div className="flex items-center justify-between relative z-10">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Clock className="h-4 w-4 text-indigo-600" />
+                    <Badge variant="secondary" className="bg-indigo-100/80 text-indigo-700 border-indigo-200/50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-700/50">
+                      Secondary
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Secondary Section</p>
+                  <div className="flex items-baseline space-x-2 mt-1">
+                    <h3 className="text-2xl font-bold">{sectionCounts.secondary}</h3>
+                    <Progress value={(sectionCounts.secondary / totalSchedules) * 100 || 0} className="w-16 h-2" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {totalSchedules > 0 ? Math.round((sectionCounts.secondary / totalSchedules) * 100) : 0}% of total
+                  </p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg">
+                  <Clock className="h-6 w-6 text-white" />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {sectionCounts.secondary}
-              </div>
-              <Progress value={(sectionCounts.secondary / totalSchedules) * 100} className="mt-2 h-2" />
-              <p className="text-xs text-gray-500 mt-1">
-                {totalSchedules > 0 ? Math.round((sectionCounts.secondary / totalSchedules) * 100) : 0}% of total
-              </p>
             </CardContent>
-            <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-purple-500 to-violet-500"></div>
           </Card>
         </div>
 
