@@ -2,43 +2,38 @@ import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useQuery } from '@tanstack/react-query';
 import { Classroom, Employee } from '@shared/schema';
-import { DataTable } from '@/components/ui/data-table';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest, queryClient } from '@/lib/queryClient';
-import { ColumnDef } from '@tanstack/react-table';
-import FilterSelect from '@/components/ui/filter-select';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getSectionDisplayName } from '@/lib/utils';
-import EditClassroomForm from '@/components/classrooms/EditClassroomForm';
 import ClassroomsGridSkeleton from '@/components/classrooms/ClassroomsGridSkeleton';
 import { ProfileAvatar } from '@/components/ui/profile-avatar';
-
-const classroomFormSchema = z.object({
-  name: z.string().min(1, "Classroom name is required"),
-  section: z.enum(['primary', 'secondary', 'highschool']),
-  capacity: z.number().min(1, "Capacity must be at least 1"),
-  teacherId: z.union([z.number(), z.null()]).optional(),
-});
-
-type ClassroomFormValues = z.infer<typeof classroomFormSchema>;
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { 
+  School, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Users, 
+  User, 
+  MapPin, 
+  Calendar,
+  Filter,
+  Search
+} from 'lucide-react';
 
 export default function Classrooms() {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
-  const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     section: '',
   });
+  const { toast } = useToast();
 
-  const { data: classrooms, isLoading, error, refetch } = useQuery<Classroom[]>({
+  const { data: classrooms, isLoading, error } = useQuery<Classroom[]>({
     queryKey: ['/api/classrooms'],
   });
 
@@ -48,351 +43,232 @@ export default function Classrooms() {
 
   const teachers = employees?.filter(employee => employee.role === 'teacher') || [];
 
-  const form = useForm<ClassroomFormValues>({
-    resolver: zodResolver(classroomFormSchema),
-    defaultValues: {
-      name: '',
-      section: 'primary',
-      capacity: 30,
-      teacherId: null,
-    },
-  });
+  const getTeacherInfo = (teacherId: number | null | undefined) => {
+    if (!teacherId) return null;
+    const teacher = teachers.find(t => t.id === teacherId);
+    return teacher ? `${teacher.firstName} ${teacher.lastName}` : null;
+  };
 
-  const onSubmit = async (data: ClassroomFormValues) => {
+  const handleDeleteClassroom = async (classroomId: number, classroomName: string) => {
+    if (!confirm(`Are you sure you want to delete classroom "${classroomName}"? This action cannot be undone.`)) {
+      return;
+    }
+
     try {
-      await apiRequest('POST', '/api/classrooms', data);
+      await apiRequest('DELETE', `/api/classrooms/${classroomId}`);
+      await queryClient.invalidateQueries({ queryKey: ['/api/classrooms'] });
       toast({
-        title: 'Success',
-        description: 'Classroom added successfully',
+        title: "Success",
+        description: `Classroom "${classroomName}" has been deleted successfully`,
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/classrooms'] });
-      setIsAddModalOpen(false);
-      form.reset();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to add classroom',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete classroom. Please try again.",
+        variant: "destructive",
       });
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this classroom?')) return;
-    
-    try {
-      await apiRequest('DELETE', `/api/classrooms/${id}`);
-      toast({
-        title: 'Success',
-        description: 'Classroom deleted successfully',
-      });
-      refetch();
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete classroom',
-        variant: 'destructive',
-      });
+  // Filter classrooms based on search and filters
+  const filteredClassrooms = classrooms?.filter(classroom => {
+    const matchesSearch = classroom.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSection = !filters.section || classroom.section === filters.section;
+    return matchesSearch && matchesSection;
+  }) || [];
+
+  const getSectionColor = (section: string) => {
+    switch (section) {
+      case 'primary':
+        return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+      case 'secondary':
+        return 'bg-green-500/10 text-green-600 border-green-500/20';
+      case 'highschool':
+        return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+      default:
+        return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
     }
   };
 
-  const getTeacherName = (teacherId: number | null | undefined) => {
-    if (!teacherId) return 'Not Assigned';
-    const teacher = teachers.find(t => t.id === teacherId);
-    return teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unknown';
+  const getCapacityStatus = (capacity: number) => {
+    if (capacity >= 40) return 'bg-red-500/10 text-red-600 border-red-500/20';
+    if (capacity >= 30) return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
+    return 'bg-green-500/10 text-green-600 border-green-500/20';
   };
-  
-  const getTeacherWithAvatar = (teacherId: number | null | undefined) => {
-    if (!teacherId) return <span className="text-gray-500">Not Assigned</span>;
-    
-    const teacher = teachers.find(t => t.id === teacherId);
-    if (!teacher) return <span className="text-gray-500">Unknown</span>;
-    
-    const fullName = `${teacher.firstName} ${teacher.lastName}`;
-    
-    return (
-      <div className="flex items-center space-x-2">
-        <ProfileAvatar 
-          name={fullName}
-          size="sm"
-          fallbackIcon="user"
-        />
-        <span>{fullName}</span>
-      </div>
-    );
-  };
-
-  const columns: ColumnDef<Classroom>[] = [
-    {
-      accessorKey: 'name',
-      header: 'Room Name',
-    },
-    {
-      accessorKey: 'section',
-      header: 'Section',
-      cell: ({ row }) => getSectionDisplayName(row.original.section),
-    },
-    {
-      accessorKey: 'capacity',
-      header: 'Capacity',
-    },
-    {
-      accessorKey: 'teacherId',
-      header: 'Assigned Teacher',
-      cell: ({ row }) => getTeacherWithAvatar(row.original.teacherId),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => {
-        return (
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-blue border-blue/30 hover:bg-blue/10 hover:text-blue rounded-full w-8 h-8 p-0"
-              onClick={() => {
-                setSelectedClassroom(row.original);
-                setIsEditModalOpen(true);
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red border-red/30 hover:bg-red/10 hover:text-red rounded-full w-8 h-8 p-0"
-              onClick={() => handleDelete(row.original.id)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </Button>
-          </div>
-        );
-      },
-    },
-  ];
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-homenaje">Classrooms Management</h1>
-        
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-6">
-          <div className="p-4 flex items-center justify-between border-b border-divider dark:border-gray-700">
-            <div className="flex items-center">
-              <h2 className="text-lg font-homenaje text-gray-800 dark:text-gray-200 mr-4">View Classrooms</h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">Filter BY</span>
-            </div>
-            <div className="flex space-x-2">
-              <FilterSelect
-                label="Section"
-                options={[
-                  { value: '', label: 'All' },
-                  { value: 'primary', label: 'Primary' },
-                  { value: 'secondary', label: 'Secondary' },
-                  { value: 'highschool', label: 'High School' },
-                ]}
-                value={filters.section}
-                onChange={(value) => setFilters({ ...filters, section: value })}
-                placeholder="Section"
-              />
-            </div>
-            
-            <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="bg-blue hover:bg-blue/90 text-white rounded-full shadow-md hover:shadow-lg transition-all"
-                  onClick={() => setIsAddModalOpen(true)}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Add Classroom
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Classroom</DialogTitle>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
-                      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Classroom Details</h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Room Name</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder="e.g. Room 101" 
-                                  {...field} 
-                                  className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="section"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Section</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
-                                    <SelectValue placeholder="Select section" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="primary">Primary</SelectItem>
-                                  <SelectItem value="secondary">Secondary</SelectItem>
-                                  <SelectItem value="highschool">High School</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
-                      <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Capacity & Assignment</h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="capacity"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Capacity</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="Capacity" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                                  className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue"
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="teacherId"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-xs text-gray-700 dark:text-gray-300">Assign Teacher</FormLabel>
-                              <Select 
-                                onValueChange={(value) => field.onChange(value ? parseInt(value) : null)} 
-                                defaultValue={field.value?.toString()}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="border-gray-200 dark:border-gray-700 focus:border-blue focus:ring-1 focus:ring-blue">
-                                    <SelectValue placeholder="Select a teacher" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="">Not Assigned</SelectItem>
-                                  {teachers.map((teacher) => (
-                                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                      {teacher.firstName} {teacher.lastName}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end space-x-3 pt-2">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setIsAddModalOpen(false)}
-                        className="border-gray-200 hover:bg-gray-50 text-gray-600"
-                      >
-                        Cancel
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        className="bg-blue hover:bg-blue/90 text-white shadow-sm hover:shadow"
-                      >
-                        Add Classroom
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
-          
-          {isLoading ? (
-            <div className="p-8">
-              <ClassroomsGridSkeleton />
-            </div>
-          ) : error ? (
-            <div className="p-8">
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-6 py-4 rounded-xl shadow-sm flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <h3 className="font-bold text-lg mb-1">Unable to load classrooms</h3>
-                  <p>There was an error loading the classroom data. Please refresh the page or try again later.</p>
-                </div>
+      <div className="space-y-8">
+        {/* Modern Page Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-primary/10 rounded-xl">
+                <School className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gradient">Classroom Management</h1>
+                <p className="text-muted-foreground">Manage school rooms and teacher assignments</p>
               </div>
             </div>
-          ) : (
-            <DataTable
-              columns={columns}
-              data={classrooms || []}
-              filterColumn="section"
-              searchable={true}
-            />
-          )}
+          </div>
+          
+          <Link to="/add-classroom">
+            <Button className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Classroom
+            </Button>
+          </Link>
         </div>
 
-        {/* Edit Classroom Dialog */}
-        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Classroom</DialogTitle>
-            </DialogHeader>
-            {selectedClassroom && (
-              <EditClassroomForm 
-                classroom={selectedClassroom} 
-                teachers={teachers}
-                onSuccess={() => {
-                  setIsEditModalOpen(false);
-                  setSelectedClassroom(null);
-                  refetch();
-                }}
-                onCancel={() => {
-                  setIsEditModalOpen(false);
-                  setSelectedClassroom(null);
-                }}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Search and Filter Bar */}
+        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search classrooms..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="glass-morphism border-border/30 pl-10 h-11"
+            />
+          </div>
+          
+          <div className="flex gap-3 items-center">
+            <div className="flex items-center space-x-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Select value={filters.section || "all"} onValueChange={(value) => setFilters(prev => ({ ...prev, section: value === "all" ? "" : value }))}>
+                <SelectTrigger className="glass-morphism border-border/30 w-[180px] h-11">
+                  <SelectValue placeholder="All Sections" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sections</SelectItem>
+                  <SelectItem value="primary">Primary School</SelectItem>
+                  <SelectItem value="secondary">Secondary School</SelectItem>
+                  <SelectItem value="highschool">High School</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        {/* Classroom Grid */}
+        {error && (
+          <div className="text-center text-red-500 py-8">
+            Error loading classrooms. Please try again.
+          </div>
+        )}
+
+        {isLoading ? (
+          <ClassroomsGridSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredClassrooms.map((classroom) => (
+              <Card key={classroom.id} className="group glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl">
+                <CardContent className="p-6 space-y-4">
+                  {/* Classroom Header */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2.5 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
+                        <School className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{classroom.name}</h3>
+                        <Badge className={`text-xs ${getSectionColor(classroom.section || 'primary')}`}>
+                          {getSectionDisplayName(classroom.section || 'primary')}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Link to={`/edit-classroom/${classroom.id}`}>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-600">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600"
+                        onClick={() => handleDeleteClassroom(classroom.id, classroom.name)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Classroom Details */}
+                  <div className="space-y-3">
+                    {/* Capacity */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Capacity</span>
+                      </div>
+                      <Badge className={`text-xs ${getCapacityStatus(classroom.capacity || 0)}`}>
+                        {classroom.capacity} students
+                      </Badge>
+                    </div>
+
+                    {/* Teacher Assignment */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Teacher</span>
+                      </div>
+                      <div className="text-sm">
+                        {getTeacherInfo(classroom.teacherId) ? (
+                          <div className="flex items-center space-x-2">
+                            <ProfileAvatar 
+                              name={getTeacherInfo(classroom.teacherId)!} 
+                              size="sm"
+                            />
+                            <span className="font-medium">{getTeacherInfo(classroom.teacherId)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground italic">Not assigned</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Created Date */}
+                    {classroom.createdAt && (
+                      <div className="flex items-center justify-between pt-2 border-t border-border/20">
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Created</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(classroom.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filteredClassrooms.length === 0 && (
+          <div className="text-center py-12">
+            <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
+              <School className="h-12 w-12 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No classrooms found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || filters.section 
+                ? "Try adjusting your search or filters" 
+                : "Get started by adding your first classroom"
+              }
+            </p>
+            <Link to="/add-classroom">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Classroom
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </Layout>
   );

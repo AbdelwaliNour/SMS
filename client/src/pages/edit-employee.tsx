@@ -2,28 +2,28 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, useLocation } from 'wouter';
 import Layout from '@/components/layout/Layout';
-import { Student } from '@shared/schema';
-import EditStudentForm from '@/components/students/EditStudentForm';
+import { Employee } from '@shared/schema';
+import EditEmployeeForm from '@/components/employees/EditEmployeeForm';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { UserPen, ArrowLeft, AlertCircle } from 'lucide-react';
 import { Link } from 'wouter';
 
-export default function EditStudent() {
+export default function EditEmployee() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
-  const [studentId, setStudentId] = useState<number>(parseInt(id));
+  const [employeeId, setEmployeeId] = useState<number>(parseInt(id));
 
-  const { data: student, isLoading, error } = useQuery<Student>({
-    queryKey: [`/api/students/${studentId}`],
-    enabled: !!studentId,
+  const { data: employee, isLoading, error } = useQuery<Employee>({
+    queryKey: [`/api/employees/${employeeId}`],
+    enabled: !!employeeId,
   });
 
   useEffect(() => {
     if (!id || isNaN(parseInt(id))) {
-      navigate('/students');
+      navigate('/employees');
     } else {
-      setStudentId(parseInt(id));
+      setEmployeeId(parseInt(id));
     }
   }, [id, navigate]);
 
@@ -74,7 +74,7 @@ export default function EditStudent() {
     );
   }
 
-  if (error || !student) {
+  if (error || !employee) {
     return (
       <Layout>
         <div className="space-y-8">
@@ -86,16 +86,16 @@ export default function EditStudent() {
                   <AlertCircle className="h-6 w-6 text-red-600" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gradient">Edit Student</h1>
-                  <p className="text-muted-foreground">Unable to load student information</p>
+                  <h1 className="text-3xl font-bold text-gradient">Edit Employee</h1>
+                  <p className="text-muted-foreground">Unable to load employee information</p>
                 </div>
               </div>
             </div>
             
-            <Link to="/students">
+            <Link to="/employees">
               <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Students
+                Back to Employees
               </Button>
             </Link>
           </div>
@@ -104,10 +104,10 @@ export default function EditStudent() {
           <div className="text-center py-12 glass-morphism rounded-xl border border-red-500/20 bg-red-500/5">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2 text-red-600">
-              {error ? 'Error Loading Student' : 'Student Not Found'}
+              {error ? 'Error Loading Employee' : 'Employee Not Found'}
             </h3>
             <p className="text-muted-foreground mb-6">
-              {error ? 'There was an error loading the student data. Please try again.' : 'The requested student could not be found.'}
+              {error ? 'There was an error loading the employee data. Please try again.' : 'The requested employee could not be found.'}
             </p>
             <div className="flex justify-center space-x-4">
               <Button
@@ -118,11 +118,11 @@ export default function EditStudent() {
                 Try Again
               </Button>
               <Button
-                onClick={() => navigate('/students')}
+                onClick={() => navigate('/employees')}
                 className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Students
+                Back to Employees
               </Button>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function EditStudent() {
     );
   }
 
-  const fullName = `${student.firstName} ${student.middleName ? student.middleName + ' ' : ''}${student.lastName}`;
+  const fullName = `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`;
 
   return (
     <Layout>
@@ -144,21 +144,21 @@ export default function EditStudent() {
                 <UserPen className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gradient">Edit Student</h1>
+                <h1 className="text-3xl font-bold text-gradient">Edit Employee</h1>
                 <p className="text-muted-foreground">Update {fullName}'s information</p>
               </div>
             </div>
           </div>
           
-          <Link to="/students">
+          <Link to="/employees">
             <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Students
+              Back to Employees
             </Button>
           </Link>
         </div>
         
-        <EditStudentForm student={student} />
+        <EditEmployeeForm employee={employee} />
       </div>
     </Layout>
   );

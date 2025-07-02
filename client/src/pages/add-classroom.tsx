@@ -1,19 +1,19 @@
-import Layout from '@/components/layout/Layout';
-import AddEmployeeForm from '@/components/employees/AddEmployeeForm';
 import { useLocation } from 'wouter';
+import Layout from '@/components/layout/Layout';
+import AddClassroomForm from '@/components/classrooms/AddClassroomForm';
+import { School, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UserPlus, ArrowLeft } from 'lucide-react';
 import { Link } from 'wouter';
 
-export default function AddEmployee() {
-  const [, navigate] = useLocation();
+export default function AddClassroom() {
+  const [, setLocation] = useLocation();
 
   const handleSuccess = () => {
-    navigate('/employees');
+    setLocation('/classrooms');
   };
 
   const handleCancel = () => {
-    navigate('/employees');
+    setLocation('/classrooms');
   };
 
   return (
@@ -24,24 +24,24 @@ export default function AddEmployee() {
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-primary/10 rounded-xl">
-                <UserPlus className="h-6 w-6 text-primary" />
+                <School className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gradient">Add New Employee</h1>
-                <p className="text-muted-foreground">Create a new employee profile with comprehensive details</p>
+                <h1 className="text-3xl font-bold text-gradient">Add New Classroom</h1>
+                <p className="text-muted-foreground">Create a new classroom with capacity and teacher assignment</p>
               </div>
             </div>
           </div>
           
-          <Link href="/employees">
+          <Link to="/classrooms">
             <Button variant="outline" className="glass-morphism border-border/30 hover:border-primary/30">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Employees
+              Back to Classrooms
             </Button>
           </Link>
         </div>
         
-        <AddEmployeeForm onSuccess={handleSuccess} onCancel={handleCancel} />
+        <AddClassroomForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     </Layout>
   );
