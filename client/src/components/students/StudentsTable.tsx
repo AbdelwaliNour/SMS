@@ -156,7 +156,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                         </h3>
                         <p className="text-sm font-medium text-muted-foreground/80 tracking-wider">{student.studentId}</p>
                         <div className="flex items-center gap-2">
-                          <Badge className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30 text-xs font-semibold px-2.5 py-1 rounded-full">
+                          <Badge className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-white border-blue-500/30 text-xs font-semibold px-2.5 py-1 rounded-full">
                             {formatAgeDisplay(student.dateOfBirth)}
                           </Badge>
                         </div>
