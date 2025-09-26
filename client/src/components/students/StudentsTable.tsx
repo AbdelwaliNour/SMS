@@ -122,89 +122,118 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
             const fullName = `${student.firstName} ${student.middleName ? student.middleName + ' ' : ''}${student.lastName}`;
             
             return (
-              <Card key={student.id} className="card-modern glass-morphism hover:border-primary/30 transition-all duration-300 group overflow-hidden">
-                <CardContent className="p-6">
-                  {/* Student Header */}
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="relative">
-                      <img
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=00A1FF&color=fff&size=64`}
-                        alt={fullName}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-border/20 bg-gray-100"
-                        onError={(e) => {
-                          console.log('Image load error for:', fullName, e.currentTarget.src);
-                          // Set a different fallback
-                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName.split(' ')[0])}&background=00A1FF&color=fff&size=64`;
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg leading-tight">{fullName}</h3>
-                      <p className="text-sm text-muted-foreground">{student.studentId}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-xs">
-                          {formatAgeDisplay(student.dateOfBirth)}
-                        </Badge>
+              <Card key={student.id} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card/80 via-card to-card/60 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Modern Shimmer Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                
+                <CardContent className="relative p-0">
+                  {/* Header Section with Gradient Background */}
+                  <div className="relative p-6 pb-4 bg-gradient-to-r from-primary/10 via-purple/5 to-secondary/10 border-b border-border/30">
+                    <div className="flex items-center space-x-4">
+                      {/* Modern Avatar with Ring Effect */}
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5 group-hover:animate-pulse">
+                          <div className="h-full w-full rounded-full bg-card" />
+                        </div>
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=667eea&color=fff&size=72`}
+                          alt={fullName}
+                          className="relative w-18 h-18 rounded-full object-cover border-2 border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName.split(' ')[0])}&background=764ba2&color=fff&size=72`;
+                          }}
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full shadow-md" />
+                      </div>
+                      
+                      {/* Student Info with Enhanced Typography */}
+                      <div className="flex-1 space-y-1">
+                        <h3 className="font-bold text-xl leading-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-secondary transition-all duration-300">
+                          {fullName}
+                        </h3>
+                        <p className="text-sm font-medium text-muted-foreground/80 tracking-wider">{student.studentId}</p>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30 text-xs font-semibold px-2.5 py-1 rounded-full">
+                            {formatAgeDisplay(student.dateOfBirth)}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Student Details */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Class</span>
-                      <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
-                        {student.class}
-                      </Badge>
+                  {/* Details Grid with Modern Layout */}
+                  <div className="p-6 pt-4 space-y-4">
+                    {/* Info Cards Grid */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Class</div>
+                        <div className="font-bold text-sm text-blue-600 dark:text-blue-400">{student.class}</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 group-hover:border-green-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Section</div>
+                        <div className="font-bold text-sm text-green-600 dark:text-green-400">{getSectionDisplayName(student.section)}</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 group-hover:border-purple-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Gender</div>
+                        <div className="font-bold text-sm text-purple-600 dark:text-purple-400">{getGenderDisplayName(student.gender)}</div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Section</span>
-                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-                        {getSectionDisplayName(student.section)}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Gender</span>
-                      <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/20">
-                        {getGenderDisplayName(student.gender)}
-                      </Badge>
-                    </div>
-                  </div>
 
-                  {/* Contact Info */}
-                  <div className="space-y-2 mb-6 p-4 bg-muted/20 rounded-lg">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Mail className="h-4 w-4" />
-                      <span>{student.email || 'No email'}</span>
+                    {/* Contact Information with Modern Icons */}
+                    <div className="space-y-3 p-4 rounded-xl bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30">
+                      <div className="flex items-center space-x-3 group/contact hover:bg-white/5 p-2 rounded-lg transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                          <Mail className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground/90 truncate">
+                            {student.email || 'No email provided'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3 group/contact hover:bg-white/5 p-2 rounded-lg transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                          <Phone className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground/90 truncate">
+                            {student.phone || 'No phone provided'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
-                      <span>{student.phone || 'No phone'}</span>
-                    </div>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Link to={`/edit-student/${student.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
+                    {/* Modern Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <Link to={`/edit-student/${student.id}`} className="flex-1">
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 text-blue-800 dark:text-blue-200 border border-blue-500/40 hover:border-blue-500/60 transition-all duration-300 group/btn font-semibold"
+                        >
+                          <Edit className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
+                          Edit
+                        </Button>
+                      </Link>
+                      <Link to={`/student-performance?studentId=${student.id}`} className="flex-1">
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 hover:from-green-500/25 hover:to-emerald-500/25 text-green-800 dark:text-green-200 border border-green-500/40 hover:border-green-500/60 transition-all duration-300 group/btn font-semibold"
+                        >
+                          <BarChart3 className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
+                          Stats
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-red-500/15 to-pink-500/15 hover:from-red-500/25 hover:to-pink-500/25 text-red-800 dark:text-red-200 border border-red-500/40 hover:border-red-500/60 transition-all duration-300 group/btn font-semibold"
+                        onClick={() => handleDelete(student.id)}
+                      >
+                        <Trash2 className="h-4 w-4 group-hover/btn:scale-110 transition-transform duration-200" />
                       </Button>
-                    </Link>
-                    <Link to={`/student-performance?studentId=${student.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full hover:bg-green-500/10 hover:text-green-600 hover:border-green-500/30">
-                        <BarChart3 className="h-4 w-4 mr-2" />
-                        Stats
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/30"
-                      onClick={() => handleDelete(student.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
