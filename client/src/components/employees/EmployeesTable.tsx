@@ -196,87 +196,126 @@ const EmployeesTable: React.FC<EmployeesTableProps> = ({ onAddEmployee }) => {
             const fullName = `${employee.firstName} ${employee.lastName}`;
             
             return (
-              <Card key={employee.id} className="card-modern glass-morphism hover:border-primary/30 transition-all duration-300 group overflow-hidden">
-                <CardContent className="p-6">
-                  {/* Employee Header */}
-                  <div className="flex items-center space-x-4 mb-4">
-                    <ProfileAvatar name={fullName} size="lg" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg leading-tight">{fullName}</h3>
-                      <p className="text-sm text-muted-foreground">{employee.employeeId}</p>
+              <Card key={employee.id} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card/80 via-card to-card/60 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Modern Shimmer Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                
+                <CardContent className="relative p-0">
+                  {/* Header Section with Gradient Background */}
+                  <div className="relative p-6 pb-4 bg-gradient-to-r from-primary/10 via-purple/5 to-secondary/10 border-b border-border/30">
+                    <div className="flex items-center space-x-4">
+                      {/* Modern Avatar with Ring Effect */}
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5 group-hover:animate-pulse">
+                          <div className="h-full w-full rounded-full bg-card" />
+                        </div>
+                        <div className="relative">
+                          <ProfileAvatar name={fullName} size="lg" className="border-2 border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300" />
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full shadow-md" />
+                      </div>
+                      
+                      {/* Employee Info with Enhanced Typography */}
+                      <div className="flex-1 space-y-1">
+                        <h3 className="font-bold text-xl leading-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-secondary transition-all duration-300">
+                          {fullName}
+                        </h3>
+                        <p className="text-sm font-medium text-muted-foreground/80 tracking-wider">{employee.employeeId}</p>
+                        <div className="flex items-center gap-2">
+                          <Badge className={`bg-gradient-to-r ${getRoleColor(employee.role)} text-xs font-semibold px-2.5 py-1 rounded-full`}>
+                            {getRoleDisplayName(employee.role)}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Employee Details */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Role</span>
-                      <Badge variant="outline" className={getRoleColor(employee.role)}>
-                        {getRoleDisplayName(employee.role)}
-                      </Badge>
+                  {/* Details Grid with Modern Layout */}
+                  <div className="p-6 pt-4 space-y-4">
+                    {/* Info Cards Grid */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 group-hover:border-green-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Section</div>
+                        <div className="font-bold text-sm text-green-600 dark:text-green-400">{getSectionDisplayName(employee.section || 'primary')}</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 group-hover:border-purple-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Gender</div>
+                        <div className="font-bold text-sm text-purple-600 dark:text-purple-400">{getGenderDisplayName(employee.gender)}</div>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-yellow-500/10 border border-orange-500/20 group-hover:border-orange-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Status</div>
+                        <div className="font-bold text-sm text-orange-600 dark:text-orange-400">Active</div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Section</span>
-                      <Badge variant="outline" className={getSectionColor(employee.section || 'primary')}>
-                        {getSectionDisplayName(employee.section || 'primary')}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Gender</span>
-                      <Badge variant="outline" className="bg-orange-500/10 text-orange-600 border-orange-500/20">
-                        {getGenderDisplayName(employee.gender)}
-                      </Badge>
-                    </div>
-                  </div>
 
-                  {/* Contact Info */}
-                  <div className="space-y-2 mb-6 p-4 bg-muted/20 rounded-lg">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Mail className="h-4 w-4" />
-                      <span className="truncate">{employee.email || 'No email'}</span>
+                    {/* Contact Information with Modern Icons */}
+                    <div className="space-y-3 p-4 rounded-xl bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30">
+                      <div className="flex items-center space-x-3 group/contact hover:bg-white/5 p-2 rounded-lg transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                          <Mail className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground/90 truncate">
+                            {employee.email || 'No email provided'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3 group/contact hover:bg-white/5 p-2 rounded-lg transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                          <Phone className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground/90 truncate">
+                            {employee.phone || 'No phone provided'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Phone className="h-4 w-4" />
-                      <span>{employee.phone || 'No phone'}</span>
-                    </div>
-                  </div>
 
-                  {/* Employment Details */}
-                  <div className="space-y-2 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Joined Date</span>
-                      <span className="font-medium">
-                        {employee.createdAt ? new Date(employee.createdAt).toLocaleDateString() : 'Not set'}
-                      </span>
+                    {/* Employment Details with Modern Cards */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Calendar className="h-4 w-4 text-cyan-600" />
+                          <div className="text-xs font-medium text-muted-foreground">Joined</div>
+                        </div>
+                        <div className="font-bold text-sm text-cyan-600 dark:text-cyan-400">
+                          {employee.createdAt ? new Date(employee.createdAt).toLocaleDateString() : 'Not set'}
+                        </div>
+                      </div>
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 border border-emerald-500/20">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <BadgeIcon className="h-4 w-4 text-emerald-600" />
+                          <div className="text-xs font-medium text-muted-foreground">Salary</div>
+                        </div>
+                        <div className="font-bold text-sm text-emerald-600 dark:text-emerald-400">
+                          ${employee.salary?.toLocaleString() || 'Not set'}
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Salary</span>
-                      <span className="font-medium text-green-600">
-                        ${employee.salary?.toLocaleString() || 'Not set'}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex space-x-2">
-                    <Link to={`/edit-employee/${employee.id}`}>
+                    {/* Modern Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <Link to={`/edit-employee/${employee.id}`} className="flex-1">
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 text-blue-950 dark:text-blue-200 border border-blue-500/40 hover:border-blue-500/60 transition-all duration-300 group/btn font-semibold"
+                        >
+                          <Edit className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
+                          Edit
+                        </Button>
+                      </Link>
                       <Button
-                        variant="outline"
                         size="sm"
-                        className="flex-1 hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/30"
+                        className="bg-gradient-to-r from-red-500/15 to-pink-500/15 hover:from-red-500/25 hover:to-pink-500/25 text-red-950 dark:text-red-200 border border-red-500/40 hover:border-red-500/60 transition-all duration-300 group/btn font-semibold"
+                        onClick={() => handleDelete(employee.id)}
                       >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
+                        <Trash2 className="h-4 w-4 group-hover/btn:scale-110 transition-transform duration-200" />
                       </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/30"
-                      onClick={() => handleDelete(employee.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
