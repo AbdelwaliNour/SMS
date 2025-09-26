@@ -211,7 +211,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                       <Link to={`/edit-student/${student.id}`} className="flex-1">
                         <Button 
                           size="sm" 
-                          className="w-full bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 text-blue-800 dark:text-blue-200 border border-blue-500/40 hover:border-blue-500/60 transition-all duration-300 group/btn font-semibold"
+                          className="w-full bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 text-blue-950 dark:text-blue-200 border border-blue-500/40 hover:border-blue-500/60 transition-all duration-300 group/btn font-semibold"
                         >
                           <Edit className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
                           Edit
@@ -220,7 +220,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                       <Link to={`/student-performance?studentId=${student.id}`} className="flex-1">
                         <Button 
                           size="sm" 
-                          className="w-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 hover:from-green-500/25 hover:to-emerald-500/25 text-green-800 dark:text-green-200 border border-green-500/40 hover:border-green-500/60 transition-all duration-300 group/btn font-semibold"
+                          className="w-full bg-gradient-to-r from-green-500/15 to-emerald-500/15 hover:from-green-500/25 hover:to-emerald-500/25 text-green-950 dark:text-green-200 border border-green-500/40 hover:border-green-500/60 transition-all duration-300 group/btn font-semibold"
                         >
                           <BarChart3 className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
                           Stats
@@ -228,7 +228,7 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ onAddStudent }) => {
                       </Link>
                       <Button
                         size="sm"
-                        className="bg-gradient-to-r from-red-500/15 to-pink-500/15 hover:from-red-500/25 hover:to-pink-500/25 text-red-800 dark:text-red-200 border border-red-500/40 hover:border-red-500/60 transition-all duration-300 group/btn font-semibold"
+                        className="bg-gradient-to-r from-red-500/15 to-pink-500/15 hover:from-red-500/25 hover:to-pink-500/25 text-red-950 dark:text-red-200 border border-red-500/40 hover:border-red-500/60 transition-all duration-300 group/btn font-semibold"
                         onClick={() => handleDelete(student.id)}
                       >
                         <Trash2 className="h-4 w-4 group-hover/btn:scale-110 transition-transform duration-200" />
