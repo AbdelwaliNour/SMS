@@ -163,85 +163,113 @@ export default function Classrooms() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredClassrooms.map((classroom) => (
-              <Card key={classroom.id} className="group glass-morphism border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-xl">
-                <CardContent className="p-6 space-y-4">
-                  {/* Classroom Header */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2.5 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
-                        <School className="h-5 w-5 text-primary" />
+              <Card key={classroom.id} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card/80 via-card to-card/60 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Modern Shimmer Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                
+                <CardContent className="relative p-0">
+                  {/* Header Section with Gradient Background */}
+                  <div className="relative p-6 pb-4 bg-gradient-to-r from-primary/10 via-purple/5 to-secondary/10 border-b border-border/30">
+                    <div className="flex items-center space-x-4">
+                      {/* Modern Icon with Ring Effect */}
+                      <div className="relative">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary p-0.5 group-hover:animate-pulse">
+                          <div className="h-full w-full rounded-full bg-card" />
+                        </div>
+                        <div className="relative w-18 h-18 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 flex items-center justify-center border-2 border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                          <School className="h-8 w-8 text-primary group-hover:text-secondary transition-colors duration-300" />
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full shadow-md" />
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{classroom.name}</h3>
-                        <Badge className={`text-xs ${getSectionColor(classroom.section || 'primary')}`}>
-                          {getSectionDisplayName(classroom.section || 'primary')}
-                        </Badge>
+                      
+                      {/* Classroom Info with Enhanced Typography */}
+                      <div className="flex-1 space-y-1">
+                        <h3 className="font-bold text-xl leading-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-secondary transition-all duration-300">
+                          {classroom.name}
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <Badge className={`bg-gradient-to-r ${getSectionColor(classroom.section || 'primary')} text-xs font-semibold px-2.5 py-1 rounded-full`}>
+                            {getSectionDisplayName(classroom.section || 'primary')}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link to={`/edit-classroom/${classroom.id}`}>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-600">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600"
-                        onClick={() => handleDeleteClassroom(classroom.id, classroom.name)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
 
-                  {/* Classroom Details */}
-                  <div className="space-y-3">
-                    {/* Capacity */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Capacity</span>
+                  {/* Details Grid with Modern Layout */}
+                  <div className="p-6 pt-4 space-y-4">
+                    {/* Info Cards Grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 group-hover:border-blue-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Capacity</div>
+                        <div className="font-bold text-sm text-blue-600 dark:text-blue-400">{classroom.capacity} students</div>
                       </div>
-                      <Badge className={`text-xs ${getCapacityStatus(classroom.capacity || 0)}`}>
-                        {classroom.capacity} students
-                      </Badge>
+                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 group-hover:border-green-500/40 transition-all duration-300">
+                        <div className="text-xs font-medium text-muted-foreground mb-1">Status</div>
+                        <div className="font-bold text-sm text-green-600 dark:text-green-400">Active</div>
+                      </div>
                     </div>
 
-                    {/* Teacher Assignment */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Teacher</span>
-                      </div>
-                      <div className="text-sm">
-                        {getTeacherInfo(classroom.teacherId) ? (
-                          <div className="flex items-center space-x-2">
-                            <ProfileAvatar 
-                              name={getTeacherInfo(classroom.teacherId)!} 
-                              size="sm"
-                            />
-                            <span className="font-medium">{getTeacherInfo(classroom.teacherId)}</span>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground italic">Not assigned</span>
-                        )}
+                    {/* Teacher Information with Modern Layout */}
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30">
+                      <div className="flex items-center space-x-3 group/teacher hover:bg-white/5 p-2 rounded-lg transition-all duration-200">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <User className="h-4 w-4 text-purple-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-medium text-muted-foreground mb-1">Assigned Teacher</div>
+                          {getTeacherInfo(classroom.teacherId) ? (
+                            <div className="flex items-center space-x-2">
+                              <ProfileAvatar 
+                                name={getTeacherInfo(classroom.teacherId)!} 
+                                size="sm"
+                              />
+                              <span className="font-medium text-sm text-foreground/90 truncate">{getTeacherInfo(classroom.teacherId)}</span>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-muted-foreground italic">No teacher assigned</p>
+                          )}
+                        </div>
                       </div>
                     </div>
 
                     {/* Created Date */}
                     {classroom.createdAt && (
-                      <div className="flex items-center justify-between pt-2 border-t border-border/20">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">Created</span>
+                      <div className="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-yellow-500/10 border border-orange-500/20">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center">
+                          <Calendar className="h-4 w-4 text-orange-600" />
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(classroom.createdAt).toLocaleDateString()}
-                        </span>
+                        <div className="flex-1">
+                          <div className="text-xs font-medium text-muted-foreground">Created Date</div>
+                          <div className="font-medium text-sm text-orange-600 dark:text-orange-400">
+                            {new Date(classroom.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
                       </div>
                     )}
+
+                    {/* Modern Action Buttons */}
+                    <div className="flex gap-2 pt-2">
+                      <Link to={`/edit-classroom/${classroom.id}`} className="flex-1">
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-gradient-to-r from-blue-500/15 to-cyan-500/15 hover:from-blue-500/25 hover:to-cyan-500/25 text-blue-950 dark:text-blue-200 border border-blue-500/40 hover:border-blue-500/60 transition-all duration-300 group/btn font-semibold"
+                        >
+                          <Edit className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform duration-200" />
+                          Edit
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        className="bg-gradient-to-r from-red-500/15 to-pink-500/15 hover:from-red-500/25 hover:to-pink-500/25 text-red-950 dark:text-red-200 border border-red-500/40 hover:border-red-500/60 transition-all duration-300 group/btn font-semibold"
+                        onClick={() => handleDeleteClassroom(classroom.id, classroom.name)}
+                      >
+                        <Trash2 className="h-4 w-4 group-hover/btn:scale-110 transition-transform duration-200" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
